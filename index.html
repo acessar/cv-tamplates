@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Templates de CV — Escolha o seu modelo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════════════════════
+   RESET
+══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+/* ══════════════════════════════════════════════════
+   INTERFACE DESIGN SYSTEM (white + blue palette)
+   Completely separate from product buttons
+══════════════════════════════════════════════════ */
+:root {
+  --bg:          #f4f8fd;
+  --surface:     #ffffff;
+  --blue-pale:   #EAF4FF;
+  --blue-pale2:  #DCEEFF;
+  --blue:        #4A90E2;
+  --blue-hover:  #3578cc;
+  --blue-deep:   #2563b0;
+  --border:      #dde6f0;
+  --border-2:    #c8d8ea;
+  --text:        #111827;
+  --text-mid:    #4b5563;
+  --text-dim:    #8b97a8;
+  --green:       #16a34a;
+  --green-bg:    #f0fdf4;
+  --green-bd:    #bbf7d0;
+  --red:         #dc2626;
+  --red-bg:      #fef2f2;
+  --r:           10px;
+  --r-btn:       8px;
+  --shadow-sm:   0 1px 3px rgba(0,20,60,0.07), 0 2px 8px rgba(0,20,60,0.04);
+  --shadow-md:   0 2px 8px rgba(0,20,60,0.08), 0 6px 24px rgba(0,20,60,0.06);
+  --shadow-lg:   0 8px 32px rgba(0,20,60,0.12), 0 2px 8px rgba(0,20,60,0.06);
+  /* button system passthrough */
+  --radius-btn: 8px;
+}
+
+body {
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════════
+   SCREENS — single-page with JS transitions
+══════════════════════════════════════════════════ */
+.screen {
+  display: none;
+  min-height: 100vh;
+  animation: screenIn 0.28s ease both;
+}
+.screen.active { display: block; }
+
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════
+   TOPBAR
+══════════════════════════════════════════════════ */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.brand-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+.topbar-right {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ══════════════════════════════════════════════════
+   SCREEN 1 — TEMPLATE GRID
+══════════════════════════════════════════════════ */
+.s1-hero {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 20px 24px;
+}
+
+.s1-hero-inner {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+
+.s1-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: var(--blue-pale);
+  border: 1px solid rgba(74,144,226,0.2);
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 12px;
+}
+
+.s1-title {
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.s1-sub {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-mid);
+  max-width: 500px;
+  line-height: 1.65;
+}
+
+.s1-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.step-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px 5px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px;
+  color: var(--text-mid);
+}
+
+.step-num {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Template grid */
+.s1-grid-wrap {
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.grid-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.grid-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.tpl-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 560px) { .tpl-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 840px) { .tpl-grid { grid-template-columns: 1fr 1fr 1fr; } }
+@media (min-width: 1020px) { .tpl-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* Template card */
+.tpl-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.18s, box-shadow 0.2s, transform 0.18s;
+}
+
+.tpl-card:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow-md), 0 0 0 3px rgba(74,144,226,0.09);
+  transform: translateY(-2px);
+}
+
+.tpl-card-swatch {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  position: relative;
+  overflow: hidden;
+}
+
+.tpl-card-info {
+  padding: 11px 13px 10px;
+  border-top: 1px solid var(--border);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tpl-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.tpl-card-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.tpl-card-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Interface action buttons — NOT product buttons */
+.i-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border-radius: 7px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, box-shadow 0.14s, transform 0.12s;
+  text-decoration: none;
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+  line-height: 1;
+}
+
+.i-btn:active { transform: scale(0.97); }
+
+.i-btn-outline {
+  background: var(--bg);
+  border-color: var(--border-2);
+  color: var(--text-mid);
+}
+.i-btn-outline:hover {
+  background: var(--blue-pale);
+  border-color: rgba(74,144,226,0.35);
+  color: var(--blue-deep);
+}
+
+.i-btn-solid {
+  background: var(--blue);
+  border-color: var(--blue-hover);
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(74,144,226,0.3);
+}
+.i-btn-solid:hover {
+  background: var(--blue-hover);
+  box-shadow: 0 2px 8px rgba(74,144,226,0.4);
+}
+
+.i-btn-green {
+  background: var(--green);
+  border-color: #15803d;
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(22,163,74,0.3);
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 9px;
+}
+.i-btn-green:hover { background: #15803d; }
+
+.i-btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-mid);
+}
+.i-btn-ghost:hover { background: var(--bg); }
+
+.i-btn svg { width: 12px; height: 12px; flex-shrink: 0; opacity: 0.8; }
+.i-btn-green svg { width: 16px; height: 16px; opacity: 1; }
+
+/* ══════════════════════════════════════════════════
+   SCREEN 2 — FORM
+══════════════════════════════════════════════════ */
+.s2-wrap {
+  max-width: 580px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+
+/* Back button */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  margin-bottom: 18px;
+  padding: 4px 0;
+  background: none;
+  border: none;
+  transition: color 0.14s;
+}
+.back-btn:hover { color: var(--blue); }
+.back-btn svg { width: 14px; height: 14px; }
+
+/* Template summary card */
+.form-tpl-summary {
+  background: var(--blue-pale);
+  border: 1.5px solid rgba(74,144,226,0.2);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.summary-swatch {
+  width: 48px; height: 48px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.summary-info {}
+.summary-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--blue);
+  margin-bottom: 2px;
+}
+.summary-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.summary-link {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+
+/* Form card */
+.form-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.form-card-head {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-card-icon {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: var(--blue-pale);
+  border: 1px solid rgba(74,144,226,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.form-card-icon svg { width: 14px; height: 14px; color: var(--blue); }
+
+.form-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.form-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.form-field {}
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  margin-bottom: 5px;
+}
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border-2);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(74,144,226,0.13);
+}
+
+.form-input.error { border-color: var(--red); box-shadow: 0 0 0 3px rgba(220,38,38,0.12); }
+
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-dim); }
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238b97a8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 70px;
+  line-height: 1.5;
+}
+
+/* Button customization section */
+.btn-custom-section {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.btn-custom-head {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.14s;
+}
+.btn-custom-head:hover { background: var(--bg); }
+
+.btn-custom-head-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.optional-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 100px;
+}
+
+.btn-custom-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.btn-custom-sub {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+
+.chevron-icon {
+  width: 16px; height: 16px;
+  color: var(--text-dim);
+  transition: transform 0.22s ease;
+  flex-shrink: 0;
+}
+.chevron-icon.open { transform: rotate(90deg); }
+
+/* Selected button preview */
+.btn-selected-preview {
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--border);
+  display: none;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg);
+}
+
+.btn-selected-preview.visible { display: flex; }
+
+.selected-preview-bg {
+  padding: 10px 16px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.selected-preview-info { flex: 1; }
+.selected-preview-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-mid);
+  margin-bottom: 2px;
+}
+.selected-preview-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.selected-clear {
+  font-size: 11px;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 5px;
+  transition: background 0.14s, color 0.14s;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.selected-clear:hover { background: var(--red-bg); color: var(--red); border-color: #fca5a5; }
+
+/* Form submit */
+.form-submit-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-submit-note {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.form-submit-note svg { width: 12px; height: 12px; color: var(--green); }
+
+/* ══════════════════════════════════════════════════
+   SCREEN 3 — BUTTON PICKER
+══════════════════════════════════════════════════ */
+.s3-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 14px 60px;
+}
+
+.s3-hero {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 20px;
+}
+
+.s3-hero-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.s3-hero-info {}
+.s3-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.s3-sub { font-size: 12px; color: var(--text-dim); }
+
+/* Aesthetic group */
+.aest-group {
+  margin-bottom: 24px;
+}
+
+.aest-group-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.aest-group-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+}
+
+.aest-group-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.aest-group-count {
+  font-size: 11px;
+  color: var(--text-dim);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 1px 7px;
+  border-radius: 100px;
+}
+
+/* Button picker grid */
+.picker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+
+@media (min-width: 480px) { .picker-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 640px) { .picker-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 840px) { .picker-grid { grid-template-columns: repeat(6, 1fr); } }
+
+/* Individual picker item */
+.picker-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background: var(--surface);
+  transition: border-color 0.16s, background 0.16s, box-shadow 0.16s;
+  position: relative;
+}
+
+.picker-item:hover {
+  border-color: var(--border-2);
+  background: var(--bg);
+}
+
+.picker-item.selected {
+  border-color: var(--blue);
+  background: var(--blue-pale);
+  box-shadow: 0 0 0 3px rgba(74,144,226,0.14);
+}
+
+.picker-item.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 5px; right: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  width: 16px; height: 16px;
+  background: var(--surface);
+  border: 1.5px solid var(--blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  text-align: center;
+}
+
+.picker-bg {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  border-radius: 6px;
+  pointer-events: none;
+  min-height: 50px;
+}
+
+.picker-color-name {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-mid);
+  text-align: center;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+/* Sticky confirm bar at bottom of s3 */
+.picker-confirm-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-shadow: 0 -4px 20px rgba(0,20,60,0.08);
+}
+
+.confirm-bar-info {
+  flex: 1;
+}
+
+.confirm-bar-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+
+.confirm-bar-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Confirm button states */
+#confirmBtnChoice:disabled {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--text-dim);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+#confirmBtnChoice:not(:disabled) {
+  background: var(--blue);
+  border-color: var(--blue-hover);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(74,144,226,0.35);
+}
+#confirmBtnChoice:not(:disabled):hover {
+  background: var(--blue-hover);
+  box-shadow: 0 3px 12px rgba(74,144,226,0.45);
+}
+
+.confirm-bar-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.confirm-bar-actions .i-btn {
+  padding: 9px 16px;
+  font-size: 13px;
+}
+
+/* ══════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--text);
+  color: #fff;
+  padding: 9px 18px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.22s;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══════════════════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+
+/* ══════════════════════════════════════════════════
+   PRODUCT BUTTONS — PRESERVED 100% VERBATIM
+   !! NÃO ALTERAR !!
+══════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 24px;
+  border-radius: var(--radius-btn);
+  border: none;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+  color: #fff;
+}
+.btn:active { transform: scale(0.98) !important; }
+
+.btn-cintilante {
+  background-color: var(--c);
+  background-image: linear-gradient(160deg,
+    color-mix(in srgb, var(--c) 70%, #000) 0%,
+    color-mix(in srgb, var(--c) 55%, #fff) 40%,
+    color-mix(in srgb, var(--c) 75%, #000) 65%,
+    color-mix(in srgb, var(--c) 65%, #fff) 85%,
+    color-mix(in srgb, var(--c) 72%, #000) 100%
+  );
+  box-shadow: 0 1px 0 rgba(255,255,255,0.18) inset, 0 -1px 0 rgba(0,0,0,0.25) inset, 0 2px 8px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.15);
+}
+.btn-cintilante::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 45%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18) 50%, transparent);
+  transform: translateX(-150%);
+  animation: cintilante-sweep 3.5s ease-in-out infinite;
+}
+.btn-cintilante::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 100%);
+  border-radius: var(--radius-btn) var(--radius-btn) 0 0;
+  pointer-events: none;
+}
+@keyframes cintilante-sweep {
+  0%   { transform: translateX(-150%); }
+  70%  { transform: translateX(250%); }
+  100% { transform: translateX(250%); }
+}
+.btn-cintilante:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 -1px 0 rgba(0,0,0,0.25) inset, 0 4px 14px rgba(0,0,0,0.35), 0 8px 28px rgba(0,0,0,0.18);
+}
+
+.btn-clean {
+  background-color: var(--c);
+  background-image: linear-gradient(180deg,
+    color-mix(in srgb, var(--c) 95%, #fff) 0%,
+    color-mix(in srgb, var(--c) 98%, #000) 100%
+  );
+  box-shadow: none;
+  border: none;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+}
+.btn-clean:hover { filter: brightness(1.1) saturate(1.05); transform: none; }
+.btn-clean:active { transform: scale(0.98) !important; filter: brightness(0.95); }
+
+.btn-glass {
+  background: rgba(var(--cr), 0.16);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,0.0);
+  border-top-color: rgba(255,255,255,0.4);
+  border-left-color: rgba(255,255,255,0.2);
+  border-right-color: rgba(255,255,255,0.08);
+  border-bottom-color: rgba(0,0,0,0.15);
+  box-shadow: 0 2px 0 rgba(255,255,255,0.08) inset, 0 -1px 0 rgba(0,0,0,0.2) inset, 0 4px 20px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(var(--cr), 0.12);
+  color: rgba(255,255,255,0.92);
+  font-weight: 400;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+.btn-glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+  border-radius: var(--radius-btn) var(--radius-btn) 30% 30%;
+  pointer-events: none;
+}
+.btn-glass:hover {
+  background: rgba(var(--cr), 0.22);
+  backdrop-filter: blur(22px) saturate(1.6);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  border-top-color: rgba(255,255,255,0.5);
+  transform: translateY(-1px);
+}
+.btn-glass:active { background: rgba(var(--cr), 0.28) !important; transform: scale(0.98) !important; }
+
+.btn-matte {
+  background-color: var(--c);
+  background-image: none;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 3px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.07), 0 20px 48px rgba(0,0,0,0.05);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+.btn-matte::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,255,255,0.0) 0%, transparent 100%);
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.btn-matte:hover { filter: brightness(1.04); box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.1), 0 12px 32px rgba(0,0,0,0.09), 0 24px 56px rgba(0,0,0,0.06); }
+.btn-matte:hover::before { opacity: 1; }
+.btn-matte:active { transform: scale(0.98) translateY(1px) !important; box-shadow: 0 0 2px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.06) !important; }
+
+.btn-metal {
+  background-color: var(--c);
+  background-image: linear-gradient(100deg,
+    color-mix(in srgb, var(--c) 55%, #000) 0%,
+    color-mix(in srgb, var(--c) 70%, #000) 10%,
+    color-mix(in srgb, var(--c) 45%, #fff) 28%,
+    color-mix(in srgb, var(--c) 62%, #000) 42%,
+    color-mix(in srgb, var(--c) 55%, #fff) 58%,
+    color-mix(in srgb, var(--c) 65%, #000) 72%,
+    color-mix(in srgb, var(--c) 50%, #fff) 85%,
+    color-mix(in srgb, var(--c) 60%, #000) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--c) 55%, #000);
+  border-top-color: color-mix(in srgb, var(--c) 60%, #fff);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35), 0 3px 8px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.06);
+  font-weight: 500;
+  transition: background-image 0.3s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+.btn-metal:hover {
+  background-image: linear-gradient(108deg,
+    color-mix(in srgb, var(--c) 55%, #000) 0%,
+    color-mix(in srgb, var(--c) 68%, #000) 10%,
+    color-mix(in srgb, var(--c) 38%, #fff) 28%,
+    color-mix(in srgb, var(--c) 60%, #000) 42%,
+    color-mix(in srgb, var(--c) 48%, #fff) 58%,
+    color-mix(in srgb, var(--c) 64%, #000) 72%,
+    color-mix(in srgb, var(--c) 44%, #fff) 85%,
+    color-mix(in srgb, var(--c) 58%, #000) 100%
+  );
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4), 0 5px 14px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.09);
+  transform: translateY(-1px);
+}
+.btn-metal:active {
+  background-image: linear-gradient(100deg,
+    color-mix(in srgb, var(--c) 65%, #000) 0%,
+    color-mix(in srgb, var(--c) 55%, #000) 30%,
+    color-mix(in srgb, var(--c) 60%, #000) 50%,
+    color-mix(in srgb, var(--c) 55%, #000) 70%,
+    color-mix(in srgb, var(--c) 62%, #000) 100%
+  ) !important;
+  transform: scale(0.98) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+}
+
+.btn-glow {
+  background-color: var(--c);
+  background-image: linear-gradient(160deg,
+    color-mix(in srgb, var(--c) 80%, #fff) 0%,
+    var(--c) 50%,
+    color-mix(in srgb, var(--c) 85%, #000) 100%
+  );
+  border: 1px solid rgba(var(--cr), 0.4);
+  box-shadow: 0 0 12px rgba(var(--cr), 0.3), 0 0 28px rgba(var(--cr), 0.18), 0 0 56px rgba(var(--cr), 0.1), 0 2px 6px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.18);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  transition: box-shadow 0.35s ease, transform 0.2s ease, background-image 0.2s;
+}
+.btn-glow:hover {
+  box-shadow: 0 0 18px rgba(var(--cr), 0.5), 0 0 40px rgba(var(--cr), 0.3), 0 0 80px rgba(var(--cr), 0.15), 0 3px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
+.btn-glow:active {
+  box-shadow: 0 0 8px rgba(var(--cr), 0.5), 0 0 16px rgba(var(--cr), 0.4), 0 1px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+  transform: scale(0.98) !important;
+}
+/* ══ END PRODUCT BUTTONS ══ */
+
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 1 — CHOOSE TEMPLATE
+════════════════════════════════════════════ -->
+<div class="screen active" id="s1">
+
+  <nav class="topbar">
+    <a class="brand" href="#" onclick="goScreen('s1'); return false;">
+      <span class="brand-dot"></span>
+      CVTemplates
+    </a>
+    <span class="topbar-right">10 modelos disponíveis</span>
+  </nav>
+
+  <div class="s1-hero">
+    <div class="s1-hero-inner">
+      <div class="s1-tag">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M5 3v2.5l1.5 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Entrega em 48 horas
+      </div>
+      <h1 class="s1-title">Escolha o modelo do seu site</h1>
+      <p class="s1-sub">Selecione a identidade visual que representa você. Tudo pronto para usar, sem precisar saber programação.</p>
+      <div class="s1-steps">
+        <div class="step-pill"><span class="step-num">1</span>Escolha a cor</div>
+        <div class="step-pill"><span class="step-num">2</span>Preencha o formulário</div>
+        <div class="step-pill"><span class="step-num">3</span>Receba em 48h</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s1-grid-wrap">
+    <div class="grid-label">Modelos prontos</div>
+    <div class="tpl-grid" id="tplGrid"></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 2 — FORM
+════════════════════════════════════════════ -->
+<div class="screen" id="s2">
+
+  <nav class="topbar">
+    <a class="brand" href="#" onclick="goScreen('s1'); return false;">
+      <span class="brand-dot"></span>
+      CVTemplates
+    </a>
+    <span class="topbar-right">Etapa 2 de 2</span>
+  </nav>
+
+  <div class="s2-wrap">
+
+    <button class="back-btn" onclick="goScreen('s1')">
+      <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Voltar aos modelos
+    </button>
+
+    <!-- Template summary -->
+    <div class="form-tpl-summary" id="formSummary">
+      <div class="summary-swatch" id="summarySwatchEl"></div>
+      <div class="summary-info">
+        <div class="summary-label">Modelo escolhido</div>
+        <div class="summary-name" id="summaryNameEl">—</div>
+        <div class="summary-link" id="summaryLinkEl">—</div>
+      </div>
+    </div>
+
+    <!-- Personal info -->
+    <div class="form-card">
+      <div class="form-card-head">
+        <div class="form-card-icon">
+          <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 12c0-2.485 2.015-4.5 4.5-4.5s4.5 2.015 4.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <span class="form-card-title">Suas informações</span>
+      </div>
+      <div class="form-card-body">
+        <div class="form-field">
+          <label class="form-label" for="fName">Nome completo *</label>
+          <input class="form-input" type="text" id="fName" placeholder="Ex: Ana Lima" autocomplete="name">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="fCompany">Nome da empresa</label>
+          <input class="form-input" type="text" id="fCompany" placeholder="Ex: Studio Ana Lima" autocomplete="organization">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="fSegment">Segmento *</label>
+          <select class="form-select" id="fSegment">
+            <option value="" disabled selected>Selecione seu segmento…</option>
+            <option>Beleza &amp; Estética</option>
+            <option>Saúde &amp; Bem-estar</option>
+            <option>Moda &amp; Estilo</option>
+            <option>Fotografia &amp; Artes</option>
+            <option>Marketing &amp; Comunicação</option>
+            <option>Tecnologia &amp; Design</option>
+            <option>Negócios &amp; Consultoria</option>
+            <option>Educação &amp; Cursos</option>
+            <option>Gastronomia</option>
+            <option>Arquitetura &amp; Interiores</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="fObs">Observações</label>
+          <textarea class="form-textarea" id="fObs" placeholder="Ex: quero algo delicado, minimalista…" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button customization (optional) -->
+    <div class="btn-custom-section" id="btnCustomSection">
+      <div class="btn-custom-head" id="btnCustomHead" onclick="goScreen('s3')">
+        <div class="btn-custom-head-left">
+          <div class="form-card-icon">
+            <svg viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="6" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 7h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="btn-custom-title">Personalizar botões</div>
+            <div class="btn-custom-sub">Escolha o estilo dos botões do seu site</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="optional-badge">Opcional</span>
+          <svg class="chevron-icon" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div class="btn-selected-preview" id="btnSelectedPreview">
+        <div class="selected-preview-bg" id="previewBg"></div>
+        <div class="selected-preview-info">
+          <div class="selected-preview-label">Botão selecionado</div>
+          <div class="selected-preview-name" id="previewName">—</div>
+        </div>
+        <button class="selected-clear" id="clearBtnChoice" onclick="clearBtnChoice(event)">Remover</button>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="form-submit-area">
+      <button class="i-btn i-btn-green" id="submitBtn" onclick="handleSubmit()">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2C4.686 2 2 4.686 2 8s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6zM6.5 11L3.5 8l1.06-1.06L6.5 8.878l4.94-4.94L12.5 5 6.5 11z" fill="currentColor"/></svg>
+        Enviar pelo WhatsApp
+      </button>
+      <div class="form-submit-note">
+        <svg viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 4.5H11L8.25 6.75l1 3.75L6 8.5 2.75 10.5l1-3.75L1 4.5h3.5L6 1z" fill="currentColor"/></svg>
+        Você será redirecionado ao WhatsApp
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCREEN 3 — BUTTON PICKER
+════════════════════════════════════════════ -->
+<div class="screen" id="s3">
+
+  <div class="s3-hero">
+    <div class="s3-hero-inner">
+      <div class="s3-hero-info">
+        <div class="s3-title">Escolha o estilo do botão</div>
+        <div class="s3-sub">Clique em qualquer botão para selecioná-lo — 72 opções</div>
+      </div>
+      <button class="i-btn i-btn-ghost" onclick="goScreen('s2')">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Voltar
+      </button>
+    </div>
+  </div>
+
+  <div class="s3-wrap" id="s3Content"></div>
+
+  <!-- Sticky confirm bar -->
+  <div class="picker-confirm-bar" id="pickerConfirmBar">
+    <div class="confirm-bar-info">
+      <div class="confirm-bar-label" id="confirmBarLabel">Nenhum botão selecionado</div>
+      <div class="confirm-bar-name" id="confirmBarName">Clique em um botão acima</div>
+    </div>
+    <div class="confirm-bar-actions">
+      <button class="i-btn i-btn-ghost" onclick="skipBtnChoice()">Pular</button>
+      <button class="i-btn i-btn-solid" id="confirmBtnChoice" onclick="confirmBtnChoice()" disabled>Confirmar botão</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+
+/* ── DATA ──────────────────────────────────────── */
+const TEMPLATES = [
+  { id:'vermelho',     name:'Vermelho Ousado',    emoji:'🔴', hex:'#C0392B', bg:'#fff1f0', textColor:'#7f1d1d', r:192,g:57, b:43,  link:'https://Acessar.github.io/cv-vermelho',     tag:'Impacto'       },
+  { id:'rosa',         name:'Rosa Delicado',       emoji:'🌸', hex:'#D81B60', bg:'#fff0f6', textColor:'#831843', r:216,g:27, b:96,  link:'https://Acessar.github.io/cv-rosa',         tag:'Elegância'     },
+  { id:'roxo',         name:'Roxo Premium',        emoji:'💜', hex:'#4527A0', bg:'#f5f0ff', textColor:'#2e1065', r:69, g:39, b:160, link:'https://Acessar.github.io/cv-roxo',         tag:'Sofisticação'  },
+  { id:'azul',         name:'Azul Sofisticado',    emoji:'🔵', hex:'#1565C0', bg:'#eff6ff', textColor:'#1e3a8a', r:21, g:101,b:192, link:'https://Acessar.github.io/cv-azul',         tag:'Confiança'     },
+  { id:'verdeescuro',  name:'Verde Elegante',      emoji:'🌲', hex:'#1B5E20', bg:'#f0fdf4', textColor:'#14532d', r:27, g:94, b:32,  link:'https://Acessar.github.io/cv-verdeescuro', tag:'Equilíbrio'    },
+  { id:'verdeclaro',   name:'Verde Vivo',          emoji:'🍃', hex:'#2E7D32', bg:'#f0fdf4', textColor:'#166534', r:46, g:125,b:50,  link:'https://Acessar.github.io/cv-verdeclaro',  tag:'Energia'       },
+  { id:'amarelo',      name:'Dourado Quente',      emoji:'⚡', hex:'#E65100', bg:'#fffbeb', textColor:'#78350f', r:230,g:81, b:0,   link:'https://Acessar.github.io/cv-amarelo',     tag:'Presença'      },
+  { id:'laranja',      name:'Laranja Criativo',    emoji:'🧡', hex:'#BF360C', bg:'#fff7ed', textColor:'#7c2d12', r:191,g:54, b:12,  link:'https://Acessar.github.io/cv-laranja',     tag:'Criatividade'  },
+  { id:'marrom',       name:'Marrom Refinado',     emoji:'🤎', hex:'#4E342E', bg:'#fdf8f6', textColor:'#292524', r:78, g:52, b:46,  link:'https://Acessar.github.io/cv-marrom',      tag:'Maturidade'    },
+  { id:'pretobranco',  name:'Preto Sofisticado',   emoji:'🖤', hex:'#1a2234', bg:'#f8fafc', textColor:'#0f172a', r:26, g:34, b:52,  link:'https://Acessar.github.io/cv-pretobranco', tag:'Minimalismo'   },
+];
+
+const AESTHETICS = [
+  { id:'cintilante', label:'Cintilante',  cls:'btn-cintilante', bgStyle: c => `background:#1c1a2e`,      needsDark:true  },
+  { id:'clean',      label:'Clean Soft',  cls:'btn-clean',      bgStyle: c => `background:#f0f4fa`,      needsDark:false },
+  { id:'glass',      label:'Glass',       cls:'btn-glass',      bgStyle: c => `background: rgb(${Math.round(c.r*0.18)},${Math.round(c.g*0.18)},${Math.round(c.b*0.18)})`,   needsDark:true },
+  { id:'matte',      label:'Soft Matte',  cls:'btn-matte',      bgStyle: c => `background:#e8ecf2`,      needsDark:false },
+  { id:'metal',      label:'Metal Soft',  cls:'btn-metal',      bgStyle: c => `background:#1a1e2a`,      needsDark:true  },
+  { id:'glow',       label:'Soft Glow',   cls:'btn-glow',       bgStyle: c => `background:#141420`,      needsDark:true  },
+];
+
+const COLORS = [
+  { id:'vinho',       name:'Vinho',         hex:'#6B1A2A', r:107,g:26, b:42  },
+  { id:'vermelho',    name:'Vermelho',       hex:'#C0392B', r:192,g:57, b:43  },
+  { id:'rosa',        name:'Rosa',           hex:'#D81B60', r:216,g:27, b:96  },
+  { id:'roxo',        name:'Roxo',           hex:'#4527A0', r:69, g:39, b:160 },
+  { id:'violeta',     name:'Violeta',        hex:'#7B1FA2', r:123,g:31, b:162 },
+  { id:'azul',        name:'Azul',           hex:'#1565C0', r:21, g:101,b:192 },
+  { id:'v-escuro',    name:'Verde Escuro',   hex:'#1B5E20', r:27, g:94, b:32  },
+  { id:'v-claro',     name:'Verde Claro',    hex:'#2E7D32', r:46, g:125,b:50  },
+  { id:'laranja',     name:'Laranja',        hex:'#E65100', r:230,g:81, b:0   },
+  { id:'marrom',      name:'Marrom',         hex:'#4E342E', r:78, g:52, b:46  },
+  { id:'dourado',     name:'Dourado',        hex:'#BF8000', r:191,g:128,b:0   },
+  { id:'preto-az',    name:'Preto Azulado',  hex:'#0D1B2A', r:13, g:27, b:42  },
+];
+
+/* ── STATE ─────────────────────────────────────── */
+let selectedTemplate = null;  // full template object
+let selectedBtn = null;       // { aest, color, cls } or null
+let tempBtnSelection = null;  // pending selection in picker
+
+/* ── SCREEN NAVIGATION ─────────────────────────── */
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+/* ── BUILD SCREEN 1 ────────────────────────────── */
+(function buildTemplateGrid() {
+  const grid = document.getElementById('tplGrid');
+  TEMPLATES.forEach(tpl => {
+    const card = document.createElement('div');
+    card.className = 'tpl-card';
+
+    // Color swatch — solid fill, no decorative elements
+    const swatch = document.createElement('div');
+    swatch.className = 'tpl-card-swatch';
+    swatch.style.background = tpl.hex;
+
+    // Info area
+    const info = document.createElement('div');
+    info.className = 'tpl-card-info';
+    info.innerHTML = `
+      <div class="tpl-card-name">${tpl.name}</div>
+      <div class="tpl-card-desc">${tpl.tag}</div>
+    `;
+
+    // Actions
+    const actions = document.createElement('div');
+    actions.className = 'tpl-card-actions';
+
+    const vizBtn = document.createElement('a');
+    vizBtn.className = 'i-btn i-btn-outline';
+    vizBtn.href = tpl.link;
+    vizBtn.target = '_blank';
+    vizBtn.rel = 'noopener';
+    vizBtn.innerHTML = `<svg viewBox="0 0 12 12" fill="none"><path d="M5 2H2.5A1.5 1.5 0 001 3.5v6A1.5 1.5 0 002.5 11h6A1.5 1.5 0 0010 9.5V7M7.5 1H11m0 0v3.5M11 1L5.5 6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Ver`;
+
+    const selBtn = document.createElement('button');
+    selBtn.className = 'i-btn i-btn-solid';
+    selBtn.innerHTML = `<svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Selecionar`;
+    selBtn.style.flex = '1';
+    selBtn.addEventListener('click', () => selectTemplate(tpl));
+
+    actions.appendChild(vizBtn);
+    actions.appendChild(selBtn);
+
+    info.appendChild(actions);
+    card.appendChild(swatch);
+    card.appendChild(info);
+    grid.appendChild(card);
+  });
+})();
+
+function selectTemplate(tpl) {
+  selectedTemplate = tpl;
+
+  // Update form summary
+  const swatchEl = document.getElementById('summarySwatchEl');
+  swatchEl.style.background = tpl.hex;
+  swatchEl.textContent = '';
+
+  document.getElementById('summaryNameEl').textContent = tpl.name;
+  document.getElementById('summaryLinkEl').textContent = tpl.link.replace('https://', '');
+
+  goScreen('s2');
+}
+
+/* ── BUILD SCREEN 3 ────────────────────────────── */
+(function buildButtonPicker() {
+  const wrap = document.getElementById('s3Content');
+
+  AESTHETICS.forEach(aest => {
+    const group = document.createElement('div');
+    group.className = 'aest-group';
+
+    const head = document.createElement('div');
+    head.className = 'aest-group-head';
+    head.innerHTML = `
+      <span class="aest-group-name">${aest.label}</span>
+      <span class="aest-group-line"></span>
+      <span class="aest-group-count">12 cores</span>
+    `;
+
+    const pickerGrid = document.createElement('div');
+    pickerGrid.className = 'picker-grid';
+
+    COLORS.forEach(color => {
+      const item = document.createElement('div');
+      item.className = 'picker-item';
+      item.dataset.aestId = aest.id;
+      item.dataset.colorId = color.id;
+      item.dataset.aestLabel = aest.label;
+      item.dataset.colorName = color.name;
+
+      // Background container for button
+      const bgDiv = document.createElement('div');
+      bgDiv.className = 'picker-bg';
+      bgDiv.setAttribute('style', aest.bgStyle(color));
+
+      // Real product button — unchanged
+      const btn = document.createElement('button');
+      btn.className = `btn ${aest.cls}`;
+      btn.textContent = 'Aa';
+      btn.style.setProperty('--c', color.hex);
+      btn.style.setProperty('--cr', `${color.r},${color.g},${color.b}`);
+      btn.style.padding = '8px 14px';
+      btn.style.fontSize = '12px';
+      btn.style.pointerEvents = 'none';
+
+      bgDiv.appendChild(btn);
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'picker-color-name';
+      nameEl.textContent = color.name;
+
+      item.appendChild(bgDiv);
+      item.appendChild(nameEl);
+
+      item.addEventListener('click', () => {
+        // Deselect all
+        document.querySelectorAll('.picker-item').forEach(el => el.classList.remove('selected'));
+        item.classList.add('selected');
+
+        tempBtnSelection = { aest, color };
+
+        // Update confirm bar
+        document.getElementById('confirmBarLabel').textContent = `Selecionado: ${aest.label} · ${color.name}`;
+        document.getElementById('confirmBarName').textContent = 'Clique em "Confirmar botão" para usar';
+        document.getElementById('confirmBtnChoice').disabled = false;
+      });
+
+      pickerGrid.appendChild(item);
+    });
+
+    group.appendChild(head);
+    group.appendChild(pickerGrid);
+    wrap.appendChild(group);
+  });
+
+  // Add bottom padding for sticky bar
+  const spacer = document.createElement('div');
+  spacer.style.height = '80px';
+  wrap.appendChild(spacer);
+})();
+
+function confirmBtnChoice() {
+  if (!tempBtnSelection) return;
+  selectedBtn = tempBtnSelection;
+
+  // Update preview in form
+  const preview = document.getElementById('btnSelectedPreview');
+  const previewBg = document.getElementById('previewBg');
+  const { aest, color } = selectedBtn;
+
+  // Render real button in preview
+  previewBg.setAttribute('style', aest.bgStyle(color) + ';padding:8px 12px;border-radius:7px;');
+  previewBg.innerHTML = '';
+  const previewBtn = document.createElement('button');
+  previewBtn.className = `btn ${aest.cls}`;
+  previewBtn.textContent = 'Botão';
+  previewBtn.style.setProperty('--c', color.hex);
+  previewBtn.style.setProperty('--cr', `${color.r},${color.g},${color.b}`);
+  previewBtn.style.pointerEvents = 'none';
+  previewBg.appendChild(previewBtn);
+
+  document.getElementById('previewName').textContent = `${aest.label} · ${color.name}`;
+  preview.classList.add('visible');
+
+  goScreen('s2');
+  showToast('Botão selecionado ✓');
+}
+
+function skipBtnChoice() {
+  selectedBtn = null;
+  document.getElementById('btnSelectedPreview').classList.remove('visible');
+  goScreen('s2');
+}
+
+function clearBtnChoice(e) {
+  e.stopPropagation();
+  selectedBtn = null;
+  tempBtnSelection = null;
+  document.getElementById('btnSelectedPreview').classList.remove('visible');
+  document.querySelectorAll('.picker-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById('confirmBtnChoice').disabled = true;
+  document.getElementById('confirmBarLabel').textContent = 'Nenhum botão selecionado';
+  document.getElementById('confirmBarName').textContent = 'Clique em um botão acima';
+}
+
+/* ── FORM SUBMIT → WHATSAPP ────────────────────── */
+function handleSubmit() {
+  const name    = document.getElementById('fName').value.trim();
+  const company = document.getElementById('fCompany').value.trim();
+  const segment = document.getElementById('fSegment').value;
+  const obs     = document.getElementById('fObs').value.trim();
+
+  // Validation
+  let hasError = false;
+  const nameInput = document.getElementById('fName');
+  const segInput  = document.getElementById('fSegment');
+
+  nameInput.classList.remove('error');
+  segInput.classList.remove('error');
+
+  if (!name) {
+    nameInput.classList.add('error');
+    nameInput.focus();
+    showToast('Informe seu nome completo');
+    hasError = true;
+  }
+
+  if (!segment) {
+    if (!hasError) segInput.focus();
+    segInput.classList.add('error');
+    if (!hasError) showToast('Selecione seu segmento');
+    hasError = true;
+  }
+
+  if (hasError) return;
+
+  // Build WhatsApp message
+  const tpl = selectedTemplate;
+  const linkShort = tpl.link.replace('https://', '');
+
+  let msg = `Olá, gostaria de um template:\n\n`;
+  msg += `• *Cor do site:* ${tpl.name}\n`;
+  msg += `• *Link:* ${linkShort}\n`;
+
+  if (selectedBtn) {
+    msg += `• *Botão:* ${selectedBtn.aest.label} – ${selectedBtn.color.name}\n`;
+  }
+
+  msg += `\n• *Nome:* ${name}`;
+  if (company) msg += `\n• *Empresa:* ${company}`;
+  msg += `\n• *Segmento:* ${segment}`;
+  if (obs) msg += `\n• *Observações:* ${obs}`;
+
+  const phone = '5583991816152';
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+/* ── TOAST ─────────────────────────────────────── */
+const toastEl = document.getElementById('toast');
+let toastTimer;
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+}
+
+/* ── KEYBOARD ──────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('s2').classList.contains('active')) {
+    handleSubmit();
+  }
+});
+
+</script>
+</body>
+</html>
