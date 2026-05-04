@@ -453,7 +453,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px 28px;
+  padding: 48px 16px;
   overflow: hidden;
   min-height: 480px;
 }
@@ -515,40 +515,44 @@ body {
 
 .visual-live {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 14px;
+  right: 14px;
   font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--green);
-  background: rgba(255,255,255,0.7);
-  border: 1px solid #bbf7d0;
-  padding: 5px 10px;
+  color: #fff;
+  background: var(--green);
+  border: 1px solid #15803d;
+  padding: 7px 13px 7px 11px;
   border-radius: 100px;
   z-index: 4;
   display: flex;
   align-items: center;
-  gap: 6px;
-  backdrop-filter: blur(6px);
+  gap: 8px;
 }
 .line.signature .visual-live {
-  background: rgba(22,163,74,0.12);
-  border-color: rgba(22,163,74,0.3);
+  background: var(--green);
+  border-color: #15803d;
+  color: #fff;
 }
 .visual-live .dot {
-  width: 5px; height: 5px;
+  width: 7px; height: 7px;
   border-radius: 50%;
-  background: var(--green);
-  animation: pulse 2s ease-in-out infinite;
+  background: #fff;
+  animation: pulse-white 2s ease-in-out infinite;
+}
+@keyframes pulse-white {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.6); }
+  50%      { box-shadow: 0 0 0 5px rgba(255,255,255,0); }
 }
 
 /* PHONE — realistic iPhone frame */
 .phone {
   position: relative;
   width: 100%;
-  max-width: 400px;
+  max-width: 460px;
   aspect-ratio: 9 / 19.5;
   background:
     linear-gradient(135deg, #2a2f3d 0%, #0a0d14 50%, #2a2f3d 100%);
@@ -925,11 +929,11 @@ body {
 /* COLOR GRID — chromatic-first */
 .var-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
+  grid-template-columns: 1fr 1fr; /* mobile default: 2 columns */
+  gap: 10px;
 }
 
-@media (min-width: 520px) { .var-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 520px) { .var-grid { gap: 14px; } }
 @media (min-width: 820px) { .var-grid { grid-template-columns: 1fr 1fr 1fr; } }
 @media (min-width: 1080px){ .var-grid { grid-template-columns: 1fr 1fr 1fr 1fr; } }
 
@@ -1245,7 +1249,7 @@ body {
     linear-gradient(180deg, var(--surface-2) 0%, var(--surface-3) 100%);
   border: 1.5px solid var(--hair);
   border-radius: var(--r-lg);
-  padding: 36px 24px 28px;
+  padding: 36px 16px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1297,7 +1301,7 @@ body {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 380px;
+  max-width: 440px;
   aspect-ratio: 9 / 19.5;
   background:
     linear-gradient(135deg, #2a2f3d 0%, #0a0d14 50%, #2a2f3d 100%);
@@ -1846,30 +1850,53 @@ body {
   .line-info .line-cta svg { width: 12px; height: 12px; }
 
   /* Visual gets MUCH more room: bigger phone, deeper stage */
-  .line-visual { padding: 24px 12px 36px; min-height: 600px; }
-  .phone { max-width: 340px; border-radius: 50px; padding: 9px; }
+  .line-visual { padding: 24px 8px 36px; min-height: 600px; }
+  .phone { max-width: 380px; border-radius: 50px; padding: 9px; }
   .phone-screen, .phone-loading { border-radius: 42px; }
   .visual-code { top: 12px; left: 12px; font-size: 9.5px; padding: 4px 7px; }
-  .visual-live { top: 12px; right: 12px; font-size: 9.5px; padding: 4px 8px; }
+  .visual-live { top: 12px; right: 12px; font-size: 11.5px; padding: 5px 10px; }
 
   .process { padding: 36px 20px 48px; }
   .colophon { padding: 18px 20px; }
   .var-head { padding: 24px 20px 18px; }
-  .collection { padding: 24px 20px 80px; }
+  .collection { padding: 24px 16px 80px; }
   .demo-head { padding: 20px 20px 14px; }
-  .demo-frame-wrap { padding: 0 20px 48px; }
+  .demo-frame-wrap { padding: 0 16px 48px; }
+  .demo-stage { padding: 28px 10px 24px; }
+  .demo-phone { max-width: 360px; border-radius: 48px; padding: 9px; }
+  .demo-phone-screen, .demo-phone-loading { border-radius: 40px; }
   .demo-actions { width: 100%; justify-content: stretch; }
   .demo-btn { flex: 1; justify-content: center; }
   .form-wrap { padding: 24px 16px 80px; }
+
+  /* Variant cards: 2-column grid, scaled down to fit */
+  .var-card-stage { height: 150px; }
+  .var-card-mark { font-size: 64px; }
+  .var-card-code, .var-card-hex { font-size: 9px; padding: 3px 6px; top: 8px; }
+  .var-card-code { left: 8px; }
+  .var-card-hex { right: 8px; }
+  .var-card-body { padding: 12px 12px 12px; gap: 8px; }
+  .var-card-name { font-size: 14px; margin-bottom: 2px; }
+  .var-card-name-en { font-size: 9px; }
+  .var-card-swatch-mark { width: 18px; height: 18px; }
+  .var-card-action { padding-top: 8px; font-size: 11.5px; }
+  .var-card-action svg { width: 12px; height: 12px; }
 }
 
 /* Smaller phones — keep phone large but cap to viewport */
 @media (max-width: 380px) {
   .line-name { font-size: 28px; }
   .line-info .line-cta { padding: 9px 12px; font-size: 12px; }
-  .phone { max-width: 280px; border-radius: 46px; }
+  .phone { max-width: 320px; border-radius: 46px; }
   .phone-screen, .phone-loading { border-radius: 38px; }
-  .line-visual { min-height: 540px; padding: 22px 10px 32px; }
+  .line-visual { min-height: 540px; padding: 22px 6px 32px; }
+  .demo-phone { max-width: 310px; border-radius: 44px; }
+  .demo-phone-screen, .demo-phone-loading { border-radius: 36px; }
+  .demo-stage { padding: 24px 6px 20px; }
+
+  .var-grid { gap: 8px; }
+  .var-card-stage { height: 130px; }
+  .var-card-mark { font-size: 54px; }
 }
 
 /* Touch-friendly tap targets on mobile */
@@ -2209,8 +2236,29 @@ body {
 
 const LINES = [
   {
-    id: 'classic',
+    id: 'signature',
     num: '01',
+    name: 'Signature',
+    tag: 'Linha autoral',
+    positioning: 'Modelo com identidade visual premium. Capa visual, presença e profundidade para marcas que querem se destacar.',
+    description: 'Capa visual, presença e profundidade.',
+    previewLink: 'https://Acessar.github.io/coverazul',
+    variants: [
+      { id:'sapphire', pt:'Sapphire',   en:'Deep Sapphire', hex:'#1e4d8c', light:'#3d6cad', deep:'#102f5c', mark:'S', link:'https://Acessar.github.io/coverazul'        },
+      { id:'ruby',     pt:'Ruby',       en:'Crimson Ruby',  hex:'#9b1c2d', light:'#c0354a', deep:'#5e0e1a', mark:'R', link:'https://Acessar.github.io/coverred'         },
+      { id:'blush',    pt:'Blush',      en:'Soft Blush',    hex:'#c95a7b', light:'#d97a98', deep:'#8a3a55', mark:'B', link:'https://Acessar.github.io/coverrosa'        },
+      { id:'amethyst', pt:'Amethyst',   en:'Royal Amethyst',hex:'#6a3aa0', light:'#8a5dc0', deep:'#3e1f66', mark:'A', link:'https://Acessar.github.io/coverroxo'        },
+      { id:'emerald',  pt:'Emerald',    en:'Forest Emerald',hex:'#1c5a3a', light:'#3a8060', deep:'#0e3522', mark:'E', link:'https://Acessar.github.io/coververdeescuro' },
+      { id:'lime',     pt:'Lime Glow',  en:'Lime Glow',     hex:'#4a8c3a', light:'#6cab5d', deep:'#2c5722', mark:'L', link:'https://Acessar.github.io/coververdelimao'  },
+      { id:'golden',   pt:'Golden Luxe',en:'Golden Luxe',   hex:'#a07835', light:'#bc9555', deep:'#664a1d', mark:'G', link:'https://Acessar.github.io/coverdourado'     },
+      { id:'sunset',   pt:'Sunset',     en:'Burnt Sunset',  hex:'#c04a1a', light:'#dc6e3a', deep:'#7a2c0e', mark:'S', link:'https://Acessar.github.io/coverlaranja'     },
+      { id:'mocha',    pt:'Mocha',      en:'Velvet Mocha',  hex:'#5a3a2e', light:'#7d5848', deep:'#36211a', mark:'M', link:'https://Acessar.github.io/covermarrom'      },
+      { id:'crystal',  pt:'Crystal',    en:'Crystal Cyan',  hex:'#0e7490', light:'#2c9bb8', deep:'#06465a', mark:'C', link:'https://Acessar.github.io/coverciano'       },
+    ]
+  },
+  {
+    id: 'classic',
+    num: '02',
     name: 'Classic',
     tag: 'Linha funcional',
     positioning: 'Modelo direto, funcional e versátil. Pensado para profissionais que querem presença digital sem ruído.',
@@ -2228,27 +2276,6 @@ const LINES = [
       { id:'marrom',       pt:'Marrom Refinado',  en:'Refined Brown',  hex:'#4E342E', light:'#735048', deep:'#2e1d18', mark:'M', link:'https://Acessar.github.io/cv-marrom'      },
       { id:'pretobranco',  pt:'Preto Sofisticado',en:'Onyx Black',     hex:'#1a2234', light:'#3a4660', deep:'#0a0e18', mark:'P', link:'https://Acessar.github.io/cv-pretobranco' },
       { id:'crystal',      pt:'Crystal',          en:'Crystal Cyan',   hex:'#0e7490', light:'#2c9bb8', deep:'#06465a', mark:'C', link:'https://Acessar.github.io/cv-ciano'       },
-    ]
-  },
-  {
-    id: 'signature',
-    num: '02',
-    name: 'Signature',
-    tag: 'Linha autoral',
-    positioning: 'Modelo com identidade visual premium. Capa visual, presença e profundidade para marcas que querem se destacar.',
-    description: 'Capa visual, presença e profundidade.',
-    previewLink: 'https://Acessar.github.io/coverazul',
-    variants: [
-      { id:'sapphire', pt:'Sapphire',   en:'Deep Sapphire', hex:'#1e4d8c', light:'#3d6cad', deep:'#102f5c', mark:'S', link:'https://Acessar.github.io/coverazul'        },
-      { id:'ruby',     pt:'Ruby',       en:'Crimson Ruby',  hex:'#9b1c2d', light:'#c0354a', deep:'#5e0e1a', mark:'R', link:'https://Acessar.github.io/coverred'         },
-      { id:'blush',    pt:'Blush',      en:'Soft Blush',    hex:'#c95a7b', light:'#d97a98', deep:'#8a3a55', mark:'B', link:'https://Acessar.github.io/coverrosa'        },
-      { id:'amethyst', pt:'Amethyst',   en:'Royal Amethyst',hex:'#6a3aa0', light:'#8a5dc0', deep:'#3e1f66', mark:'A', link:'https://Acessar.github.io/coverroxo'        },
-      { id:'emerald',  pt:'Emerald',    en:'Forest Emerald',hex:'#1c5a3a', light:'#3a8060', deep:'#0e3522', mark:'E', link:'https://Acessar.github.io/coververdeescuro' },
-      { id:'lime',     pt:'Lime Glow',  en:'Lime Glow',     hex:'#4a8c3a', light:'#6cab5d', deep:'#2c5722', mark:'L', link:'https://Acessar.github.io/coververdelimao'  },
-      { id:'golden',   pt:'Golden Luxe',en:'Golden Luxe',   hex:'#a07835', light:'#bc9555', deep:'#664a1d', mark:'G', link:'https://Acessar.github.io/coverdourado'     },
-      { id:'sunset',   pt:'Sunset',     en:'Burnt Sunset',  hex:'#c04a1a', light:'#dc6e3a', deep:'#7a2c0e', mark:'S', link:'https://Acessar.github.io/coverlaranja'     },
-      { id:'mocha',    pt:'Mocha',      en:'Velvet Mocha',  hex:'#5a3a2e', light:'#7d5848', deep:'#36211a', mark:'M', link:'https://Acessar.github.io/covermarrom'      },
-      { id:'crystal',  pt:'Crystal',    en:'Crystal Cyan',  hex:'#0e7490', light:'#2c9bb8', deep:'#06465a', mark:'C', link:'https://Acessar.github.io/coverciano'       },
     ]
   }
 ];
