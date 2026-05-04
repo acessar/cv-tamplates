@@ -665,6 +665,25 @@ body {
   color: var(--ink-dim);
 }
 
+/* Manual fallback link — appears after timeout if iframe never fires onload */
+.phone-loading-fallback {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px 14px;
+  background: var(--blue);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: var(--shadow-blue);
+}
+.phone-loading-fallback:hover { background: var(--blue-hover); }
+
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
@@ -955,6 +974,11 @@ body {
   padding: 0;
   width: 100%;
   color: inherit;
+  /* Mobile-safe button defaults — prevent native quirks */
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-mask-image: -webkit-radial-gradient(white, black); /* iOS Safari clip fix */
 }
 
 .var-card:focus-visible {
@@ -1000,21 +1024,27 @@ body {
 /* CHROMATIC STAGE — pure color identity, big letter mark, no embedded device */
 .var-card-stage {
   position: relative;
+  width: 100%;
   height: 220px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  /* Background applied directly so it always fills, even if ::before fails to render */
+  background-color: var(--var-color);
 }
 
 /* Layered chromatic identity — Classic: solid + soft sheen */
 .var-card.classic .var-card-stage {
-  background: var(--var-color);
+  background-color: var(--var-color);
 }
 .var-card.classic .var-card-stage::before {
   content: '';
   position: absolute;
-  inset: 0;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
   background:
     radial-gradient(ellipse 70% 100% at 0% 0%, rgba(255,255,255,0.18) 0%, transparent 60%),
     radial-gradient(ellipse 100% 70% at 100% 100%, rgba(0,0,0,0.18) 0%, transparent 60%);
@@ -1023,13 +1053,16 @@ body {
 
 /* Signature: deeper, layered atmosphere */
 .var-card.signature .var-card-stage {
-  background:
+  background-color: var(--var-color);
+  background-image:
     radial-gradient(ellipse 80% 60% at 50% 0%, var(--var-light) 0%, var(--var-color) 50%, var(--var-deep) 100%);
 }
 .var-card.signature .var-card-stage::before {
   content: '';
   position: absolute;
-  inset: 0;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
   background:
     radial-gradient(ellipse 60% 40% at 30% 30%, rgba(255,255,255,0.12) 0%, transparent 60%),
     radial-gradient(ellipse 80% 50% at 70% 100%, rgba(0,0,0,0.3) 0%, transparent 60%);
@@ -1716,11 +1749,14 @@ body {
 
 /* ═══════════════════════════════════════════════════════════
    JUMP-NEXT — floating side nav between models on home
+   Vertical position is set dynamically via --jump-top so the button
+   aligns with the center of the first model's smartphone, not the
+   viewport center. Falls back to 50% if JS hasn't run yet.
 ═══════════════════════════════════════════════════════════ */
 .jump-next {
   position: fixed;
   left: 18px;
-  top: 50%;
+  top: var(--jump-top, 50%);
   transform: translateY(-50%) translateX(-12px);
   z-index: 45;
   display: none;
@@ -1739,7 +1775,7 @@ body {
   box-shadow: var(--shadow-md);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.32s ease, transform 0.34s cubic-bezier(.2,.7,.2,1), border-color 0.18s, background 0.18s, box-shadow 0.2s;
+  transition: opacity 0.32s ease, transform 0.34s cubic-bezier(.2,.7,.2,1), border-color 0.18s, background 0.18s, box-shadow 0.2s, top 0.15s linear;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -1870,7 +1906,19 @@ body {
   .form-wrap { padding: 24px 16px 80px; }
 
   /* Variant cards: 2-column grid, scaled down to fit */
-  .var-card-stage { height: 150px; }
+  .var-card-stage {
+    height: 150px;
+    min-height: 150px; /* iOS Safari: prevents flex shrink collapsing the swatch */
+    box-sizing: border-box;
+    /* Explicit corner rounding on the swatch top — survives even if parent overflow:hidden fails */
+    border-top-left-radius: calc(var(--r-md) - 2px);
+    border-top-right-radius: calc(var(--r-md) - 2px);
+  }
+  /* Same explicit corners on the ::before overlay so it never extends past the card edges */
+  .var-card-stage::before {
+    border-top-left-radius: calc(var(--r-md) - 2px);
+    border-top-right-radius: calc(var(--r-md) - 2px);
+  }
   .var-card-mark { font-size: 64px; }
   .var-card-code, .var-card-hex { font-size: 9px; padding: 3px 6px; top: 8px; }
   .var-card-code { left: 8px; }
@@ -1895,7 +1943,7 @@ body {
   .demo-stage { padding: 24px 6px 20px; }
 
   .var-grid { gap: 8px; }
-  .var-card-stage { height: 130px; }
+  .var-card-stage { height: 130px; min-height: 130px; }
   .var-card-mark { font-size: 54px; }
 }
 
@@ -1938,7 +1986,7 @@ body {
     <p class="hero-lede">
       Dois modelos. Vinte e uma variações. Cada site é entregue funcionando, com domínio e personalização. Você escolhe a linha, escolhe a cor, e inicia o atendimento.
     </p>
-     <div class="hero-meta">
+    <div class="hero-meta">
       <span class="hero-meta-pill">
         <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
         Entrega em <strong>48h</strong>
@@ -2024,7 +2072,7 @@ body {
 
   <div class="var-head">
     <div class="breadcrumb">
-      <button class="breadcrumb-back" onclick="goScreen('screen-home')">
+      <button class="breadcrumb-back" onclick="goScreen('screen-home', 'restore')">
         <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Coleção
       </button>
@@ -2122,8 +2170,13 @@ body {
           <iframe id="demo-iframe"
                   class="demo-phone-iframe"
                   src="about:blank"
-                  loading="lazy"
                   title="Demonstração"
+                  width="100%"
+                  height="100%"
+                  frameborder="0"
+                  scrolling="yes"
+                  allow="autoplay; fullscreen"
+                  referrerpolicy="no-referrer-when-downgrade"
                   onload="hideDemoLoading()"></iframe>
         </div>
       </div>
@@ -2284,8 +2337,8 @@ const LINES = [
       { id:'rosa',         pt:'Rosa Delicado',    en:'Delicate Rose',  hex:'#D81B60', light:'#e84582', deep:'#8a1140', mark:'R', link:'https://Acessar.github.io/cv-rosa'        },
       { id:'roxo',         pt:'Roxo Premium',     en:'Royal Purple',   hex:'#4527A0', light:'#6b48c9', deep:'#2a1666', mark:'R', link:'https://Acessar.github.io/cv-roxo'        },
       { id:'verdeescuro',  pt:'Verde Elegante',   en:'Forest Green',   hex:'#1B5E20', light:'#3a8540', deep:'#0d3a13', mark:'V', link:'https://Acessar.github.io/cv-verdeescuro' },
-      { id:'verdeclaro',   pt:'Verde Vivo',       en:'Vivid Lime',     hex:'#2E7D32', light:'#4ea454', deep:'#1a4d1d', mark:'V', link:'https://Acessar.github.io/cv-verdeclaro'  },
-      { id:'amarelo',      pt:'Dourado Quente',   en:'Warm Gold',      hex:'#E65100', light:'#f5762e', deep:'#933000', mark:'D', link:'https://Acessar.github.io/cv-amarelo'     },
+      { id:'verdeclaro',   pt:'Verde Vivo',       en:'Vivid Lime',     hex:'#2E7D32', light:'#4ea454', deep:'#1a4d1d', mark:'V', link:'https://Acessar.github.io/cv-verdelimao'  },
+      { id:'amarelo',      pt:'Dourado Quente',   en:'Warm Gold',      hex:'#E65100', light:'#f5762e', deep:'#933000', mark:'D', link:'https://Acessar.github.io/cv-dourado'     },
       { id:'laranja',      pt:'Laranja Criativo', en:'Creative Amber', hex:'#BF360C', light:'#dc5a2e', deep:'#7a1f06', mark:'L', link:'https://Acessar.github.io/cv-laranja'     },
       { id:'marrom',       pt:'Marrom Refinado',  en:'Refined Brown',  hex:'#4E342E', light:'#735048', deep:'#2e1d18', mark:'M', link:'https://Acessar.github.io/cv-marrom'      },
       { id:'pretobranco',  pt:'Preto Sofisticado',en:'Onyx Black',     hex:'#1a2234', light:'#3a4660', deep:'#0a0e18', mark:'P', link:'https://Acessar.github.io/cv-pretobranco' },
@@ -2300,10 +2353,25 @@ let currentVariant = null;
 let selectedVariantId = null; // active selection in variations grid
 
 /* ── NAV ──────────────────────────────────────────────────── */
-function goScreen(id) {
+const screenScroll = {}; // remembered scroll position per screen id
+
+function goScreen(id, mode = 'reset') {
+  // Save scroll of currently active screen before leaving
+  const current = document.querySelector('.screen.active');
+  if (current) screenScroll[current.id] = window.scrollY;
+
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'instant' });
+
+  if (mode === 'restore' && typeof screenScroll[id] === 'number') {
+    // Wait for the new screen to render before restoring scroll
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: screenScroll[id], behavior: 'instant' });
+    });
+  } else if (mode === 'reset') {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  // mode === 'preserve' → leave scroll exactly as is
 }
 
 /* ── BUILD HOME LINES ─────────────────────────────────────── */
@@ -2349,9 +2417,17 @@ function goScreen(id) {
               </div>
               <iframe class="phone-iframe"
                       src="${line.previewLink}"
-                      loading="lazy"
                       title="Preview ${line.name}"
-                      onload="hidePhoneLoading('${line.id}')"></iframe>
+                      width="100%"
+                      height="100%"
+                      frameborder="0"
+                      scrolling="yes"
+                      allow="autoplay; fullscreen"
+                      referrerpolicy="no-referrer-when-downgrade"
+                      data-line-id="${line.id}"
+                      data-fallback="${line.previewLink}"
+                      onload="hidePhoneLoading('${line.id}')"
+                      onerror="handlePhoneIframeError('${line.id}')"></iframe>
             </div>
           </div>
         </div>
@@ -2371,6 +2447,8 @@ function goScreen(id) {
     });
 
     wrap.appendChild(el);
+    // Start watchdog for this iframe — surfaces fallback if load doesn't fire
+    requestAnimationFrame(() => watchPhoneIframe(line.id, line.previewLink));
   });
 })();
 
@@ -2384,6 +2462,7 @@ function goScreen(id) {
 
   const firstLine  = lines[0];
   const secondLine = lines[1];
+  const firstPhone = firstLine.querySelector('.phone');
 
   // Observe both: visible only when first line is in view AND second is NOT yet
   let firstVisible = false;
@@ -2411,6 +2490,29 @@ function goScreen(id) {
   obs.observe(firstLine);
   obs.observe(secondLine);
 
+  /* Position the button vertically so its center matches the first phone's center.
+     Clamp to viewport so it never goes off-screen even if the phone is tall. */
+  let rafPending = false;
+  function positionJump() {
+    rafPending = false;
+    if (!firstPhone) return;
+    const rect = firstPhone.getBoundingClientRect();
+    const phoneCenter = rect.top + rect.height / 2;
+    const viewportH = window.innerHeight;
+    // Clamp between 80px (below masthead) and viewportH - 60px (above bottom edge)
+    const clamped = Math.max(80, Math.min(phoneCenter, viewportH - 60));
+    jump.style.setProperty('--jump-top', clamped + 'px');
+  }
+  function schedulePosition() {
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(positionJump);
+  }
+
+  positionJump();
+  window.addEventListener('scroll', schedulePosition, { passive: true });
+  window.addEventListener('resize', schedulePosition);
+
   jump.addEventListener('click', () => {
     secondLine.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
@@ -2419,11 +2521,45 @@ function goScreen(id) {
 function hidePhoneLoading(lineId) {
   const el = document.getElementById(`loading-${lineId}`);
   if (el) setTimeout(() => el.classList.add('hidden'), 400);
+  // Mark as loaded to clear timeout watcher
+  if (phoneLoadTimers[lineId]) {
+    clearTimeout(phoneLoadTimers[lineId]);
+    delete phoneLoadTimers[lineId];
+  }
 }
 
 function hideDemoLoading() {
   const el = document.getElementById('demoLoading');
   if (el) setTimeout(() => el.classList.add('hidden'), 400);
+}
+
+/* ── IFRAME LOAD WATCHDOG ──────────────────────────────────
+   Some mobile browsers (iOS Safari, in-app browsers) silently fail to
+   fire 'onload' on cross-origin iframes, especially on slower networks.
+   After 10s without a load event, we surface a manual "Abrir em nova aba"
+   action so the user is never stuck on a blank shimmer. */
+const phoneLoadTimers = {};
+
+function watchPhoneIframe(lineId, fallbackUrl) {
+  if (phoneLoadTimers[lineId]) clearTimeout(phoneLoadTimers[lineId]);
+  phoneLoadTimers[lineId] = setTimeout(() => {
+    const loading = document.getElementById(`loading-${lineId}`);
+    if (!loading || loading.classList.contains('hidden')) return;
+    // Replace shimmer with a manual fallback prompt
+    loading.innerHTML = `
+      <div class="phone-loading-mark">A</div>
+      <div class="phone-loading-text" style="text-align:center;line-height:1.5;">
+        Demo demorando<br>para carregar
+      </div>
+      <a class="phone-loading-fallback" href="${fallbackUrl}" target="_blank" rel="noopener">
+        Abrir em nova aba
+      </a>`;
+  }, 10000);
+}
+
+function handlePhoneIframeError(lineId) {
+  const loading = document.getElementById(`loading-${lineId}`);
+  if (loading) loading.classList.remove('hidden');
 }
 
 /* ── OPEN LINE → VARIATIONS ───────────────────────────────── */
@@ -2540,8 +2676,8 @@ function openDemo(line, variant) {
 
 function goBackToVariations() {
   document.getElementById('demo-iframe').src = 'about:blank';
-  if (currentLine) goScreen('screen-variations');
-  else goScreen('screen-home');
+  if (currentLine) goScreen('screen-variations', 'restore');
+  else goScreen('screen-home', 'restore');
 }
 
 function selectFromDemo() {
@@ -2550,8 +2686,8 @@ function selectFromDemo() {
 }
 
 function goBackToVariationsFromForm() {
-  if (currentLine) goScreen('screen-variations');
-  else goScreen('screen-home');
+  if (currentLine) goScreen('screen-variations', 'restore');
+  else goScreen('screen-home', 'restore');
 }
 
 /* ── FORM SUBMIT → WHATSAPP ───────────────────────────────── */
@@ -2634,7 +2770,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (document.getElementById('screen-form').classList.contains('active')) goBackToVariationsFromForm();
     else if (document.getElementById('screen-demo').classList.contains('active')) goBackToVariations();
-    else if (document.getElementById('screen-variations').classList.contains('active')) goScreen('screen-home');
+    else if (document.getElementById('screen-variations').classList.contains('active')) goScreen('screen-home', 'restore');
   }
   if (e.key === 'Enter' && document.getElementById('screen-form').classList.contains('active')) {
     if (e.target.tagName !== 'TEXTAREA') {
