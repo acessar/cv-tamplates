@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Atelier — Catálogo de Sites Profissionais</title>
+<title>Atelier — Pré-atendimento inteligente por nicho</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -16,7 +16,6 @@
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 :root {
-  /* Clean light palette — premium SaaS catalogue */
   --bg:           #f7f8fa;
   --surface:      #ffffff;
   --surface-2:    #f1f3f7;
@@ -29,7 +28,6 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   --hair:         #e3e6ed;
   --hair-soft:    #eef0f5;
 
-  /* BLUE — catalogue identity */
   --blue:         #2563eb;
   --blue-hover:   #1d4ed8;
   --blue-deep:    #1e3a8a;
@@ -212,7 +210,7 @@ body {
   line-height: 1.02;
   letter-spacing: -0.035em;
   color: var(--ink);
-  max-width: 16ch;
+  max-width: 20ch;
   margin-bottom: 20px;
 }
 .hero-title .accent { color: var(--blue); }
@@ -323,7 +321,7 @@ body {
   .line.reverse .line-info   { order: 1; }
 }
 
-/* LINE INFO — slim, commercial. Tight composition: name + CTA close together */
+/* LINE INFO */
 .line-info {
   padding: 36px 36px 32px;
   display: flex;
@@ -334,7 +332,6 @@ body {
   background: var(--surface);
 }
 
-/* Desktop: name and CTA stacked. Mobile (handled below): inline. */
 .line-name-row {
   display: flex;
   flex-direction: column;
@@ -378,7 +375,7 @@ body {
 
 .line-name {
   font-weight: 800;
-  font-size: clamp(40px, 6vw, 64px);
+  font-size: clamp(32px, 5vw, 56px);
   line-height: 1;
   letter-spacing: -0.04em;
   color: var(--ink);
@@ -393,7 +390,7 @@ body {
   letter-spacing: -0.005em;
 }
 
-/* CTA — strong, primary */
+/* CTA */
 .line-cta-row {
   display: flex;
   align-items: center;
@@ -446,7 +443,7 @@ body {
   display: inline-block;
 }
 
-/* LINE VISUAL — phone stage */
+/* LINE VISUAL */
 .line-visual {
   position: relative;
   background: linear-gradient(155deg, var(--surface-2) 0%, var(--surface-3) 100%);
@@ -458,14 +455,12 @@ body {
   min-height: 480px;
 }
 
-/* Signature gets a richer dark stage */
 .line.signature .line-visual {
   background:
     radial-gradient(ellipse 80% 60% at 50% 100%, rgba(37,99,235,0.18) 0%, transparent 70%),
     linear-gradient(155deg, #161b2c 0%, #0d1220 100%);
 }
 
-/* Subtle dot grid backdrop */
 .line-visual::before {
   content: '';
   position: absolute;
@@ -480,7 +475,6 @@ body {
   opacity: 0.5;
 }
 
-/* Code chip */
 .visual-code {
   position: absolute;
   top: 16px;
@@ -548,7 +542,7 @@ body {
   50%      { box-shadow: 0 0 0 5px rgba(255,255,255,0); }
 }
 
-/* PHONE — realistic iPhone frame */
+/* PHONE */
 .phone {
   position: relative;
   width: 100%;
@@ -571,7 +565,6 @@ body {
 
 .line:hover .phone { transform: translateY(-6px) scale(1.01); }
 
-/* iPhone side buttons */
 .phone::before {
   content: '';
   position: absolute;
@@ -620,17 +613,14 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* Live iframe inside phone — fully interactive */
 .phone-iframe {
   width: 100%;
   height: 100%;
   border: none;
   display: block;
   background: #fff;
-  /* allow scroll, tap, click — real device feel */
 }
 
-/* Loading shimmer over iframe */
 .phone-loading {
   position: absolute;
   inset: 0;
@@ -665,7 +655,6 @@ body {
   color: var(--ink-dim);
 }
 
-/* Manual fallback link — appears after timeout if iframe never fires onload */
 .phone-loading-fallback {
   display: inline-flex;
   align-items: center;
@@ -790,7 +779,348 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   SCREEN 2 — VARIATIONS (color-focused, no phones)
+   SCREEN 1.5 — PÁGINA INTERMEDIÁRIA DE CONVERSÃO
+═══════════════════════════════════════════════════════════ */
+
+.inter-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.inter-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  margin-bottom: 40px;
+}
+.inter-breadcrumb-back {
+  background: none;
+  border: none;
+  font: inherit;
+  letter-spacing: inherit;
+  color: var(--blue);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 4px 4px;
+  border-radius: 6px;
+  transition: background 0.16s;
+}
+.inter-breadcrumb-back:hover { background: var(--blue-pale); }
+.inter-breadcrumb-back svg { width: 13px; height: 13px; }
+.inter-breadcrumb-sep { color: var(--ink-faint); }
+.inter-breadcrumb-current { color: var(--ink); font-weight: 600; }
+
+/* Hero da intermediária */
+.inter-hero {
+  margin-bottom: 48px;
+}
+
+.inter-nicho-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: var(--blue-pale);
+  border: 1px solid rgba(37,99,235,0.18);
+  padding: 6px 12px;
+  border-radius: 100px;
+  margin-bottom: 24px;
+}
+.inter-nicho-badge .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+.inter-hero-title {
+  font-weight: 800;
+  font-size: clamp(32px, 5vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  max-width: 22ch;
+  margin-bottom: 18px;
+}
+.inter-hero-title .accent { color: var(--blue); }
+
+.inter-hero-lede {
+  font-size: clamp(15px, 1.6vw, 17px);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ink-mid);
+  max-width: 52ch;
+  margin-bottom: 0;
+}
+
+/* Problema / solução */
+.inter-problem-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 48px;
+}
+
+@media (min-width: 720px) {
+  .inter-problem-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+}
+
+.inter-problem-card {
+  background: var(--surface);
+  border: 1.5px solid var(--hair);
+  border-radius: var(--r-md);
+  padding: 24px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.inter-problem-card:hover { border-color: var(--blue); box-shadow: var(--shadow-sm); }
+
+.inter-problem-card.highlight {
+  border-color: var(--blue);
+  background: var(--blue-pale);
+}
+
+.inter-card-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inter-card-icon {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.inter-card-icon.red-icon { background: var(--red-bg); }
+.inter-card-icon.red-icon svg { color: var(--red); }
+.inter-card-icon.blue-icon { background: var(--blue-pale2); }
+.inter-card-icon.blue-icon svg { color: var(--blue); }
+.inter-card-icon svg { width: 17px; height: 17px; }
+
+.inter-card-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.inter-problem-card.highlight .inter-card-label { color: var(--blue); }
+
+.inter-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.inter-card-desc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-mid);
+}
+
+/* Benefícios */
+.inter-benefits-head {
+  margin-bottom: 20px;
+}
+.inter-benefits-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+.inter-benefits-title {
+  font-size: clamp(20px, 2.5vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.inter-benefits-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 48px;
+}
+
+@media (min-width: 600px) {
+  .inter-benefits-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+}
+
+.inter-benefit {
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-md);
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: border-color 0.2s;
+}
+.inter-benefit:hover { border-color: var(--blue); }
+
+.inter-benefit-num {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(37,99,235,0.22);
+}
+
+.inter-benefit-body {}
+.inter-benefit-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.inter-benefit-desc {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-mid);
+}
+
+/* CTA block */
+.inter-cta-block {
+  background: var(--ink);
+  border-radius: var(--r-lg);
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.inter-cta-block::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 18px 18px;
+  pointer-events: none;
+}
+
+.inter-cta-block::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  right: -60px;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(37,99,235,0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.inter-cta-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  position: relative;
+  z-index: 1;
+}
+
+.inter-cta-title {
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  line-height: 1.1;
+  max-width: 28ch;
+  position: relative;
+  z-index: 1;
+}
+
+.inter-cta-sub {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.6);
+  max-width: 40ch;
+  position: relative;
+  z-index: 1;
+}
+
+.inter-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 26px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 11px;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.2s, transform 0.15s;
+  box-shadow: var(--shadow-blue);
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+}
+.inter-cta-btn:hover {
+  background: var(--blue-hover);
+  box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+  transform: translateY(-1px);
+}
+.inter-cta-btn:active { transform: scale(0.98); }
+.inter-cta-btn svg { width: 15px; height: 15px; }
+
+.inter-cta-note {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.inter-cta-note svg { width: 13px; height: 13px; color: rgba(255,255,255,0.4); }
+
+@media (max-width: 640px) {
+  .inter-cta-block { padding: 28px 22px; }
+  .inter-cta-btn { width: 100%; justify-content: center; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCREEN 2 — VARIATIONS (cores = identidade visual universal)
 ═══════════════════════════════════════════════════════════ */
 
 .var-head {
@@ -904,7 +1234,7 @@ body {
   color: var(--ink-dim);
 }
 
-/* COLOR COLLECTION — focus on chromatic identity */
+/* COLOR COLLECTION */
 .collection {
   max-width: 1280px;
   margin: 0 auto;
@@ -945,10 +1275,10 @@ body {
   color: var(--ink-dim);
 }
 
-/* COLOR GRID — chromatic-first */
+/* COLOR GRID */
 .var-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* mobile default: 2 columns */
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
@@ -956,7 +1286,7 @@ body {
 @media (min-width: 820px) { .var-grid { grid-template-columns: 1fr 1fr 1fr; } }
 @media (min-width: 1080px){ .var-grid { grid-template-columns: 1fr 1fr 1fr 1fr; } }
 
-/* COLOR CARD — variation as premium selection tile (rendered as <button>) */
+/* COLOR CARD */
 .var-card {
   position: relative;
   background: var(--surface);
@@ -968,17 +1298,15 @@ body {
   flex-direction: column;
   transition: border-color 0.22s, transform 0.3s cubic-bezier(.2,.7,.2,1), box-shadow 0.25s;
   box-shadow: var(--shadow-sm);
-  /* button reset */
   font-family: inherit;
   text-align: left;
   padding: 0;
   width: 100%;
   color: inherit;
-  /* Mobile-safe button defaults — prevent native quirks */
   -webkit-appearance: none;
   appearance: none;
   -webkit-tap-highlight-color: transparent;
-  -webkit-mask-image: -webkit-radial-gradient(white, black); /* iOS Safari clip fix */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
 .var-card:focus-visible {
@@ -993,7 +1321,6 @@ body {
   box-shadow: var(--shadow-md), 0 0 0 4px var(--blue-tint);
 }
 
-/* Selected state — strong active visual */
 .var-card.selected {
   border-color: var(--blue);
   box-shadow:
@@ -1021,7 +1348,6 @@ body {
   background-position: center;
 }
 
-/* CHROMATIC STAGE — pure color identity, big letter mark, no embedded device */
 .var-card-stage {
   position: relative;
   width: 100%;
@@ -1031,11 +1357,9 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* Background applied directly so it always fills, even if ::before fails to render */
   background-color: var(--var-color);
 }
 
-/* Layered chromatic identity — Classic: solid + soft sheen */
 .var-card.classic .var-card-stage {
   background-color: var(--var-color);
 }
@@ -1051,7 +1375,6 @@ body {
   pointer-events: none;
 }
 
-/* Signature: deeper, layered atmosphere */
 .var-card.signature .var-card-stage {
   background-color: var(--var-color);
   background-image:
@@ -1069,7 +1392,6 @@ body {
   pointer-events: none;
 }
 
-/* Big variant letter mark */
 .var-card-mark {
   position: relative;
   z-index: 2;
@@ -1085,7 +1407,6 @@ body {
 
 .var-card:hover .var-card-mark { transform: scale(1.04); }
 
-/* Variant code chip */
 .var-card-code {
   position: absolute;
   top: 12px;
@@ -1104,7 +1425,6 @@ body {
   backdrop-filter: blur(6px);
 }
 
-/* Hex code chip */
 .var-card-hex {
   position: absolute;
   top: 12px;
@@ -1123,7 +1443,6 @@ body {
   text-transform: uppercase;
 }
 
-/* Card body — variant info + action prompt */
 .var-card-body {
   padding: 14px 16px 14px;
   background: var(--surface);
@@ -1171,7 +1490,6 @@ body {
   color: var(--ink-dim);
 }
 
-/* Card action prompt — appears in body, signals the click target */
 .var-card-action {
   display: flex;
   align-items: center;
@@ -1195,7 +1513,7 @@ body {
 .var-card:hover .var-card-action { color: var(--blue-hover); }
 
 /* ═══════════════════════════════════════════════════════════
-   SCREEN 3 — DEMO (preview)
+   SCREEN 3 — DEMO PREVIEW
 ═══════════════════════════════════════════════════════════ */
 .demo-head {
   max-width: 1280px;
@@ -1274,7 +1592,6 @@ body {
   padding: 0 24px 80px;
 }
 
-/* DEMO STAGE — premium phone preview, works on desktop and mobile */
 .demo-stage {
   position: relative;
   background:
@@ -1290,7 +1607,6 @@ body {
   overflow: hidden;
 }
 
-/* Subtle dot grid backdrop */
 .demo-stage::before {
   content: '';
   position: absolute;
@@ -1329,7 +1645,6 @@ body {
   animation: pulse 2s ease-in-out infinite;
 }
 
-/* Big premium phone — desktop and mobile */
 .demo-phone {
   position: relative;
   z-index: 2;
@@ -1349,7 +1664,6 @@ body {
     0 60px 120px -30px rgba(0,0,0,0.45);
 }
 
-/* Side buttons */
 .demo-phone::before {
   content: '';
   position: absolute;
@@ -1404,7 +1718,6 @@ body {
   border: none;
   display: block;
   background: #fff;
-  /* fully interactive */
 }
 
 .demo-phone-loading {
@@ -1455,7 +1768,7 @@ body {
 .demo-stage-hint svg { width: 13px; height: 13px; color: var(--blue); }
 
 /* ═══════════════════════════════════════════════════════════
-   SCREEN 4 — FORM (conversion)
+   SCREEN 4 — FORM
 ═══════════════════════════════════════════════════════════ */
 .form-wrap {
   max-width: 620px;
@@ -1707,7 +2020,6 @@ body {
 .form-error-msg.visible { display: flex; }
 .form-error-msg svg { width: 13px; height: 13px; flex-shrink: 0; }
 
-/* Submit area */
 .form-submit-area {
   margin-top: 6px;
 }
@@ -1748,10 +2060,7 @@ body {
 .form-submit-note svg { width: 13px; height: 13px; color: var(--green); }
 
 /* ═══════════════════════════════════════════════════════════
-   JUMP-NEXT — floating side nav between models on home
-   Vertical position is set dynamically via --jump-top so the button
-   aligns with the center of the first model's smartphone, not the
-   viewport center. Falls back to 50% if JS hasn't run yet.
+   JUMP-NEXT
 ═══════════════════════════════════════════════════════════ */
 .jump-next {
   position: fixed;
@@ -1818,12 +2127,11 @@ body {
     font-size: 11px;
     gap: 8px;
   }
-  .jump-next-label { display: none; } /* arrow-only on mobile */
+  .jump-next-label { display: none; }
   .jump-next-arrow { width: 32px; height: 32px; }
   .jump-next-arrow svg { width: 14px; height: 14px; }
 }
 
-/* jump-next sits inside #screen-home and is hidden naturally when that screen is inactive */
 #screen-home:not(.active) .jump-next { display: none !important; }
 
 .toast {
@@ -1850,20 +2158,19 @@ body {
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast svg { width: 14px; height: 14px; }
 
-/* ═══════════════════════════════════════════════════════════
-   SCROLLBAR
-═══════════════════════════════════════════════════════════ */
+/* SCROLLBAR */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
 
-/* Mobile tweaks */
+/* ═══════════════════════════════════════════════════════════
+   MOBILE TWEAKS
+═══════════════════════════════════════════════════════════ */
 @media (max-width: 720px) {
   .hero { padding: 36px 20px 28px; }
   .lines { padding: 0 16px 48px; gap: 14px; }
 
-  /* Compact info: tight padding + name and CTA INLINE */
   .line-info { padding: 14px 16px 14px; gap: 10px; }
   .line-num-row { gap: 7px; }
   .line-num { font-size: 10px; padding: 3px 7px; }
@@ -1875,7 +2182,7 @@ body {
     justify-content: space-between;
     gap: 12px;
   }
-  .line-name { font-size: 32px; line-height: 1; letter-spacing: -0.035em; }
+  .line-name { font-size: 28px; line-height: 1; letter-spacing: -0.035em; }
   .line-info .line-cta {
     margin-top: 0;
     padding: 10px 14px;
@@ -1885,7 +2192,6 @@ body {
   }
   .line-info .line-cta svg { width: 12px; height: 12px; }
 
-  /* Visual gets MUCH more room: bigger phone, deeper stage */
   .line-visual { padding: 24px 8px 36px; min-height: 600px; }
   .phone { max-width: 380px; border-radius: 50px; padding: 9px; }
   .phone-screen, .phone-loading { border-radius: 42px; }
@@ -1905,16 +2211,13 @@ body {
   .demo-btn { flex: 1; justify-content: center; }
   .form-wrap { padding: 24px 16px 80px; }
 
-  /* Variant cards: 2-column grid, scaled down to fit */
   .var-card-stage {
     height: 150px;
-    min-height: 150px; /* iOS Safari: prevents flex shrink collapsing the swatch */
+    min-height: 150px;
     box-sizing: border-box;
-    /* Explicit corner rounding on the swatch top — survives even if parent overflow:hidden fails */
     border-top-left-radius: calc(var(--r-md) - 2px);
     border-top-right-radius: calc(var(--r-md) - 2px);
   }
-  /* Same explicit corners on the ::before overlay so it never extends past the card edges */
   .var-card-stage::before {
     border-top-left-radius: calc(var(--r-md) - 2px);
     border-top-right-radius: calc(var(--r-md) - 2px);
@@ -1929,11 +2232,13 @@ body {
   .var-card-swatch-mark { width: 18px; height: 18px; }
   .var-card-action { padding-top: 8px; font-size: 11.5px; }
   .var-card-action svg { width: 12px; height: 12px; }
+
+  .inter-wrap { padding: 28px 16px 60px; }
+  .inter-cta-block { padding: 28px 20px; }
 }
 
-/* Smaller phones — keep phone large but cap to viewport */
 @media (max-width: 380px) {
-  .line-name { font-size: 28px; }
+  .line-name { font-size: 24px; }
   .line-info .line-cta { padding: 9px 12px; font-size: 12px; }
   .phone { max-width: 320px; border-radius: 46px; }
   .phone-screen, .phone-loading { border-radius: 38px; }
@@ -1947,7 +2252,6 @@ body {
   .var-card-mark { font-size: 54px; }
 }
 
-/* Touch-friendly tap targets on mobile */
 @media (hover: none) {
   .line-cta, .form-submit, .demo-btn, .var-card, .form-input, .form-select { min-height: 44px; }
 }
@@ -1968,7 +2272,7 @@ body {
         Atelier
       </a>
       <div class="mast-meta">
-        <span>2 modelos</span>
+        <span>2 nichos</span>
         <span class="mast-status"><span class="dot"></span> Aceitando pedidos</span>
       </div>
     </div>
@@ -1978,42 +2282,42 @@ body {
   <section class="hero">
     <div class="hero-eyebrow">
       <span class="pulse"></span>
-      Coleção 2026 / Disponível
+      Pré-atendimento inteligente · 2026
     </div>
     <h1 class="hero-title">
-      Sites profissionais, prontos em <span class="accent">48 horas</span>.
+      Seu cliente começa a ser atendido antes mesmo do <span class="accent">primeiro contato.</span>
     </h1>
     <p class="hero-lede">
-      Dois modelos. Vinte e uma variações. Cada site é entregue funcionando, com domínio e personalização. Você escolhe a linha, escolhe a cor, e inicia o atendimento.
+      Qualifique atendimentos, entenda necessidades reais e receba clientes mais preparados — tudo automaticamente por apenas R$67/mês.
     </p>
     <div class="hero-meta">
       <span class="hero-meta-pill">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 4.4L13.5 6l-3.5 3.4.8 4.6L7 11.8l-3.8 2.2.8-4.6L.5 6l4.7-.6L7 1z" fill="currentColor"/></svg>
+        Qualificação <strong>automática</strong>
+      </span>
+      <span class="hero-meta-pill">
         <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        Entrega em <strong>48h</strong>
+        Ativo <strong>24h por dia</strong>
       </span>
       <span class="hero-meta-pill">
         <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <strong>21</strong> variações
-      </span>
-      <span class="hero-meta-pill">
-        <svg viewBox="0 0 14 14" fill="none"><path d="M7 1l1.8 4.4L13.5 6l-3.5 3.4.8 4.6L7 11.8l-3.8 2.2.8-4.6L.5 6l4.7-.6L7 1z" fill="currentColor"/></svg>
-        Personalização <strong>incluída</strong>
+        Entrega em <strong>48h</strong>
       </span>
     </div>
   </section>
 
   <!-- COLLECTION HEAD -->
   <div class="collection-head">
-    <div class="collection-title">A Coleção</div>
-    <div class="collection-meta">2 linhas / Atualizado 2026</div>
+    <div class="collection-title">Nichos disponíveis</div>
+    <div class="collection-meta">2 nichos / Atualizado 2026</div>
   </div>
 
   <!-- PRODUCT LINES -->
   <section class="lines" id="lines"></section>
 
-  <!-- Floating side nav: jump to next model -->
-  <button class="jump-next" id="jumpNext" type="button" aria-label="Ir para o próximo modelo">
-    <span class="jump-next-label">Próximo modelo</span>
+  <!-- Floating side nav -->
+  <button class="jump-next" id="jumpNext" type="button" aria-label="Ir para o próximo nicho">
+    <span class="jump-next-label">Próximo nicho</span>
     <span class="jump-next-arrow">
       <svg viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3.5 7.5L7 11l3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </span>
@@ -2029,18 +2333,18 @@ body {
     <div class="process-grid">
       <div class="process-step">
         <div class="process-step-num">1</div>
-        <div class="process-step-title">Escolha o modelo</div>
-        <div class="process-step-desc">Classic ou Signature. Cada linha tem caráter próprio para diferentes mercados.</div>
+        <div class="process-step-title">Escolha seu nicho</div>
+        <div class="process-step-desc">Salão de beleza ou clínica odontológica. Cada nicho tem uma experiência construída para seu mercado.</div>
       </div>
       <div class="process-step">
         <div class="process-step-num">2</div>
-        <div class="process-step-title">Selecione a variação</div>
-        <div class="process-step-desc">Visualize cada cor antes de decidir. Confirmação instantânea ao clicar.</div>
+        <div class="process-step-title">Veja o atendimento real</div>
+        <div class="process-step-desc">Teste a experiência interativa como seu cliente vai viver. Escolha a identidade visual que representa sua marca.</div>
       </div>
       <div class="process-step">
         <div class="process-step-num">3</div>
-        <div class="process-step-title">Receba em 48h</div>
-        <div class="process-step-desc">Atendimento via WhatsApp. Personalização e entrega em até dois dias úteis.</div>
+        <div class="process-step-title">Ativo em 48h</div>
+        <div class="process-step-desc">Atendimento via WhatsApp. Personalização e entrega em até dois dias úteis, por R$67/mês.</div>
       </div>
     </div>
   </section>
@@ -2053,7 +2357,115 @@ body {
 </main>
 
 <!-- ═══════════════════════════════════════════════════════════
-     SCREEN 2 — VARIATIONS
+     SCREEN 1.5 — INTERMEDIÁRIA DE CONVERSÃO
+═══════════════════════════════════════════════════════════ -->
+<main class="screen" id="screen-inter">
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <a class="mast-brand" href="#" onclick="goScreen('screen-home'); return false;">
+        <span class="mast-brand-mark">A</span>
+        Atelier
+      </a>
+      <div class="mast-meta">
+        <span id="inter-nicho-meta">—</span>
+        <span class="mast-status"><span class="dot"></span> Aceitando pedidos</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="inter-wrap">
+
+    <div class="inter-breadcrumb">
+      <button class="inter-breadcrumb-back" onclick="goScreen('screen-home', 'restore')">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Nichos
+      </button>
+      <span class="inter-breadcrumb-sep">/</span>
+      <span class="inter-breadcrumb-current" id="inter-bc-name">—</span>
+    </div>
+
+    <!-- Hero -->
+    <div class="inter-hero">
+      <div class="inter-nicho-badge">
+        <span class="dot"></span>
+        <span id="inter-badge-text">Nicho 01 — Pré-atendimento</span>
+      </div>
+      <h1 class="inter-hero-title" id="inter-hero-title">
+        Seu WhatsApp recebe mensagens.<br>
+        A plataforma <span class="accent">qualifica clientes.</span>
+      </h1>
+      <p class="inter-hero-lede" id="inter-hero-lede">
+        Antes de qualquer cliente enviar uma mensagem, ele já respondeu o que precisa, quando quer ser atendido e o que espera do serviço. Você entra na conversa pronto para fechar.
+      </p>
+    </div>
+
+    <!-- Problema vs Solução -->
+    <div class="inter-problem-grid">
+      <div class="inter-problem-card">
+        <div class="inter-card-icon-row">
+          <div class="inter-card-icon red-icon">
+            <svg viewBox="0 0 17 17" fill="none"><circle cx="8.5" cy="8.5" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 5v4M8.5 11v.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </div>
+          <div class="inter-card-label">Sem pré-atendimento</div>
+        </div>
+        <div class="inter-card-title">Mensagens repetitivas que consomem seu dia</div>
+        <div class="inter-card-desc">
+          "Qual o preço?" · "Vocês têm horário?" · "Aceitam plano?" — as mesmas perguntas chegam dezenas de vezes. Você responde manualmente, perde tempo e ainda corre o risco de perder o cliente.
+        </div>
+      </div>
+      <div class="inter-problem-card highlight">
+        <div class="inter-card-icon-row">
+          <div class="inter-card-icon blue-icon">
+            <svg viewBox="0 0 17 17" fill="none"><path d="M2.5 8.5l4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="inter-card-label">Com Atelier</div>
+        </div>
+        <div class="inter-card-title">Cliente qualificado antes do primeiro "Olá"</div>
+        <div class="inter-card-desc">
+          Ele passa por uma experiência guiada que coleta serviço, disponibilidade e histórico. Você recebe um briefing completo — e a conversa começa do ponto certo.
+        </div>
+      </div>
+    </div>
+
+    <!-- Benefícios -->
+    <div class="inter-benefits-head">
+      <div class="inter-benefits-eyebrow">O que muda na prática</div>
+      <h2 class="inter-benefits-title">Menos ruído. Mais consultas fechadas.</h2>
+    </div>
+
+    <div class="inter-benefits-grid" id="inter-benefits-grid">
+      <!-- preenchido via JS conforme nicho -->
+    </div>
+
+    <!-- CTA block -->
+    <div class="inter-cta-block">
+      <div class="inter-cta-eyebrow">Próximo passo</div>
+      <div class="inter-cta-title">Escolha a identidade visual da sua plataforma</div>
+      <div class="inter-cta-sub">
+        A experiência já está pronta. Agora é só escolher as cores que vão representar sua marca — e em 48h você está no ar.
+      </div>
+      <button class="inter-cta-btn" onclick="openVariationsFromInter()">
+        Escolher identidade visual
+        <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="inter-cta-note">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        10 variações disponíveis · R$67/mês · entrega em 48h
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="colophon">
+    <span>Atelier © 2026</span>
+    <span>João Pessoa / BR</span>
+  </footer>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCREEN 2 — VARIATIONS (identidade visual universal — demo manicure)
 ═══════════════════════════════════════════════════════════ -->
 <main class="screen" id="screen-variations">
 
@@ -2072,25 +2484,23 @@ body {
 
   <div class="var-head">
     <div class="breadcrumb">
-      <button class="breadcrumb-back" onclick="goScreen('screen-home', 'restore')">
+      <button class="breadcrumb-back" onclick="goScreen('screen-inter', 'restore')">
         <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Coleção
+        Sobre o produto
       </button>
       <span class="breadcrumb-sep">/</span>
-      <span class="breadcrumb-current" id="bc-line-name">—</span>
-      <span class="breadcrumb-sep">/</span>
-      <span>Variações</span>
+      <span class="breadcrumb-current">Identidade Visual</span>
     </div>
 
     <div class="var-title-grid">
       <div>
-        <div class="var-line-num" id="var-line-num-text">Linha 01</div>
-        <h1 class="var-title" id="var-title-text">—</h1>
-        <p class="var-meta-lede" id="var-lede-text">—</p>
+        <div class="var-line-num">Identidade Visual</div>
+        <h1 class="var-title">Escolha sua cor</h1>
+        <p class="var-meta-lede">Design, acabamento e branding. Escolha a variação que representa sua marca — a experiência é a mesma para qualquer nicho.</p>
       </div>
       <div class="var-meta-side">
         <div>
-          <div class="var-stat-num" id="var-stat-count">—</div>
+          <div class="var-stat-num" id="var-stat-count">10</div>
           <div class="var-stat-label">Variações</div>
         </div>
         <div>
@@ -2103,7 +2513,7 @@ body {
 
   <section class="collection">
     <div class="collection-list-head">
-      <div class="collection-list-title">Coleção Cromática</div>
+      <div class="collection-list-title">Variações Cromáticas</div>
       <div class="collection-list-meta" id="var-list-meta">—</div>
     </div>
     <div class="var-grid" id="var-grid"></div>
@@ -2149,7 +2559,7 @@ body {
         Abrir
       </a>
       <button class="demo-btn demo-btn-solid" onclick="selectFromDemo()">
-        Selecionar e seguir
+        Ver atendimento real
         <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
@@ -2158,14 +2568,14 @@ body {
   <div class="demo-frame-wrap">
     <div class="demo-stage">
       <div class="demo-stage-meta">
-        <span class="demo-meta-chip"><span class="demo-meta-dot"></span> Demo ao vivo · interativa</span>
+        <span class="demo-meta-chip"><span class="demo-meta-dot"></span> Experiência ao vivo · interativa</span>
       </div>
       <div class="demo-phone">
         <div class="demo-phone-screen">
           <div class="demo-phone-island"></div>
           <div class="demo-phone-loading" id="demoLoading">
             <div class="demo-phone-loading-mark">A</div>
-            <div class="demo-phone-loading-text">Carregando preview</div>
+            <div class="demo-phone-loading-text">Carregando experiência</div>
           </div>
           <iframe id="demo-iframe"
                   class="demo-phone-iframe"
@@ -2182,7 +2592,7 @@ body {
       </div>
       <div class="demo-stage-hint">
         <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5M7.5 10.5L11 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Toque, role e explore como em um celular real
+        Toque, role e explore como seu cliente vai ver
       </div>
     </div>
   </div>
@@ -2235,7 +2645,7 @@ body {
       </div>
       <div class="form-card-body">
         <div class="form-field">
-          <label class="form-label" for="fName">Nome do cliente <span class="req">*</span></label>
+          <label class="form-label" for="fName">Nome do responsável <span class="req">*</span></label>
           <input class="form-input" type="text" id="fName" placeholder="Ex: Ana Lima" autocomplete="name">
           <div class="form-error-msg" id="errName">
             <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -2243,23 +2653,21 @@ body {
           </div>
         </div>
         <div class="form-field">
-          <label class="form-label" for="fCompany">Nome da empresa <span class="opt">opcional</span></label>
+          <label class="form-label" for="fCompany">Nome do estabelecimento <span class="opt">opcional</span></label>
           <input class="form-input" type="text" id="fCompany" placeholder="Ex: Studio Ana Lima" autocomplete="organization">
         </div>
         <div class="form-field">
           <label class="form-label" for="fSegment">Segmento <span class="req">*</span></label>
           <select class="form-select" id="fSegment">
             <option value="" disabled selected>Selecione…</option>
-            <option>Beleza &amp; Estética</option>
-            <option>Saúde &amp; Bem-estar</option>
-            <option>Moda &amp; Estilo</option>
-            <option>Fotografia &amp; Artes</option>
-            <option>Marketing &amp; Comunicação</option>
-            <option>Tecnologia &amp; Design</option>
-            <option>Negócios &amp; Consultoria</option>
-            <option>Educação &amp; Cursos</option>
-            <option>Gastronomia</option>
-            <option>Arquitetura &amp; Interiores</option>
+            <option>Salão de Beleza</option>
+            <option>Barbearia</option>
+            <option>Clínica Odontológica</option>
+            <option>Clínica de Estética</option>
+            <option>Clínica Médica</option>
+            <option>Spa &amp; Bem-estar</option>
+            <option>Nutrição &amp; Saúde</option>
+            <option>Personal Trainer</option>
             <option>Outro</option>
           </select>
           <div class="form-error-msg" id="errSegment">
@@ -2269,7 +2677,7 @@ body {
         </div>
         <div class="form-field">
           <label class="form-label" for="fObs">Observações <span class="opt">opcional</span></label>
-          <textarea class="form-textarea" id="fObs" placeholder="Conte um pouco sobre seu negócio, preferências de conteúdo, etc." rows="3"></textarea>
+          <textarea class="form-textarea" id="fObs" placeholder="Conte um pouco sobre seu negócio, horários, serviços principais, etc." rows="3"></textarea>
         </div>
       </div>
     </div>
@@ -2305,58 +2713,60 @@ const LINES = [
   {
     id: 'signature',
     num: '01',
-    name: 'Signature',
-    tag: 'Linha autoral',
-    positioning: 'Modelo com identidade visual premium. Capa visual, presença e profundidade para marcas que querem se destacar.',
-    description: 'Capa visual, presença e profundidade.',
-    previewLink: 'https://Acessar.github.io/coverazul',
-    variants: [
-      { id:'sapphire', pt:'Sapphire',   en:'Deep Sapphire', hex:'#1e4d8c', light:'#3d6cad', deep:'#102f5c', mark:'S', link:'https://Acessar.github.io/coverazul'        },
-      { id:'ruby',     pt:'Ruby',       en:'Crimson Ruby',  hex:'#9b1c2d', light:'#c0354a', deep:'#5e0e1a', mark:'R', link:'https://Acessar.github.io/coverred'         },
-      { id:'blush',    pt:'Blush',      en:'Soft Blush',    hex:'#c95a7b', light:'#d97a98', deep:'#8a3a55', mark:'B', link:'https://Acessar.github.io/coverrosa'        },
-      { id:'amethyst', pt:'Amethyst',   en:'Royal Amethyst',hex:'#6a3aa0', light:'#8a5dc0', deep:'#3e1f66', mark:'A', link:'https://Acessar.github.io/coverroxo'        },
-      { id:'emerald',  pt:'Emerald',    en:'Forest Emerald',hex:'#1c5a3a', light:'#3a8060', deep:'#0e3522', mark:'E', link:'https://Acessar.github.io/coververdeescuro' },
-      { id:'lime',     pt:'Lime Glow',  en:'Lime Glow',     hex:'#4a8c3a', light:'#6cab5d', deep:'#2c5722', mark:'L', link:'https://Acessar.github.io/coververdelimao'  },
-      { id:'golden',   pt:'Golden Luxe',en:'Golden Luxe',   hex:'#a07835', light:'#bc9555', deep:'#664a1d', mark:'G', link:'https://Acessar.github.io/coverdourado'     },
-      { id:'sunset',   pt:'Sunset',     en:'Burnt Sunset',  hex:'#c04a1a', light:'#dc6e3a', deep:'#7a2c0e', mark:'S', link:'https://Acessar.github.io/coverlaranja'     },
-      { id:'mocha',    pt:'Mocha',      en:'Velvet Mocha',  hex:'#5a3a2e', light:'#7d5848', deep:'#36211a', mark:'M', link:'https://Acessar.github.io/covermarrom'      },
-      { id:'crystal',  pt:'Crystal',    en:'Crystal Cyan',  hex:'#0e7490', light:'#2c9bb8', deep:'#06465a', mark:'C', link:'https://Acessar.github.io/coverciano'       },
+    name: 'Salão de Beleza',
+    tag: 'Pré-atendimento',
+    positioning: 'Qualifique clientes antes do WhatsApp. Saiba o serviço desejado, o horário preferido e o histórico do cliente — tudo antes do primeiro contato.',
+    description: 'Experiência de pré-atendimento para salões.',
+    /* ── LINK ATUALIZADO ── */
+    previewLink: 'https://acessar.github.io/salao',
+    benefits: [
+      { title: 'Zero mensagens "qual o preço?"', desc: 'O cliente recebe as informações antes de falar com você. Sua caixa de entrada fica limpa.' },
+      { title: 'Horários preenchidos com intenção', desc: 'Ele já informa disponibilidade. Você agenda com quem realmente quer ir.' },
+      { title: 'Histórico do cliente na palma da mão', desc: 'Serviços anteriores, preferências e observações — coletados automaticamente.' },
+      { title: 'Mais tempo para o que importa', desc: 'Pare de responder manualmente. Atenda mais e atenda melhor.' },
     ]
   },
   {
     id: 'classic',
     num: '02',
-    name: 'Classic',
-    tag: 'Linha funcional',
-    positioning: 'Modelo direto, funcional e versátil. Pensado para profissionais que querem presença digital sem ruído.',
-    description: 'Minimalista, elegante e versátil.',
-    previewLink: 'https://Acessar.github.io/cv-azul',
-    variants: [
-      { id:'azul',         pt:'Azul Sofisticado', en:'Deep Sapphire',  hex:'#1565C0', light:'#3a82d9', deep:'#0a3d7a', mark:'A', link:'https://Acessar.github.io/cv-azul'        },
-      { id:'vermelho',     pt:'Vermelho Ousado',  en:'Bold Red',       hex:'#C0392B', light:'#dc5543', deep:'#7a1d12', mark:'V', link:'https://Acessar.github.io/cv-vermelho'    },
-      { id:'rosa',         pt:'Rosa Delicado',    en:'Delicate Rose',  hex:'#D81B60', light:'#e84582', deep:'#8a1140', mark:'R', link:'https://Acessar.github.io/cv-rosa'        },
-      { id:'roxo',         pt:'Roxo Premium',     en:'Royal Purple',   hex:'#4527A0', light:'#6b48c9', deep:'#2a1666', mark:'R', link:'https://Acessar.github.io/cv-roxo'        },
-      { id:'verdeescuro',  pt:'Verde Elegante',   en:'Forest Green',   hex:'#1B5E20', light:'#3a8540', deep:'#0d3a13', mark:'V', link:'https://Acessar.github.io/cv-verdeescuro' },
-      { id:'verdeclaro',   pt:'Verde Vivo',       en:'Vivid Lime',     hex:'#2E7D32', light:'#4ea454', deep:'#1a4d1d', mark:'V', link:'https://Acessar.github.io/cv-verdelimao'  },
-      { id:'amarelo',      pt:'Dourado Quente',   en:'Warm Gold',      hex:'#E65100', light:'#f5762e', deep:'#933000', mark:'D', link:'https://Acessar.github.io/cv-dourado'     },
-      { id:'laranja',      pt:'Laranja Criativo', en:'Creative Amber', hex:'#BF360C', light:'#dc5a2e', deep:'#7a1f06', mark:'L', link:'https://Acessar.github.io/cv-laranja'     },
-      { id:'marrom',       pt:'Marrom Refinado',  en:'Refined Brown',  hex:'#4E342E', light:'#735048', deep:'#2e1d18', mark:'M', link:'https://Acessar.github.io/cv-marrom'      },
-      { id:'pretobranco',  pt:'Preto Sofisticado',en:'Onyx Black',     hex:'#1a2234', light:'#3a4660', deep:'#0a0e18', mark:'P', link:'https://Acessar.github.io/cv-pretobranco' },
-      { id:'crystal',      pt:'Crystal',          en:'Crystal Cyan',   hex:'#0e7490', light:'#2c9bb8', deep:'#06465a', mark:'C', link:'https://Acessar.github.io/cv-ciano'       },
+    name: 'Clínica Odontológica',
+    tag: 'Pré-atendimento',
+    positioning: 'Receba pacientes qualificados. Colete queixa principal, plano de saúde e disponibilidade antes mesmo de ligar. Menos tempo perdido, mais consultas fechadas.',
+    description: 'Experiência de pré-atendimento para clínicas.',
+    /* ── LINK ATUALIZADO ── */
+    previewLink: 'https://acessar.github.io/coverciano',
+    benefits: [
+      { title: 'Queixa principal antes da consulta', desc: 'O paciente descreve o problema antes de ligar. Você já sabe o que esperar — e se aceita o caso.' },
+      { title: 'Plano de saúde verificado no fluxo', desc: 'Filtro automático: paciente informa convênio na qualificação. Sem surpresas na recepção.' },
+      { title: 'Agenda com menos faltas', desc: 'Quem passa pelo pré-atendimento chega comprometido. Taxa de comparecimento maior.' },
+      { title: 'Recepção focada no paciente', desc: 'Dados já coletados. Sua equipe faz acolhimento, não triagem manual.' },
     ]
   }
+];
+
+/* Variações de cor — demo visual universal (manicure) */
+const COLOR_VARIANTS = [
+  { id:'sapphire', pt:'Azul Clássico',   en:'Classic Blue',    hex:'#1e4d8c', light:'#3d6cad', deep:'#102f5c', mark:'A', link:'https://Acessar.github.io/coverazul'        },
+  { id:'blush',    pt:'Rosa Delicado',   en:'Soft Blush',      hex:'#c95a7b', light:'#d97a98', deep:'#8a3a55', mark:'R', link:'https://Acessar.github.io/coverrosa'        },
+  { id:'amethyst', pt:'Roxo Premium',    en:'Royal Amethyst',  hex:'#6a3aa0', light:'#8a5dc0', deep:'#3e1f66', mark:'R', link:'https://Acessar.github.io/coverroxo'        },
+  { id:'golden',   pt:'Dourado Luxe',    en:'Golden Luxe',     hex:'#a07835', light:'#bc9555', deep:'#664a1d', mark:'D', link:'https://Acessar.github.io/coverdourado'     },
+  { id:'emerald',  pt:'Verde Esmeralda', en:'Forest Emerald',  hex:'#1c5a3a', light:'#3a8060', deep:'#0e3522', mark:'E', link:'https://Acessar.github.io/coververdeescuro' },
+  { id:'ruby',     pt:'Vermelho Ousado', en:'Crimson Ruby',    hex:'#9b1c2d', light:'#c0354a', deep:'#5e0e1a', mark:'V', link:'https://Acessar.github.io/coverred'         },
+  { id:'mocha',    pt:'Marrom Veludo',   en:'Velvet Mocha',    hex:'#5a3a2e', light:'#7d5848', deep:'#36211a', mark:'M', link:'https://Acessar.github.io/covermarrom'      },
+  { id:'sunset',   pt:'Laranja Sunset',  en:'Burnt Sunset',    hex:'#c04a1a', light:'#dc6e3a', deep:'#7a2c0e', mark:'L', link:'https://Acessar.github.io/coverlaranja'     },
+  { id:'crystal',  pt:'Ciano Crystal',   en:'Crystal Cyan',    hex:'#0e7490', light:'#2c9bb8', deep:'#06465a', mark:'C', link:'https://Acessar.github.io/coverciano'       },
+  { id:'lime',     pt:'Verde Lima',      en:'Lime Glow',       hex:'#4a8c3a', light:'#6cab5d', deep:'#2c5722', mark:'V', link:'https://Acessar.github.io/coververdelimao'  },
 ];
 
 /* ── STATE ────────────────────────────────────────────────── */
 let currentLine = null;
 let currentVariant = null;
-let selectedVariantId = null; // active selection in variations grid
+let selectedVariantId = null;
 
 /* ── NAV ──────────────────────────────────────────────────── */
-const screenScroll = {}; // remembered scroll position per screen id
+const screenScroll = {};
 
 function goScreen(id, mode = 'reset') {
-  // Save scroll of currently active screen before leaving
   const current = document.querySelector('.screen.active');
   if (current) screenScroll[current.id] = window.scrollY;
 
@@ -2364,14 +2774,12 @@ function goScreen(id, mode = 'reset') {
   document.getElementById(id).classList.add('active');
 
   if (mode === 'restore' && typeof screenScroll[id] === 'number') {
-    // Wait for the new screen to render before restoring scroll
     requestAnimationFrame(() => {
       window.scrollTo({ top: screenScroll[id], behavior: 'instant' });
     });
   } else if (mode === 'reset') {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
-  // mode === 'preserve' → leave scroll exactly as is
 }
 
 /* ── BUILD HOME LINES ─────────────────────────────────────── */
@@ -2386,16 +2794,17 @@ function goScreen(id, mode = 'reset') {
       <div class="line-grid">
         <div class="line-info">
           <div class="line-num-row">
-            <span class="line-num">Linha ${line.num}</span>
+            <span class="line-num">Nicho ${line.num}</span>
             <span class="line-tag">${line.tag}</span>
           </div>
           <div class="line-name-row">
             <h2 class="line-name">${line.name}</h2>
             <button class="line-cta" data-line-id="${line.id}">
-              Ver variações
+              Testar experiência
               <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
           </div>
+          <p class="line-positioning">${line.positioning}</p>
         </div>
 
         <div class="line-visual">
@@ -2405,7 +2814,7 @@ function goScreen(id, mode = 'reset') {
           </div>
           <div class="visual-live">
             <span class="dot"></span>
-            Demo ao vivo
+            Ao vivo
           </div>
 
           <div class="phone">
@@ -2434,25 +2843,23 @@ function goScreen(id, mode = 'reset') {
       </div>
     `;
 
-    // Click anywhere on the line (except phone area) opens variations
-    // The phone area is intentionally NOT a navigation trigger — it's a live demo
+    /* Clique em qualquer parte do card → página intermediária */
     el.addEventListener('click', (e) => {
       if (e.target.closest('.phone')) return;
       if (e.target.closest('.line-cta')) return;
-      openLine(line);
+      openInter(line);
     });
     el.querySelector('.line-cta').addEventListener('click', (e) => {
       e.stopPropagation();
-      openLine(line);
+      openInter(line);
     });
 
     wrap.appendChild(el);
-    // Start watchdog for this iframe — surfaces fallback if load doesn't fire
     requestAnimationFrame(() => watchPhoneIframe(line.id, line.previewLink));
   });
 })();
 
-/* ── JUMP-NEXT — show only while user is on first model ─── */
+/* ── JUMP-NEXT ─────────────────────────────────────────────── */
 (function setupJumpNext() {
   const jump = document.getElementById('jumpNext');
   if (!jump) return;
@@ -2464,7 +2871,6 @@ function goScreen(id, mode = 'reset') {
   const secondLine = lines[1];
   const firstPhone = firstLine.querySelector('.phone');
 
-  // Observe both: visible only when first line is in view AND second is NOT yet
   let firstVisible = false;
   let secondVisible = false;
 
@@ -2484,14 +2890,12 @@ function goScreen(id, mode = 'reset') {
     sync();
   }, {
     threshold: [0, 0.15, 0.3, 0.5],
-    rootMargin: '-60px 0px -10% 0px' /* exclude masthead area */
+    rootMargin: '-60px 0px -10% 0px'
   });
 
   obs.observe(firstLine);
   obs.observe(secondLine);
 
-  /* Position the button vertically so its center matches the first phone's center.
-     Clamp to viewport so it never goes off-screen even if the phone is tall. */
   let rafPending = false;
   function positionJump() {
     rafPending = false;
@@ -2499,7 +2903,6 @@ function goScreen(id, mode = 'reset') {
     const rect = firstPhone.getBoundingClientRect();
     const phoneCenter = rect.top + rect.height / 2;
     const viewportH = window.innerHeight;
-    // Clamp between 80px (below masthead) and viewportH - 60px (above bottom edge)
     const clamped = Math.max(80, Math.min(phoneCenter, viewportH - 60));
     jump.style.setProperty('--jump-top', clamped + 'px');
   }
@@ -2521,7 +2924,6 @@ function goScreen(id, mode = 'reset') {
 function hidePhoneLoading(lineId) {
   const el = document.getElementById(`loading-${lineId}`);
   if (el) setTimeout(() => el.classList.add('hidden'), 400);
-  // Mark as loaded to clear timeout watcher
   if (phoneLoadTimers[lineId]) {
     clearTimeout(phoneLoadTimers[lineId]);
     delete phoneLoadTimers[lineId];
@@ -2533,11 +2935,6 @@ function hideDemoLoading() {
   if (el) setTimeout(() => el.classList.add('hidden'), 400);
 }
 
-/* ── IFRAME LOAD WATCHDOG ──────────────────────────────────
-   Some mobile browsers (iOS Safari, in-app browsers) silently fail to
-   fire 'onload' on cross-origin iframes, especially on slower networks.
-   After 10s without a load event, we surface a manual "Abrir em nova aba"
-   action so the user is never stuck on a blank shimmer. */
 const phoneLoadTimers = {};
 
 function watchPhoneIframe(lineId, fallbackUrl) {
@@ -2545,7 +2942,6 @@ function watchPhoneIframe(lineId, fallbackUrl) {
   phoneLoadTimers[lineId] = setTimeout(() => {
     const loading = document.getElementById(`loading-${lineId}`);
     if (!loading || loading.classList.contains('hidden')) return;
-    // Replace shimmer with a manual fallback prompt
     loading.innerHTML = `
       <div class="phone-loading-mark">A</div>
       <div class="phone-loading-text" style="text-align:center;line-height:1.5;">
@@ -2562,32 +2958,53 @@ function handlePhoneIframeError(lineId) {
   if (loading) loading.classList.remove('hidden');
 }
 
-/* ── OPEN LINE → VARIATIONS ───────────────────────────────── */
-function openLine(line) {
+/* ── OPEN INTER (intermediária) ──────────────────────────── */
+function openInter(line) {
   currentLine = line;
-  selectedVariantId = null;
 
-  document.getElementById('var-count-meta').textContent = `${line.variants.length} variações`;
-  document.getElementById('bc-line-name').textContent = line.name;
-  document.getElementById('var-line-num-text').textContent = `Linha ${line.num}`;
-  document.getElementById('var-title-text').textContent = line.name;
-  document.getElementById('var-lede-text').textContent = line.positioning;
-  document.getElementById('var-stat-count').textContent = String(line.variants.length).padStart(2, '0');
-  document.getElementById('var-list-meta').textContent = `01 — ${String(line.variants.length).padStart(2,'0')} variações`;
+  document.getElementById('inter-nicho-meta').textContent = `Nicho ${line.num}`;
+  document.getElementById('inter-bc-name').textContent = line.name;
+  document.getElementById('inter-badge-text').textContent = `Nicho ${line.num} — ${line.tag}`;
 
-  buildVariantGrid(line);
+  /* Benefícios específicos por nicho */
+  const grid = document.getElementById('inter-benefits-grid');
+  grid.innerHTML = '';
+  line.benefits.forEach((b, i) => {
+    const el = document.createElement('div');
+    el.className = 'inter-benefit';
+    el.innerHTML = `
+      <div class="inter-benefit-num">${i + 1}</div>
+      <div class="inter-benefit-body">
+        <div class="inter-benefit-title">${b.title}</div>
+        <div class="inter-benefit-desc">${b.desc}</div>
+      </div>
+    `;
+    grid.appendChild(el);
+  });
+
+  goScreen('screen-inter');
+}
+
+/* ── CTA DA INTERMEDIÁRIA → VARIAÇÕES ────────────────────── */
+function openVariationsFromInter() {
+  buildVariantGrid();
   goScreen('screen-variations');
 }
 
-/* ── BUILD VARIANT GRID — pure selection tiles, no embedded preview ───── */
-function buildVariantGrid(line) {
+/* ── BUILD VARIANT GRID (cores universais — demo manicure) ── */
+function buildVariantGrid() {
   const grid = document.getElementById('var-grid');
   grid.innerHTML = '';
 
-  line.variants.forEach((v, i) => {
+  const count = COLOR_VARIANTS.length;
+  document.getElementById('var-stat-count').textContent = String(count).padStart(2, '0');
+  document.getElementById('var-list-meta').textContent = `01 — ${String(count).padStart(2,'0')} variações`;
+  document.getElementById('var-count-meta').textContent = `${count} variações`;
+
+  COLOR_VARIANTS.forEach((v, i) => {
     const card = document.createElement('button');
     card.type = 'button';
-    card.className = `var-card ${line.id}`;
+    card.className = `var-card signature`;
     card.dataset.variantId = v.id;
     card.style.setProperty('--var-color', v.hex);
     card.style.setProperty('--var-light', v.light);
@@ -2609,63 +3026,55 @@ function buildVariantGrid(line) {
           <div class="var-card-swatch-mark" style="background:${v.hex}"></div>
         </div>
         <div class="var-card-action">
-          <span>Visualizar variação</span>
+          <span>Ver identidade visual</span>
           <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </div>
     `;
 
-    // Whole tile = single action: open the demo for this variant
-    card.addEventListener('click', () => openDemo(line, v));
-
+    card.addEventListener('click', () => openDemo(v));
     grid.appendChild(card);
   });
 }
 
-/* ── SELECT VARIANT → STRAIGHT TO FORM ────────────────────── */
-function selectVariant(line, variant) {
-  currentLine = line;
+/* ── SELECT VARIANT ───────────────────────────────────────── */
+function selectVariant(variant) {
   currentVariant = variant;
   selectedVariantId = variant.id;
 
-  // Mark card as selected (visual feedback)
   document.querySelectorAll('.var-card').forEach(c => c.classList.remove('selected'));
   const card = document.querySelector(`.var-card[data-variant-id="${variant.id}"]`);
   if (card) card.classList.add('selected');
 
-  // Tiny delay so user sees the selection state
-  setTimeout(() => populateAndOpenForm(line, variant), 220);
+  setTimeout(() => populateAndOpenForm(variant), 220);
 }
 
-function populateAndOpenForm(line, variant) {
-  // Populate form summary
+function populateAndOpenForm(variant) {
+  const line = currentLine;
   const chroma = document.getElementById('formSummaryChroma');
   chroma.style.background = variant.hex;
   document.getElementById('formSummaryMark').textContent = variant.mark;
-  document.getElementById('formSummaryName').textContent = `${line.name} · ${variant.pt}`;
+  document.getElementById('formSummaryName').textContent = `${line ? line.name + ' · ' : ''}${variant.pt}`;
   document.getElementById('formSummaryLine').textContent = `${variant.en} — ${variant.hex}`;
 
   goScreen('screen-form');
-  // Auto-focus first field
   setTimeout(() => document.getElementById('fName').focus(), 200);
 }
 
 /* ── DEMO PREVIEW ─────────────────────────────────────────── */
-function openDemo(line, variant) {
-  currentLine = line;
+function openDemo(variant) {
   currentVariant = variant;
 
-  // Mark selected card visually for clear feedback when returning
   document.querySelectorAll('.var-card').forEach(c => c.classList.remove('selected'));
   const card = document.querySelector(`.var-card[data-variant-id="${variant.id}"]`);
   if (card) card.classList.add('selected');
 
-  document.getElementById('demo-line-tag').textContent = `${line.name} / ${variant.pt}`;
-  document.getElementById('demo-breadcrumb').textContent = `Linha ${line.num} — ${line.name}`;
+  const lineName = currentLine ? currentLine.name : 'Identidade Visual';
+  document.getElementById('demo-line-tag').textContent = `${lineName} / ${variant.pt}`;
+  document.getElementById('demo-breadcrumb').textContent = `Identidade Visual`;
   document.getElementById('demo-title').textContent = variant.pt;
   document.getElementById('demo-open-link').href = variant.link;
 
-  // Reset loading state for the new variant
   const loading = document.getElementById('demoLoading');
   if (loading) loading.classList.remove('hidden');
 
@@ -2676,18 +3085,16 @@ function openDemo(line, variant) {
 
 function goBackToVariations() {
   document.getElementById('demo-iframe').src = 'about:blank';
-  if (currentLine) goScreen('screen-variations', 'restore');
-  else goScreen('screen-home', 'restore');
+  goScreen('screen-variations', 'restore');
 }
 
 function selectFromDemo() {
-  if (!currentLine || !currentVariant) return;
-  selectVariant(currentLine, currentVariant);
+  if (!currentVariant) return;
+  selectVariant(currentVariant);
 }
 
 function goBackToVariationsFromForm() {
-  if (currentLine) goScreen('screen-variations', 'restore');
-  else goScreen('screen-home', 'restore');
+  goScreen('screen-variations', 'restore');
 }
 
 /* ── FORM SUBMIT → WHATSAPP ───────────────────────────────── */
@@ -2702,7 +3109,6 @@ function handleSubmit() {
   const errName   = document.getElementById('errName');
   const errSeg    = document.getElementById('errSegment');
 
-  // Reset
   nameInput.classList.remove('error');
   segInput.classList.remove('error');
   errName.classList.remove('visible');
@@ -2728,17 +3134,16 @@ function handleSubmit() {
     return;
   }
 
-  // Build WhatsApp message
-  const line = currentLine;
   const v = currentVariant;
+  const line = currentLine;
   const linkShort = v.link.replace('https://', '');
 
   let msg = `*Novo pedido — Atelier*\n\n`;
-  msg += `• *Modelo:* ${line.name}\n`;
-  msg += `• *Variação:* ${v.pt} (${v.en})\n`;
+  if (line) msg += `• *Nicho:* ${line.name}\n`;
+  msg += `• *Identidade Visual:* ${v.pt} (${v.en})\n`;
   msg += `• *Link:* ${linkShort}\n`;
   msg += `\n• *Nome:* ${name}`;
-  if (company) msg += `\n• *Empresa:* ${company}`;
+  if (company) msg += `\n• *Estabelecimento:* ${company}`;
   msg += `\n• *Segmento:* ${segment}`;
   if (obs) msg += `\n• *Observações:* ${obs}`;
 
@@ -2768,9 +3173,10 @@ function showToast(msg, type = 'default') {
 /* ── KEYBOARD ─────────────────────────────────────────────── */
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    if (document.getElementById('screen-form').classList.contains('active')) goBackToVariationsFromForm();
-    else if (document.getElementById('screen-demo').classList.contains('active')) goBackToVariations();
-    else if (document.getElementById('screen-variations').classList.contains('active')) goScreen('screen-home', 'restore');
+    if (document.getElementById('screen-form').classList.contains('active'))        goBackToVariationsFromForm();
+    else if (document.getElementById('screen-demo').classList.contains('active'))   goBackToVariations();
+    else if (document.getElementById('screen-variations').classList.contains('active')) goScreen('screen-inter', 'restore');
+    else if (document.getElementById('screen-inter').classList.contains('active'))  goScreen('screen-home', 'restore');
   }
   if (e.key === 'Enter' && document.getElementById('screen-form').classList.contains('active')) {
     if (e.target.tagName !== 'TEXTAREA') {
