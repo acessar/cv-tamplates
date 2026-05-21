@@ -401,6 +401,164 @@ body {
 .cta-final-note svg { width: 13px; height: 13px; color: var(--green-ui); }
 
 /* ═══════════════════════════════════════════════════════════
+   NOVA SEÇÃO — RELACIONAMENTO INTELIGENTE
+═══════════════════════════════════════════════════════════ */
+.section-relac {
+  background: var(--ink);
+  position: relative; overflow: hidden;
+}
+.section-relac::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 26px 26px; pointer-events: none;
+}
+.section-relac::after {
+  content: ''; position: absolute;
+  top: -200px; right: -200px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(245,200,0,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+.relac-headline { color: var(--yellow-hl); max-width: 22ch; }
+.relac-sub { color: rgba(255,255,255,0.65); margin-bottom: 48px; }
+.relac-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 720px) { .relac-grid { grid-template-columns: 1fr; gap: 12px; } }
+.relac-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-md);
+  padding: 24px 22px;
+  display: flex; gap: 16px; align-items: flex-start;
+  transition: background 0.2s, border-color 0.2s;
+}
+.relac-card:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(245,200,0,0.2);
+}
+.relac-card-num {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  color: var(--yellow-hl); letter-spacing: 0.06em;
+  margin-top: 2px; flex-shrink: 0;
+}
+.relac-card-title {
+  font-family: var(--display); font-size: 16px; font-weight: 800;
+  color: var(--white); letter-spacing: -0.015em; margin-bottom: 7px; line-height: 1.2;
+}
+.relac-card-desc {
+  font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NOVA SEÇÃO — RECORRÊNCIA
+═══════════════════════════════════════════════════════════ */
+.section-recor {
+  background: var(--green-hero);
+  position: relative; overflow: hidden;
+}
+.section-recor::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 24px 24px; pointer-events: none;
+}
+.recor-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: center;
+}
+@media (max-width: 860px) { .recor-layout { grid-template-columns: 1fr; gap: 40px; } }
+.recor-headline { color: var(--yellow-hl); max-width: 20ch; }
+.recor-sub {
+  font-size: clamp(15px, 1.6vw, 17px); line-height: 1.6;
+  color: rgba(255,255,255,0.75); margin-bottom: 32px; max-width: 44ch;
+}
+.recor-stats {
+  display: flex; flex-direction: column; gap: 20px;
+}
+.recor-stat {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: var(--r-md); padding: 22px 24px;
+  display: grid; grid-template-columns: 40px 1fr; grid-template-rows: auto auto;
+  gap: 4px 14px; align-items: start;
+}
+.recor-stat-value {
+  font-family: var(--display); font-size: 28px; font-weight: 800;
+  color: var(--yellow-hl); line-height: 1; grid-row: 1 / 3; align-self: center;
+}
+.recor-stat-label {
+  font-family: var(--display); font-size: 15px; font-weight: 800;
+  color: var(--white); letter-spacing: -0.01em;
+}
+.recor-stat-desc {
+  font-size: 12.5px; color: rgba(255,255,255,0.6); line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NOVA SEÇÃO — EXPERIÊNCIA DO CLIENTE
+═══════════════════════════════════════════════════════════ */
+.section-exp {
+  background: var(--white);
+  padding-bottom: 80px;
+}
+.exp-headline { color: var(--ink); max-width: 24ch; }
+.exp-sub { color: var(--ink-soft); margin-bottom: 48px; }
+.exp-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+}
+@media (min-width: 860px) { .exp-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 560px) { .exp-grid { grid-template-columns: 1fr; gap: 14px; } }
+.exp-item {
+  background: var(--off-white);
+  border: 1.5px solid var(--hair);
+  border-radius: var(--r-lg); padding: 28px 22px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: border-color 0.2s, transform 0.25s cubic-bezier(.2,.7,.2,1);
+}
+.exp-item:hover { border-color: var(--green-hero); transform: translateY(-3px); }
+.exp-item-icon {
+  width: 40px; height: 40px; border-radius: 11px;
+  background: rgba(26,122,60,0.1); border: 1px solid rgba(26,122,60,0.15);
+  display: flex; align-items: center; justify-content: center;
+}
+.exp-item-icon svg { width: 18px; height: 18px; color: var(--green-hero); }
+.exp-item-title {
+  font-family: var(--display); font-size: 16px; font-weight: 800;
+  color: var(--ink); letter-spacing: -0.015em; line-height: 1.2;
+}
+.exp-item-desc {
+  font-size: 13px; line-height: 1.6; color: var(--ink-soft);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TIMER ELEGANTE NO CHATBOT
+═══════════════════════════════════════════════════════════ */
+.conv-timer-bar {
+  display: flex; align-items: center; gap: 10px;
+}
+.conv-timer-track {
+  flex: 1; height: 2px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px; overflow: hidden;
+}
+.conv-timer-fill {
+  height: 100%;
+  background: rgba(245,200,0,0.55);
+  border-radius: 2px;
+  transition: width 1s linear;
+  width: 100%;
+}
+.conv-timer-label {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.06em; color: rgba(255,255,255,0.28);
+  white-space: nowrap; flex-shrink: 0;
+  transition: color 0.3s;
+}
+.conv-timer-label.ending { color: rgba(245,200,0,0.6); }
+
+/* ═══════════════════════════════════════════════════════════
    FOOTER
 ═══════════════════════════════════════════════════════════ */
 .footer {
@@ -965,10 +1123,10 @@ body {
       <div class="hero-left">
         <div class="hero-label">
           <span class="hero-label-dot"></span>
-          Pré-atendimento inteligente · 2026
+          IA de relacionamento e conversão · 2026
         </div>
-        <h1 class="hero-headline">A principal engenharia brasileira de conversão</h1>
-        <p class="hero-subheadline">Antes de qualquer cliente enviar mensagem, ele já falou os detalhes do que realmente precisa e o que espera do serviço. Você entra na conversa somente para fechar.</p>
+        <h1 class="hero-headline">Seu atendimento começa antes do WhatsApp.</h1>
+        <p class="hero-subheadline">A IA que entende o que o seu cliente procura antes da conversa começar — e transforma visitantes em clientes automaticamente.</p>
         <button class="hero-cta" onclick="openConv()">
           Solicitar demonstração
           <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -978,29 +1136,29 @@ body {
       <div class="hero-visual">
         <div class="hero-card">
           <div class="hero-card-icon">
-            <svg viewBox="0 0 18 18" fill="none"><path d="M9 1c-4.418 0-8 3.582-8 8 0 1.395.358 2.706.985 3.847L1 17l4.273-1.012A7.977 7.977 0 009 17c4.418 0 8-3.582 8-8s-3.582-8-8-8z" fill="currentColor"/></svg>
+            <svg viewBox="0 0 18 18" fill="none"><path d="M9 2a5.5 5.5 0 100 11A5.5 5.5 0 009 2zm0 0v5.5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="7.5" r="0" fill="none"/><path d="M14.5 14.5l-2.8-2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
           </div>
           <div>
-            <div class="hero-card-title">Cliente chega pronto para fechar</div>
-            <div class="hero-card-desc">Antes do primeiro "Olá", ele já informou serviço, horário e expectativa.</div>
+            <div class="hero-card-title">Inteligência antes do primeiro contato</div>
+            <div class="hero-card-desc">O sistema entende intenção, contexto e preferência — antes do seu cliente digitar "Olá".</div>
           </div>
         </div>
         <div class="hero-card">
           <div class="hero-card-icon">
-            <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.5"/><path d="M9 5.5v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 18 18" fill="none"><path d="M2 14c0-3.3 2.7-6 6-6h2c3.3 0 6 2.7 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M14 8l2 2-2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <div>
-            <div class="hero-card-title">Suas perguntas respondidas automaticamente</div>
-            <div class="hero-card-desc">O fluxo coleta tudo antes de você precisar perguntar. Zero repetição.</div>
+            <div class="hero-card-title">Clientes mais preparados. Conversas mais inteligentes.</div>
+            <div class="hero-card-desc">Você entra na conversa com contexto completo. Sem repetição. Só para fechar.</div>
           </div>
         </div>
         <div class="hero-card">
           <div class="hero-card-icon">
-            <svg viewBox="0 0 18 18" fill="none"><path d="M2.5 9l4 4 9-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 18 18" fill="none"><path d="M3 9.5C3 6.46 5.46 4 8.5 4S14 6.46 14 9.5M6 14c0-1.66 1.12-3 2.5-3S11 12.34 11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8.5" cy="9.5" r="1.5" fill="currentColor"/></svg>
           </div>
           <div>
-            <div class="hero-card-title">Identidade visual do seu negócio</div>
-            <div class="hero-card-desc">Cores, tom e linguagem personalizados para a sua marca em 48h.</div>
+            <div class="hero-card-title">Relacionamento que gera recorrência</div>
+            <div class="hero-card-desc">A IA aprende padrões, antecipa retornos e mantém o cliente conectado à sua marca.</div>
           </div>
         </div>
       </div>
@@ -1012,9 +1170,9 @@ body {
     <div class="section-inner">
       <div class="section-label">
         <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        O problema
+        O problema real
       </div>
-      <h2 class="section-headline">Não perca tempo com conversas repetitivas</h2>
+      <h2 class="section-headline">A conversa errada custa mais do que você imagina</h2>
       <div class="problema-grid">
         <div class="problema-img">
           <svg class="problema-illustration" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1025,8 +1183,8 @@ body {
             <rect x="100" y="104" width="120" height="32" rx="10" fill="rgba(255,255,255,0.12)"/>
             <text x="115" y="125" font-size="10" fill="rgba(255,255,255,0.7)" font-family="monospace">Tem horário livre?</text>
             <rect x="78" y="148" width="144" height="52" rx="10" fill="rgba(26,122,60,0.35)" stroke="rgba(26,122,60,0.4)" stroke-width="1"/>
-            <text x="92" y="168" font-size="10" fill="rgba(255,255,255,0.9)" font-family="monospace">✓ Dados coletados</text>
-            <text x="92" y="183" font-size="10" fill="rgba(245,200,0,0.9)" font-family="monospace">Cliente qualificado</text>
+            <text x="92" y="168" font-size="10" fill="rgba(255,255,255,0.9)" font-family="monospace">✓ Contexto mapeado</text>
+            <text x="92" y="183" font-size="10" fill="rgba(245,200,0,0.9)" font-family="monospace">Cliente inteligente</text>
             <line x1="88" y1="215" x2="212" y2="215" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
             <rect x="84" y="224" width="65" height="18" rx="9" fill="rgba(22,163,74,0.3)" stroke="rgba(22,163,74,0.4)" stroke-width="1"/>
             <text x="100" y="237" font-size="8.5" fill="#86efac" font-family="monospace">Automático</text>
@@ -1035,7 +1193,7 @@ body {
           </svg>
         </div>
         <div class="problema-content">
-          <p class="section-sub">Automatize o início da conversa sem perder a sensação de atendimento humano, enquanto você ganha tempo para focar no que realmente importa.</p>
+          <p class="section-sub">Toda conversa genérica é uma oportunidade perdida. Quando o cliente chega sem contexto, você gasta energia respondendo o óbvio — e perde o momento certo de converter.</p>
           <button class="btn-demo" onclick="openConv()">
             Solicitar demonstração
             <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1052,50 +1210,50 @@ body {
         <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
         Antes e depois
       </div>
-      <h2 class="section-headline" style="max-width:none;margin-bottom:36px;">a diferença é clara</h2>
+      <h2 class="section-headline" style="max-width:none;margin-bottom:36px;">a camada inteligente muda tudo</h2>
       <div class="antes-grid">
         <div class="antes-col sem">
           <div class="antes-col-header">
-            <div class="antes-col-badge">Sem pré-atendimento</div>
+            <div class="antes-col-badge">Sem Atelier</div>
           </div>
-          <div class="antes-col-title">Caos no WhatsApp</div>
+          <div class="antes-col-title">Relacionamento reativo</div>
           <div class="antes-item">
             <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div class="antes-item-text">Mensagens repetidas sobre preços e horários</div>
-          </div>
-          <div class="antes-item">
-            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div class="antes-item-text">Cliente perdido sem qualificação prévia</div>
+            <div class="antes-item-text">Você responde as mesmas perguntas todos os dias</div>
           </div>
           <div class="antes-item">
             <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div class="antes-item-text">Perguntas manuais a cada novo contato</div>
+            <div class="antes-item-text">Nenhum contexto sobre quem está chegando</div>
           </div>
           <div class="antes-item">
             <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div class="antes-item-text">Conversa desorganizada, sem foco</div>
+            <div class="antes-item-text">Cliente some e você não sabe o motivo</div>
+          </div>
+          <div class="antes-item">
+            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+            <div class="antes-item-text">Sem previsibilidade. Sem recorrência. Sem dados.</div>
           </div>
         </div>
         <div class="antes-col com">
           <div class="antes-col-header">
             <div class="antes-col-badge">Com Atelier</div>
           </div>
-          <div class="antes-col-title">Fluxo inteligente</div>
+          <div class="antes-col-title">Inteligência contínua</div>
           <div class="antes-item">
             <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="antes-item-text">Cliente chega qualificado com necessidades claras</div>
+            <div class="antes-item-text">Cliente chega com contexto, intenção e histórico mapeados</div>
           </div>
           <div class="antes-item">
             <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="antes-item-text">Horários definidos antes do primeiro contato</div>
+            <div class="antes-item-text">A IA aprende padrões e antecipa necessidades</div>
           </div>
           <div class="antes-item">
             <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="antes-item-text">Serviço desejado e histórico já coletados</div>
+            <div class="antes-item-text">Relacionamento contínuo — o cliente volta sem você pedir</div>
           </div>
           <div class="antes-item">
             <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="antes-item-text">Conversa objetiva — você só entra para fechar</div>
+            <div class="antes-item-text">Previsibilidade real. Você só entra para fechar.</div>
           </div>
         </div>
       </div>
@@ -1105,37 +1263,37 @@ body {
   <!-- CARROSSEL -->
   <section class="section-cards">
     <div class="cards-head">
-      <div class="cards-head-label">Por que usar</div>
-      <h2 class="cards-head-title">Mais resultado. Menos esforço.</h2>
+      <div class="cards-head-label">O que a IA entrega</div>
+      <h2 class="cards-head-title">Automatize o início. Humanize o fechamento.</h2>
     </div>
     <div class="carousel-track-wrap" id="carouselWrap">
       <div class="carousel-track" id="carouselTrack">
         <div class="carousel-card c-blue">
-          <div class="carousel-card-num">01 — Acesso</div>
+          <div class="carousel-card-num">01 — Conversão</div>
           <div class="carousel-card-body">
-            <div class="carousel-card-title">facilite o acesso do cliente</div>
-            <div class="carousel-card-desc">Link único que funciona em qualquer canal — Instagram, WhatsApp, site, bio ou QR code.</div>
+            <div class="carousel-card-title">visitantes viram clientes automaticamente</div>
+            <div class="carousel-card-desc">A IA conduz o visitante por uma jornada inteligente antes do primeiro contato humano — e entrega um lead qualificado.</div>
           </div>
         </div>
         <div class="carousel-card c-purple">
-          <div class="carousel-card-num">02 — Faturamento</div>
+          <div class="carousel-card-num">02 — Inteligência</div>
           <div class="carousel-card-body">
-            <div class="carousel-card-title">aumente seu faturamento</div>
-            <div class="carousel-card-desc">Menos tempo em triagem significa mais tempo para atender. Mais atendimentos, mais receita.</div>
+            <div class="carousel-card-title">aprende como seus clientes decidem</div>
+            <div class="carousel-card-desc">O sistema mapeia padrões de comportamento, preferências e intenção — e melhora a cada interação.</div>
           </div>
         </div>
         <div class="carousel-card c-yellow">
-          <div class="carousel-card-num">03 — Tempo</div>
+          <div class="carousel-card-num">03 — Recorrência</div>
           <div class="carousel-card-body">
-            <div class="carousel-card-title">economize tempo</div>
-            <div class="carousel-card-desc">Elimine as mesmas perguntas de sempre. O sistema coleta o que você precisa saber automaticamente.</div>
+            <div class="carousel-card-title">seu negócio começa a prever retornos</div>
+            <div class="carousel-card-desc">A IA identifica janelas de reengajamento e mantém o relacionamento ativo — sem esforço manual.</div>
           </div>
         </div>
         <div class="carousel-card c-green">
           <div class="carousel-card-num">04 — Personalização</div>
           <div class="carousel-card-body">
-            <div class="carousel-card-title">personalize conversas do seu jeito</div>
-            <div class="carousel-card-desc">Fluxo, tom, cores e identidade visual criados para o seu negócio — não um template genérico.</div>
+            <div class="carousel-card-title">cada cliente sente que foi feito para ele</div>
+            <div class="carousel-card-desc">Tom, linguagem, identidade e fluxo criados para a sua marca. Não existe "padrão" aqui.</div>
           </div>
         </div>
       </div>
@@ -1147,9 +1305,9 @@ body {
     <div class="section-inner">
       <div class="section-label">
         <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        Integrações
+        Onde a IA está presente
       </div>
-      <h2 class="section-headline">integre suas principais redes sociais</h2>
+      <h2 class="section-headline">a camada inteligente em todos os canais</h2>
       <div class="integ-grid">
         <div class="integ-pill"><span class="integ-pill-dot"></span> Instagram</div>
         <div class="integ-pill"><span class="integ-pill-dot"></span> WhatsApp</div>
@@ -1157,11 +1315,132 @@ body {
         <div class="integ-pill"><span class="integ-pill-dot"></span> Facebook</div>
         <div class="integ-pill"><span class="integ-pill-dot"></span> Shopify</div>
       </div>
-      <p class="integ-sub">conecte-se com o seu público com mais facilidade.</p>
+      <p class="integ-sub">Um link. Qualquer canal. A mesma inteligência trabalhando 24h por você.</p>
       <button class="btn-demo" onclick="openConv()">
         Solicitar demonstração
         <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
+    </div>
+  </section>
+
+  <!-- NOVA SEÇÃO — RELACIONAMENTO INTELIGENTE -->
+  <section class="section-relac">
+    <div class="section-inner">
+      <div class="section-label">
+        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
+        Relacionamento inteligente
+      </div>
+      <h2 class="section-headline relac-headline">A IA que aprende como seus clientes compram.</h2>
+      <p class="section-sub relac-sub">Cada interação revela padrões. A plataforma entende preferências, identifica comportamentos recorrentes e constrói uma visão completa de quem está chegando até você — antes mesmo da conversa começar.</p>
+      <div class="relac-grid">
+        <div class="relac-card">
+          <div class="relac-card-num">01</div>
+          <div class="relac-card-content">
+            <div class="relac-card-title">Mapeia intenção antes do contato</div>
+            <div class="relac-card-desc">O sistema entende o que o cliente procura — e prepara você com contexto real, não suposições.</div>
+          </div>
+        </div>
+        <div class="relac-card">
+          <div class="relac-card-num">02</div>
+          <div class="relac-card-content">
+            <div class="relac-card-title">Identifica padrões de decisão</div>
+            <div class="relac-card-desc">A IA reconhece como cada perfil de cliente toma decisões — e adapta a experiência em tempo real.</div>
+          </div>
+        </div>
+        <div class="relac-card">
+          <div class="relac-card-num">03</div>
+          <div class="relac-card-content">
+            <div class="relac-card-title">Cria continuidade no atendimento</div>
+            <div class="relac-card-desc">Histórico, preferências e contexto preservados. Cada retorno parece uma conversa que nunca parou.</div>
+          </div>
+        </div>
+        <div class="relac-card">
+          <div class="relac-card-num">04</div>
+          <div class="relac-card-content">
+            <div class="relac-card-title">Antecipa necessidades futuras</div>
+            <div class="relac-card-desc">Com dados suficientes, a plataforma começa a prever quando o cliente vai precisar de você — antes de ele saber.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOVA SEÇÃO — RECORRÊNCIA E RETORNO -->
+  <section class="section-recor">
+    <div class="section-inner">
+      <div class="section-label">
+        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
+        Recorrência e retorno
+      </div>
+      <div class="recor-layout">
+        <div class="recor-left">
+          <h2 class="section-headline recor-headline">Seu negócio começa a prever retornos.</h2>
+          <p class="recor-sub">O cliente que você atendeu hoje não é perdido amanhã. A IA mantém o relacionamento ativo, identifica o momento certo de reengajar e cria previsibilidade real no seu faturamento.</p>
+          <button class="btn-demo" onclick="openConv()">
+            Quero conhecer
+            <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="recor-stats">
+          <div class="recor-stat">
+            <div class="recor-stat-value">+</div>
+            <div class="recor-stat-label">Recorrência</div>
+            <div class="recor-stat-desc">Clientes que voltam por conta própria — porque a experiência foi memorável.</div>
+          </div>
+          <div class="recor-stat">
+            <div class="recor-stat-value">↑</div>
+            <div class="recor-stat-label">Conversão</div>
+            <div class="recor-stat-desc">Leads que chegam preparados fecham mais rápido e com menos objeção.</div>
+          </div>
+          <div class="recor-stat">
+            <div class="recor-stat-value">∞</div>
+            <div class="recor-stat-label">Relacionamento</div>
+            <div class="recor-stat-desc">A conversa não termina no primeiro atendimento. Ela continua evoluindo.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOVA SEÇÃO — EXPERIÊNCIA DO CLIENTE -->
+  <section class="section-exp">
+    <div class="section-inner">
+      <div class="section-label">
+        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
+        Experiência do cliente
+      </div>
+      <h2 class="section-headline exp-headline">Como seu cliente sente o atendimento.</h2>
+      <p class="section-sub exp-sub">A tecnologia desaparece. O que fica é a sensação de ter sido entendido antes mesmo de explicar.</p>
+      <div class="exp-grid">
+        <div class="exp-item">
+          <div class="exp-item-icon">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6c0 4-6 10-6 10S4 12 4 8a6 6 0 016-6z" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+          </div>
+          <div class="exp-item-title">Menos repetição</div>
+          <div class="exp-item-desc">O cliente não precisa se apresentar do zero a cada vez. O contexto já está lá.</div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-item-icon">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M10 17V3M4 9l6-6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="exp-item-title">Mais clareza</div>
+          <div class="exp-item-desc">A jornada é clara, fluida e conduzida. Sem confusão, sem atrito desnecessário.</div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-item-icon">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="exp-item-title">Sensação premium</div>
+          <div class="exp-item-desc">A experiência reflete a identidade da sua marca — não uma automação genérica.</div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-item-icon">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2.4 5.4L18 8.6l-4 3.9.9 5.5L10 15.4l-4.9 2.6.9-5.5-4-3.9 5.6-.8L10 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="exp-item-title">Personalização real</div>
+          <div class="exp-item-desc">Cada cliente sente que a conversa foi criada especificamente para o momento dele.</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1172,8 +1451,8 @@ body {
         <span class="dot"></span>
         Próximo passo
       </div>
-      <h2 class="cta-final-title">Pronto para transformar como seus clientes <span class="accent">chegam até você?</span></h2>
-      <p class="cta-final-sub">Vamos entender o seu negócio, entender o que seus clientes precisam, e criar uma experiência feita sob medida para a sua realidade.</p>
+      <h2 class="cta-final-title">A camada inteligente entre<br><span class="accent">sua empresa e seus clientes.</span></h2>
+      <p class="cta-final-sub">Vamos entender o seu negócio, mapear seus clientes e construir uma inteligência que converte, retém e gera recorrência — automaticamente.</p>
       <button class="cta-final-btn" onclick="openConv()">
         Solicitar demonstração
         <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1540,26 +1819,26 @@ const COLOR_VARIANTS = [
 ];
 
 /* ── CONVERSA — SCRIPT ─────────────────────────────────────── */
-// Cada passo: { id, etapa, microcopy (opcional), question, type, options/placeholder }
+// Cada passo: { id, etapa, messages, type, options/placeholder, key, timed? }
 const CONV_STEPS = [
   // Abertura
   {
     id: 'intro',
     etapa: 0,
     messages: [
-      { text: 'Antes de começarmos, quero te mostrar uma coisa importante…', delay: 0 },
-      { text: 'Nosso objetivo não é apenas criar uma página bonita. Queremos fazer o seu cliente chegar até você <strong>mais preparado, mais decidido</strong> — e com informações que realmente ajudam no atendimento.', delay: 1400 },
-      { text: 'Para criar algo realmente personalizado para o seu negócio, preciso te fazer algumas perguntas. Pode ser?', delay: 2800, isQuestion: true },
+      { text: 'Oi! Antes de começar, quero te contar uma coisa…', delay: 0 },
+      { text: 'O que fazemos aqui não é criar uma página de perguntas. É entender o seu negócio fundo o suficiente para construir uma <strong>inteligência que trabalha por você</strong> — antes de qualquer cliente mandar "Oi".',  delay: 1400 },
+      { text: 'Posso fazer algumas perguntas rápidas para entender melhor a sua realidade?', delay: 3000, isQuestion: true },
     ],
     type: 'options',
-    options: ['Sim, pode começar!', 'Claro, vamos lá']
+    options: ['Pode sim, vamos lá!', 'Claro, pode começar']
   },
   // Etapa 1 — Conexão
   {
     id: 'nome',
     etapa: 1,
     messages: [
-      { text: 'Ótimo! Vamos começar pelo básico. <strong>Qual é o seu nome?</strong>', delay: 0 },
+      { text: 'Ótimo! Vou começar pelo mais simples. <strong>Qual é o seu nome?</strong>', delay: 0 },
     ],
     type: 'text',
     placeholder: 'Ex: Ana Lima, João Costa…',
@@ -1569,79 +1848,85 @@ const CONV_STEPS = [
     id: 'nicho',
     etapa: 1,
     messages: [
-      { text: 'Prazer, {nome}! Que incrível ter você aqui. 🙌', delay: 0 },
-      { text: 'Cada negócio tem um jeito único de atender — e é exatamente isso que queremos preservar. <strong>Em que área você trabalha?</strong>', delay: 1200, isQuestion: true },
+      { text: 'Prazer, {nome}! Feliz em ter você aqui. 🙌', delay: 0 },
+      { text: 'Cada negócio tem uma forma única de se relacionar com clientes. E é esse jeito — o <em>seu</em> — que a gente quer preservar. <strong>Em que área você atua?</strong>', delay: 1300, isQuestion: true },
     ],
     type: 'options',
     options: ['Salão / Barbearia', 'Clínica / Saúde', 'Estética / Bem-estar', 'Nutrição / Fitness', 'E-commerce / Loja', 'Outro segmento'],
-    key: 'nicho'
+    key: 'nicho',
+    timed: true
   },
   {
     id: 'atendimento',
     etapa: 1,
     messages: [
-      { text: '{nicho}! Um mercado onde a <strong>primeira impressão</strong> conta muito.', delay: 0 },
-      { text: 'Como você atende hoje — o cliente agenda antes ou chega direto?', delay: 1000, isQuestion: true },
+      { text: '{nicho} — um segmento onde a <strong>primeira impressão</strong> define tudo.', delay: 0 },
+      { text: 'Me conta: como seus clientes chegam até você hoje?', delay: 900, isQuestion: true },
     ],
     type: 'options',
-    options: ['Agendamento prévio', 'Chegada por ordem', 'Misto (agendamento + espontâneo)', 'Atendimento online'],
-    key: 'atendimento'
+    options: ['Por agendamento prévio', 'Chegam por ordem de chegada', 'Misto — agendamento e espontâneo', 'Atendimento online'],
+    key: 'atendimento',
+    timed: true
   },
   // Etapa 2 — Entendimento
   {
     id: 'dificuldade',
     etapa: 2,
     messages: [
-      { text: 'Muitos negócios acabam perdendo tempo com perguntas repetitivas todos os dias.', delay: 0, isInsight: true },
-      { text: 'Qual é a <strong>principal dificuldade</strong> que você enfrenta hoje no WhatsApp com seus clientes?', delay: 1100, isQuestion: true },
+      { text: 'Sabe o que a maioria dos negócios descobre tarde demais? Que o problema não era o produto — era a <strong>conversa antes do produto</strong>.', delay: 0, isInsight: true },
+      { text: 'O que mais te consome hoje no dia a dia com os clientes?', delay: 1200, isQuestion: true },
     ],
     type: 'options',
-    options: ['Muitas perguntas repetidas', 'Clientes sem compromisso', 'Dificuldade de organizar agenda', 'Clientes chegam sem informações', 'Muito tempo no celular'],
-    key: 'dificuldade'
+    options: ['Responder as mesmas perguntas todo dia', 'Clientes que somem sem avisar', 'Agenda difícil de organizar', 'Clientes chegam sem entender o serviço', 'Tempo demais no celular'],
+    key: 'dificuldade',
+    timed: true
   },
   {
     id: 'perguntas',
     etapa: 2,
     messages: [
-      { text: 'Faz todo sentido. A ideia aqui é <strong>transformar essas situações em uma experiência mais inteligente</strong>.', delay: 0 },
-      { text: 'Quais são as perguntas que seus clientes mais fazem antes de marcar?', delay: 900, isQuestion: true },
+      { text: 'Faz total sentido. Essas situações drenam energia e desviam o foco do que realmente importa.', delay: 0 },
+      { text: 'Quais perguntas seus clientes mais fazem <em>antes</em> de agendar ou comprar?', delay: 1000, isQuestion: true },
     ],
     type: 'options',
-    options: ['Preços e valores', 'Horários disponíveis', 'Como funciona o serviço', 'Se aceita convênio/parcelamento', 'Localização e como chegar'],
-    key: 'perguntas'
+    options: ['Preços e formas de pagamento', 'Horários disponíveis', 'Como funciona o serviço', 'Se aceita convênio', 'Localização e como chegar'],
+    key: 'perguntas',
+    timed: true
   },
   // Etapa 3 — Personalidade
   {
     id: 'tom',
     etapa: 3,
     messages: [
-      { text: 'Quanto mais entendermos sua rotina, melhor conseguimos estruturar o seu pré-atendimento.', delay: 0, isInsight: true },
-      { text: 'Como você quer que seus clientes se <strong>sintam</strong> durante a conversa com a sua marca?', delay: 1000, isQuestion: true },
+      { text: 'Quanto mais eu entendo sua rotina, mais precisa fica a inteligência que vamos construir para você.', delay: 0, isInsight: true },
+      { text: 'Quando um cliente conversa com a sua marca, como você quer que ele se <strong>sinta</strong>?', delay: 1100, isQuestion: true },
     ],
     type: 'options',
-    options: ['Acolhido e à vontade', 'Confiante e seguro', 'Empolgado e animado', 'Respeitado e bem atendido'],
-    key: 'tom'
+    options: ['Acolhido e à vontade', 'Confiante e seguro', 'Animado e engajado', 'Respeitado e bem atendido'],
+    key: 'tom',
+    timed: true
   },
   {
     id: 'visual',
     etapa: 3,
     messages: [
-      { text: 'Perfeito. E quanto à <strong>identidade visual</strong> — qual tom combina mais com a sua marca?', delay: 0, isQuestion: true },
+      { text: 'Isso vai moldar como a experiência vai se comunicar com o seu cliente. Agora me conta — <strong>qual estética combina mais com a sua marca?</strong>', delay: 0, isQuestion: true },
     ],
     type: 'options',
     options: ['Sofisticado e premium', 'Moderno e tecnológico', 'Quente e acolhedor', 'Limpo e minimalista'],
-    key: 'visual'
+    key: 'visual',
+    timed: true
   },
   // Etapa 4 — Expectativa
   {
     id: 'melhoria',
     etapa: 4,
     messages: [
-      { text: 'Cada empresa possui um jeito único de atender. E é exatamente isso que queremos preservar.', delay: 0, isInsight: true },
-      { text: 'Se você pudesse <strong>mudar uma coisa</strong> hoje no seu processo de atendimento, o que seria?', delay: 1100, isQuestion: true },
+      { text: 'Cada empresa tem um ponto onde tudo poderia fluir melhor. E identificar esse ponto é o começo de tudo.', delay: 0, isInsight: true },
+      { text: 'Se você pudesse mudar <strong>uma coisa agora</strong> na forma como seus clientes chegam até você, o que seria?', delay: 1200, isQuestion: true },
     ],
     type: 'text',
-    placeholder: 'Ex: queria que os clientes chegassem mais preparados…',
+    placeholder: 'Ex: queria que já chegassem sabendo o preço e prontos para marcar…',
     key: 'melhoria'
   },
   // Final
@@ -1649,9 +1934,9 @@ const CONV_STEPS = [
     id: 'fim',
     etapa: 4,
     messages: [
-      { text: 'Que resposta poderosa. 🎯 Isso mostra exatamente onde a gente pode fazer a diferença para você.', delay: 0 },
-      { text: 'Já tenho o suficiente para entender o seu negócio e criar uma experiência de pré-atendimento <strong>feita sob medida</strong> para a sua realidade.', delay: 1300 },
-      { text: 'Quando você clicar em continuar, vou gerar um resumo completo e te levar direto para a conversa — sem formulário, sem burocracia.', delay: 2500 },
+      { text: 'Isso é exatamente o tipo de clareza que a gente transforma em inteligência. 🎯', delay: 0 },
+      { text: 'Já tenho o que preciso para entender o seu negócio e construir uma experiência que <strong>converte, retém e cria recorrência</strong> — no piloto automático.', delay: 1200 },
+      { text: 'Quando você continuar, vou gerar um resumo personalizado e te levar diretamente para a conversa. Sem formulário. Sem burocracia.', delay: 2600 },
     ],
     type: 'final'
   }
@@ -1801,6 +2086,8 @@ function interpolate(str) {
 function renderAnswerArea(step) {
   const inner = document.getElementById('conv-answer-inner');
   inner.innerHTML = '';
+  // Limpa qualquer timer anterior
+  if (window._convTimer) { clearInterval(window._convTimer); window._convTimer = null; }
 
   if (step.type === 'options') {
     const hint = document.createElement('div');
@@ -1814,10 +2101,44 @@ function renderAnswerArea(step) {
       const btn = document.createElement('button');
       btn.className = 'conv-option';
       btn.textContent = opt;
-      btn.onclick = () => handleConvOption(opt, step);
+      btn.onclick = () => {
+        if (window._convTimer) { clearInterval(window._convTimer); window._convTimer = null; }
+        handleConvOption(opt, step);
+      };
       opts.appendChild(btn);
     });
     inner.appendChild(opts);
+
+    // Timer elegante de 25s apenas para steps com timed:true
+    if (step.timed) {
+      const timerBar = document.createElement('div');
+      timerBar.className = 'conv-timer-bar';
+      timerBar.innerHTML = `
+        <div class="conv-timer-track"><div class="conv-timer-fill" id="conv-timer-fill"></div></div>
+        <div class="conv-timer-label" id="conv-timer-label">25s</div>`;
+      inner.appendChild(timerBar);
+
+      let secs = 25;
+      const fill = timerBar.querySelector('#conv-timer-fill');
+      const label = timerBar.querySelector('#conv-timer-label');
+      fill.style.width = '100%';
+
+      window._convTimer = setInterval(() => {
+        secs--;
+        const pct = Math.max(0, (secs / 25) * 100);
+        fill.style.width = pct + '%';
+        label.textContent = secs + 's';
+        if (secs <= 8) label.classList.add('ending');
+        if (secs <= 0) {
+          clearInterval(window._convTimer);
+          window._convTimer = null;
+          // Após 25s: avança automaticamente com a primeira opção não selecionada
+          // (apenas continua — não força resposta, mantém UX confortável)
+          label.textContent = '—';
+          fill.style.width = '0%';
+        }
+      }, 1000);
+    }
 
   } else if (step.type === 'text') {
     const hint = document.createElement('div');
