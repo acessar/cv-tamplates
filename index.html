@@ -81,7 +81,10 @@ body {
    SCREENS
 ═══════════════════════════════════════════════════════════ */
 .screen { display: none; min-height: 100vh; }
+/* screen-conv tem seu próprio controle de altura — override do min-height */
+#screen-conv.screen { min-height: unset; }
 .screen.active { display: block; animation: screenIn 0.28s cubic-bezier(.2,.7,.2,1) both; }
+#screen-conv.active { display: flex; }
 
 @keyframes screenIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -576,14 +579,43 @@ body {
 /* ═══════════════════════════════════════════════════════════
    SCREEN CONVERSACIONAL — NOVA CAMADA PREMIUM
 ═══════════════════════════════════════════════════════════ */
+
+/*
+  ARQUITETURA DE VIEWPORT:
+  #screen-conv ocupa exatamente 100dvh (dynamic viewport height).
+  Divide em 3 faixas empilhadas com flexbox:
+    1. .conv-masthead  — altura fixa (58px), sticky topo
+    2. .conv-scroll-area — flex:1, overflow-y scroll, contém .conv-stage
+    3. .conv-answer-area — altura dinâmica, sticky base
+  Resultado: nenhuma mensagem fica escondida. Nunca.
+*/
+
 #screen-conv {
   background: #0a0f1a;
-  min-height: 100vh;
+  /* Ocupa exatamente a viewport visível do browser — inclusive mobile */
+  height: 100dvh;
+  height: 100svh; /* fallback: small viewport height (exclui barras de browser) */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* impede scroll no container pai */
+  /* Sem min-height — queremos exatamente a viewport */
+}
+
+/* Zona de scroll da conversa — cresce entre header e footer */
+.conv-scroll-area {
+  flex: 1 1 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
 }
 
 .conv-masthead {
+  /* sticky dentro do flex — fica sempre visível no topo */
   position: sticky; top: 0; z-index: 100;
-  background: rgba(10,15,26,0.95);
+  flex-shrink: 0; /* não comprime */
+  background: rgba(10,15,26,0.98);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255,255,255,0.07);
@@ -605,10 +637,14 @@ body {
   transition: width 0.5s cubic-bezier(.4,0,.2,1);
 }
 
-/* Stage de conversa */
+/* Stage de conversa — dentro da zona de scroll */
 .conv-stage {
-  max-width: 800px; margin: 0 auto; padding: 48px 24px 120px;
+  max-width: 800px; margin: 0 auto;
+  /* padding-top generoso para respiro inicial acima da 1ª mensagem */
+  padding: 32px 24px 32px;
   display: flex; flex-direction: column; gap: 0;
+  /* min-height garante que mensagens curtas não ficam no topo absoluto */
+  min-height: 100%;
 }
 
 /* Mensagem do sistema (balão esquerda) */
@@ -690,14 +726,19 @@ body {
 
 /* Área de resposta do usuário */
 .conv-answer-area {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: rgba(10,15,26,0.97);
+  /* sticky-bottom dentro do flex de #screen-conv — nunca sobrepõe mensagens */
+  position: sticky;
+  bottom: 0;
+  flex-shrink: 0; /* não comprime */
+  z-index: 50;
+  background: rgba(10,15,26,0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid rgba(255,255,255,0.07);
-  padding: 16px 24px 20px;
-  z-index: 50;
+  /* safe-area para iPhones com home indicator */
+  padding: 14px 24px calc(16px + env(safe-area-inset-bottom, 0px));
   animation: slideUp 0.35s cubic-bezier(.2,.7,.2,1) both;
+  transition: opacity 0.2s ease;
 }
 @keyframes slideUp {
   from { transform: translateY(100%); opacity: 0; }
@@ -869,8 +910,8 @@ body {
   .collection { padding: 24px 16px 80px; }
   .demo-actions { width: 100%; flex-wrap: wrap; }
   .demo-btn { flex: 1; justify-content: center; }
-  .conv-stage { padding: 32px 16px 140px; }
-  .conv-answer-area { padding: 12px 16px 16px; }
+  .conv-stage { padding: 28px 16px 28px; }
+  .conv-answer-area { padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
   .conv-option { font-size: 13px; padding: 9px 14px; }
 }
 @media (max-width: 480px) {
@@ -1372,8 +1413,10 @@ body {
     </div>
   </header>
 
-  <div class="conv-stage" id="conv-stage">
-    <!-- Mensagens injetadas pelo JS -->
+  <div class="conv-scroll-area" id="conv-scroll-area">
+    <div class="conv-stage" id="conv-stage">
+      <!-- Mensagens injetadas pelo JS -->
+    </div>
   </div>
 
   <div class="conv-answer-area" id="conv-answer-area">
@@ -1644,7 +1687,14 @@ function openConv() {
   document.getElementById('conv-answer-inner').innerHTML = '';
   document.getElementById('conv-progress-fill').style.width = '0%';
   document.getElementById('conv-step-label').textContent = 'Aquecendo…';
+  const answerArea = document.getElementById('conv-answer-area');
+  answerArea.style.display = '';
+  answerArea.style.opacity = '1';
+  answerArea.style.pointerEvents = 'auto';
   goScreen('screen-conv');
+  // Reseta scroll do container interno
+  const scroller = document.getElementById('conv-scroll-area');
+  if (scroller) scroller.scrollTop = 0;
   setTimeout(() => runConvStep(), 400);
 }
 
@@ -1834,11 +1884,9 @@ function submitTextAnswer(step) {
 }
 
 function advanceConv() {
-  // Esconde resposta imediatamente
   const answerArea = document.getElementById('conv-answer-area');
   answerArea.style.opacity = '0';
   answerArea.style.pointerEvents = 'none';
-  answerArea.style.display = 'flex';
 
   convState.step++;
   if (convState.step < CONV_STEPS.length) {
@@ -1848,8 +1896,10 @@ function advanceConv() {
 
 function scrollConvBottom() {
   setTimeout(() => {
-    const stage = document.getElementById('conv-stage');
-    window.scrollTo({ top: stage.scrollHeight + 300, behavior: 'smooth' });
+    const scroller = document.getElementById('conv-scroll-area');
+    if (scroller) {
+      scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+    }
   }, 60);
 }
 
