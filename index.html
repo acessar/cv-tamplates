@@ -26,9 +26,16 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   --blue-dk:        #122654;
   --blue-lt:        #234da0;
 
-  --red-section:    #a01a1a;
-  --red-dk:         #7a0e0e;
-  --red-lt:         #c22020;
+  /* AJUSTE 3 — Vinho premium substitui vermelho */
+  --wine-section:   #3d0c1f;
+  --wine-dk:        #2a0714;
+  --wine-lt:        #5c1230;
+
+  /* Cores internas "Sem" e "Com" dentro da seção */
+  --antes-sem-bg:   #7a0e1e;
+  --antes-sem-lt:   #a01828;
+  --antes-com-bg:   #122654;
+  --antes-com-lt:   #1a3a7a;
 
   --white:          #ffffff;
   --off-white:      #f6f7f9;
@@ -81,7 +88,6 @@ body {
    SCREENS
 ═══════════════════════════════════════════════════════════ */
 .screen { display: none; min-height: 100vh; }
-/* screen-conv tem seu próprio controle de altura — override do min-height */
 #screen-conv.screen { min-height: unset; }
 .screen.active { display: block; animation: screenIn 0.28s cubic-bezier(.2,.7,.2,1) both; }
 #screen-conv.active { display: flex; }
@@ -190,7 +196,6 @@ body {
 .hero-cta:active { transform: scale(0.97); }
 .hero-cta svg { width: 16px; height: 16px; }
 
-/* Hero visual lado direito */
 .hero-visual { display: flex; flex-direction: column; gap: 12px; position: relative; }
 .hero-card {
   background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
@@ -262,39 +267,94 @@ body {
 .btn-demo svg { width: 15px; height: 15px; }
 
 /* ═══════════════════════════════════════════════════════════
-   SEÇÃO ANTES E DEPOIS — VERMELHO
+   AJUSTE 3 — SEÇÃO ANTES E DEPOIS — VINHO PREMIUM
 ═══════════════════════════════════════════════════════════ */
-.section-antes { background: var(--red-section); position: relative; overflow: hidden; }
+.section-antes {
+  background: var(--wine-section);
+  position: relative; overflow: hidden;
+}
 .section-antes::before {
   content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
   background-size: 26px 26px; pointer-events: none;
 }
+/* Gradiente sutil no topo para profundidade */
+.section-antes::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 200px;
+  background: linear-gradient(180deg, rgba(90,18,40,0.4) 0%, transparent 100%);
+  pointer-events: none;
+}
+
 .antes-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
 @media (min-width: 760px) { .antes-grid { grid-template-columns: 1fr 1fr; gap: 24px; } }
+
+/* Coluna SEM — vermelho forte sobre fundo vinho */
 .antes-col {
   border-radius: var(--r-lg); padding: 32px 28px;
   display: flex; flex-direction: column; gap: 16px;
+  position: relative; z-index: 1;
 }
-.antes-col.sem { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); }
-.antes-col.com { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); }
+.antes-col.sem {
+  background: linear-gradient(145deg, rgba(140,14,30,0.6) 0%, rgba(100,8,20,0.5) 100%);
+  border: 1px solid rgba(200,40,60,0.25);
+  box-shadow: inset 0 1px 0 rgba(255,100,100,0.08), 0 4px 20px rgba(0,0,0,0.3);
+}
+.antes-col.com {
+  background: linear-gradient(145deg, rgba(22,44,120,0.6) 0%, rgba(14,30,90,0.5) 100%);
+  border: 1px solid rgba(60,100,220,0.3);
+  box-shadow: inset 0 1px 0 rgba(100,140,255,0.1), 0 4px 20px rgba(0,0,0,0.3);
+}
+
 .antes-col-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .antes-col-badge {
   font-family: var(--mono); font-size: 11px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
   padding: 5px 11px; border-radius: 100px;
 }
-.antes-col.sem .antes-col-badge { background: rgba(220,38,38,0.35); color: #fca5a5; border: 1px solid rgba(220,38,38,0.3); }
-.antes-col.com .antes-col-badge { background: rgba(22,163,74,0.3); color: #86efac; border: 1px solid rgba(22,163,74,0.3); }
-.antes-col-title { font-family: var(--display); font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--white); line-height: 1.1; }
-.antes-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: var(--r-md); }
-.antes-col.sem .antes-item { background: rgba(0,0,0,0.2); }
-.antes-col.com .antes-item { background: rgba(255,255,255,0.06); }
-.antes-item-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-.antes-col.sem .antes-item-icon { background: rgba(220,38,38,0.3); color: #fca5a5; }
-.antes-col.com .antes-item-icon { background: rgba(22,163,74,0.35); color: #86efac; }
+/* Badge "Sem" — vermelho forte, legível sobre vinho */
+.antes-col.sem .antes-col-badge {
+  background: rgba(200,30,50,0.4);
+  color: #ffb3be;
+  border: 1px solid rgba(220,60,80,0.4);
+}
+/* Badge "Com" — azul premium */
+.antes-col.com .antes-col-badge {
+  background: rgba(30,70,180,0.4);
+  color: #a5c0ff;
+  border: 1px solid rgba(60,110,230,0.4);
+}
+.antes-col-title {
+  font-family: var(--display); font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800; letter-spacing: -0.02em;
+  color: var(--white); line-height: 1.1;
+}
+.antes-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; border-radius: var(--r-md);
+}
+.antes-col.sem .antes-item { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); }
+.antes-col.com .antes-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
+.antes-item-icon {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+/* Ícone "X" — vermelho nítido */
+.antes-col.sem .antes-item-icon {
+  background: rgba(200,30,50,0.35);
+  color: #ff8a97;
+}
+/* Ícone "✓" — azul/verde premium */
+.antes-col.com .antes-item-icon {
+  background: rgba(26,80,200,0.4);
+  color: #93c5fd;
+}
 .antes-item-icon svg { width: 11px; height: 11px; }
-.antes-item-text { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.85); line-height: 1.4; }
+.antes-item-text {
+  font-size: 14px; font-weight: 500;
+  color: rgba(255,255,255,0.88); line-height: 1.4;
+}
 
 /* ═══════════════════════════════════════════════════════════
    CARROSSEL DE CARDS
@@ -350,7 +410,7 @@ body {
 .integ-sub { font-size: 17px; font-weight: 400; color: rgba(255,255,255,0.65); max-width: 40ch; line-height: 1.55; margin-bottom: 36px; }
 
 /* ═══════════════════════════════════════════════════════════
-   SEÇÃO CTA FINAL — antes do footer
+   SEÇÃO CTA FINAL
 ═══════════════════════════════════════════════════════════ */
 .section-cta-final {
   background: var(--off-white);
@@ -401,7 +461,7 @@ body {
 .cta-final-note svg { width: 13px; height: 13px; color: var(--green-ui); }
 
 /* ═══════════════════════════════════════════════════════════
-   NOVA SEÇÃO — RELACIONAMENTO INTELIGENTE
+   SEÇÃO RELACIONAMENTO INTELIGENTE
 ═══════════════════════════════════════════════════════════ */
 .section-relac {
   background: var(--ink);
@@ -453,7 +513,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   NOVA SEÇÃO — RECORRÊNCIA
+   SEÇÃO RECORRÊNCIA
 ═══════════════════════════════════════════════════════════ */
 .section-recor {
   background: var(--green-hero);
@@ -497,7 +557,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   NOVA SEÇÃO — EXPERIÊNCIA DO CLIENTE
+   SEÇÃO EXPERIÊNCIA DO CLIENTE
 ═══════════════════════════════════════════════════════════ */
 .section-exp {
   background: var(--white);
@@ -533,7 +593,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TIMER ELEGANTE NO CHATBOT
+   AJUSTE 1 — TIMER COM SELEÇÃO MÚLTIPLA + BOTÃO CONTINUAR
 ═══════════════════════════════════════════════════════════ */
 .conv-timer-bar {
   display: flex; align-items: center; gap: 10px;
@@ -558,6 +618,48 @@ body {
 }
 .conv-timer-label.ending { color: rgba(245,200,0,0.6); }
 
+/* Opção selecionada — estado visual */
+.conv-option.selected {
+  background: rgba(245,200,0,0.18);
+  border-color: rgba(245,200,0,0.6);
+  color: var(--yellow-hl);
+}
+.conv-option.selected::before {
+  content: '✓ ';
+  font-weight: 700;
+}
+
+/* Botão Continuar — aparece após seleção */
+.conv-continue-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 12px 24px;
+  background: var(--yellow-hl); color: var(--ink);
+  font-family: var(--body); font-size: 14px; font-weight: 700;
+  border: none; border-radius: 10px; cursor: pointer;
+  transition: background 0.15s, transform 0.12s, opacity 0.2s;
+  letter-spacing: -0.01em;
+  box-shadow: 0 4px 12px rgba(245,200,0,0.3);
+  opacity: 0; pointer-events: none;
+  transform: translateY(4px);
+}
+.conv-continue-btn.visible {
+  opacity: 1; pointer-events: auto;
+  transform: translateY(0);
+  transition: background 0.15s, transform 0.2s cubic-bezier(.2,.7,.2,1), opacity 0.2s;
+}
+.conv-continue-btn:hover { background: var(--yellow-hl-dk); transform: translateY(-1px); }
+.conv-continue-btn:active { transform: scale(0.97); }
+.conv-continue-btn svg { width: 14px; height: 14px; }
+
+/* Row que contém opções + botão continuar lado a lado */
+.conv-options-row {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.conv-options-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap;
+}
+
 /* ═══════════════════════════════════════════════════════════
    FOOTER
 ═══════════════════════════════════════════════════════════ */
@@ -572,7 +674,7 @@ body {
 .footer-meta { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: rgba(255,255,255,0.4); }
 
 /* ═══════════════════════════════════════════════════════════
-   SCREENS INTERNAS — MASTHEAD COMPARTILHADO
+   MASTHEAD COMPARTILHADO
 ═══════════════════════════════════════════════════════════ */
 .masthead {
   position: sticky; top: 0; z-index: 100;
@@ -735,31 +837,17 @@ body {
 .demo-stage-hint svg { width: 13px; height: 13px; color: var(--blue-ui); }
 
 /* ═══════════════════════════════════════════════════════════
-   SCREEN CONVERSACIONAL — NOVA CAMADA PREMIUM
+   SCREEN CONVERSACIONAL
 ═══════════════════════════════════════════════════════════ */
-
-/*
-  ARQUITETURA DE VIEWPORT:
-  #screen-conv ocupa exatamente 100dvh (dynamic viewport height).
-  Divide em 3 faixas empilhadas com flexbox:
-    1. .conv-masthead  — altura fixa (58px), sticky topo
-    2. .conv-scroll-area — flex:1, overflow-y scroll, contém .conv-stage
-    3. .conv-answer-area — altura dinâmica, sticky base
-  Resultado: nenhuma mensagem fica escondida. Nunca.
-*/
-
 #screen-conv {
   background: #0a0f1a;
-  /* Ocupa exatamente a viewport visível do browser — inclusive mobile */
   height: 100dvh;
-  height: 100svh; /* fallback: small viewport height (exclui barras de browser) */
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* impede scroll no container pai */
-  /* Sem min-height — queremos exatamente a viewport */
+  overflow: hidden;
 }
 
-/* Zona de scroll da conversa — cresce entre header e footer */
 .conv-scroll-area {
   flex: 1 1 0;
   overflow-y: auto;
@@ -770,9 +858,8 @@ body {
 }
 
 .conv-masthead {
-  /* sticky dentro do flex — fica sempre visível no topo */
   position: sticky; top: 0; z-index: 100;
-  flex-shrink: 0; /* não comprime */
+  flex-shrink: 0;
   background: rgba(10,15,26,0.98);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -795,17 +882,13 @@ body {
   transition: width 0.5s cubic-bezier(.4,0,.2,1);
 }
 
-/* Stage de conversa — dentro da zona de scroll */
 .conv-stage {
   max-width: 800px; margin: 0 auto;
-  /* padding-top generoso para respiro inicial acima da 1ª mensagem */
   padding: 32px 24px 32px;
   display: flex; flex-direction: column; gap: 0;
-  /* min-height garante que mensagens curtas não ficam no topo absoluto */
   min-height: 100%;
 }
 
-/* Mensagem do sistema (balão esquerda) */
 .conv-msg {
   display: flex; align-items: flex-start; gap: 12px;
   margin-bottom: 20px;
@@ -847,7 +930,6 @@ body {
   box-shadow: 0 0 0 3px rgba(245,200,0,0.2);
 }
 
-/* Cursor de digitação */
 .conv-cursor {
   display: inline-block; width: 2px; height: 1em;
   background: var(--yellow-hl); border-radius: 1px;
@@ -859,7 +941,6 @@ body {
   50%    { opacity: 0; }
 }
 
-/* Typing indicator */
 .conv-typing {
   display: flex; align-items: center; gap: 12px;
   padding: 14px 0; margin-bottom: 12px;
@@ -882,18 +963,15 @@ body {
   40%        { transform: scale(1.1); opacity: 1; }
 }
 
-/* Área de resposta do usuário */
 .conv-answer-area {
-  /* sticky-bottom dentro do flex de #screen-conv — nunca sobrepõe mensagens */
   position: sticky;
   bottom: 0;
-  flex-shrink: 0; /* não comprime */
+  flex-shrink: 0;
   z-index: 50;
   background: rgba(10,15,26,0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid rgba(255,255,255,0.07);
-  /* safe-area para iPhones com home indicator */
   padding: 14px 24px calc(16px + env(safe-area-inset-bottom, 0px));
   animation: slideUp 0.35s cubic-bezier(.2,.7,.2,1) both;
   transition: opacity 0.2s ease;
@@ -909,7 +987,6 @@ body {
   color: rgba(255,255,255,0.3);
 }
 
-/* Opções de escolha múltipla */
 .conv-options { display: flex; flex-wrap: wrap; gap: 8px; }
 .conv-option {
   display: inline-flex; align-items: center; gap: 8px;
@@ -928,7 +1005,6 @@ body {
 }
 .conv-option:active { transform: scale(0.96); }
 
-/* Input de texto livre */
 .conv-input-row { display: flex; gap: 10px; align-items: flex-end; }
 .conv-text-input {
   flex: 1; padding: 13px 18px;
@@ -953,7 +1029,6 @@ body {
 .conv-send-btn:active { transform: scale(0.93); }
 .conv-send-btn svg { width: 18px; height: 18px; color: var(--ink); }
 
-/* Resposta do usuário (bolha direita) */
 .conv-user-msg {
   display: flex; justify-content: flex-end;
   margin-bottom: 20px;
@@ -966,7 +1041,6 @@ body {
   font-size: 15px; line-height: 1.55; color: var(--white); font-weight: 500;
 }
 
-/* Estado de conclusão */
 .conv-completion {
   text-align: center; padding: 40px 24px;
   animation: msgIn 0.5s ease both;
@@ -1003,7 +1077,7 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   SCREEN FORM (mantido para fallback)
+   SCREEN FORM
 ═══════════════════════════════════════════════════════════ */
 #screen-form { background: var(--off-white); }
 .form-wrap { max-width: 620px; margin: 0 auto; padding: 32px 20px 80px; }
@@ -1203,7 +1277,7 @@ body {
     </div>
   </section>
 
-  <!-- SEÇÃO ANTES E DEPOIS -->
+  <!-- SEÇÃO ANTES E DEPOIS — VINHO PREMIUM (AJUSTE 3) -->
   <section class="section-antes">
     <div class="section-inner">
       <div class="section-label">
@@ -1254,6 +1328,85 @@ body {
           <div class="antes-item">
             <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
             <div class="antes-item-text">Previsibilidade real. Você só entra para fechar.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO RELACIONAMENTO INTELIGENTE -->
+  <section class="section-relac">
+    <div class="section-inner">
+      <div class="section-label">
+        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
+        Relacionamento inteligente
+      </div>
+      <h2 class="section-headline relac-headline">A IA que aprende como seus clientes compram.</h2>
+      <p class="section-sub relac-sub">Cada interação revela padrões. A plataforma entende preferências, identifica comportamentos recorrentes e constrói uma visão completa de quem está chegando até você — antes mesmo da conversa começar.</p>
+      <div class="relac-grid">
+        <div class="relac-card">
+          <div class="relac-card-num">01</div>
+          <div class="relac-card-content">
+            <div class="relac-card-title">Mapeia intenção antes do contato</div>
+            <div class="relac-card-desc">O sistema entende o que o cliente procura — e prepara você com contexto real, não suposições.</div>
+          </div>
+        </div>
+        <div class="relac-card">
+          <div class="relac-card-num">02</div>
+          <div class="relac-card-content">
+            <div class="relac-card-title">Identifica padrões de decisão</div>
+            <div class="relac-card-desc">A IA reconhece como cada perfil de cliente toma decisões — e adapta a experiência em tempo real.</div>
+          </div>
+        </div>
+        <div class="relac-card">
+          <div class="relac-card-num">03</div>
+          <div class="relac-card-content">
+            <div class="relac-card-title">Cria continuidade no atendimento</div>
+            <div class="relac-card-desc">Histórico, preferências e contexto preservados. Cada retorno parece uma conversa que nunca parou.</div>
+          </div>
+        </div>
+        <div class="relac-card">
+          <div class="relac-card-num">04</div>
+          <div class="relac-card-content">
+            <div class="relac-card-title">Antecipa necessidades futuras</div>
+            <div class="relac-card-desc">Com dados suficientes, a plataforma começa a prever quando o cliente vai precisar de você — antes de ele saber.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO RECORRÊNCIA E RETORNO -->
+  <section class="section-recor">
+    <div class="section-inner">
+      <div class="section-label">
+        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
+        Recorrência e retorno
+      </div>
+      <div class="recor-layout">
+        <div class="recor-left">
+          <h2 class="section-headline recor-headline">Seu negócio começa a prever retornos.</h2>
+          <p class="recor-sub">O cliente que você atendeu hoje não é perdido amanhã. A IA mantém o relacionamento ativo, identifica o momento certo de reengajar e cria previsibilidade real no seu faturamento.</p>
+          <button class="btn-demo" onclick="openConv()">
+            Quero conhecer
+            <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="recor-stats">
+          <div class="recor-stat">
+            <div class="recor-stat-value">+</div>
+            <div class="recor-stat-label">Recorrência</div>
+            <div class="recor-stat-desc">Clientes que voltam por conta própria — porque a experiência foi memorável.</div>
+          </div>
+          <div class="recor-stat">
+            <div class="recor-stat-value">↑</div>
+            <div class="recor-stat-label">Conversão</div>
+            <div class="recor-stat-desc">Leads que chegam preparados fecham mais rápido e com menos objeção.</div>
+          </div>
+          <div class="recor-stat">
+            <div class="recor-stat-value">∞</div>
+            <div class="recor-stat-label">Relacionamento</div>
+            <div class="recor-stat-desc">A conversa não termina no primeiro atendimento. Ela continua evoluindo.</div>
           </div>
         </div>
       </div>
@@ -1320,127 +1473,6 @@ body {
         Solicitar demonstração
         <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-    </div>
-  </section>
-
-  <!-- NOVA SEÇÃO — RELACIONAMENTO INTELIGENTE -->
-  <section class="section-relac">
-    <div class="section-inner">
-      <div class="section-label">
-        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        Relacionamento inteligente
-      </div>
-      <h2 class="section-headline relac-headline">A IA que aprende como seus clientes compram.</h2>
-      <p class="section-sub relac-sub">Cada interação revela padrões. A plataforma entende preferências, identifica comportamentos recorrentes e constrói uma visão completa de quem está chegando até você — antes mesmo da conversa começar.</p>
-      <div class="relac-grid">
-        <div class="relac-card">
-          <div class="relac-card-num">01</div>
-          <div class="relac-card-content">
-            <div class="relac-card-title">Mapeia intenção antes do contato</div>
-            <div class="relac-card-desc">O sistema entende o que o cliente procura — e prepara você com contexto real, não suposições.</div>
-          </div>
-        </div>
-        <div class="relac-card">
-          <div class="relac-card-num">02</div>
-          <div class="relac-card-content">
-            <div class="relac-card-title">Identifica padrões de decisão</div>
-            <div class="relac-card-desc">A IA reconhece como cada perfil de cliente toma decisões — e adapta a experiência em tempo real.</div>
-          </div>
-        </div>
-        <div class="relac-card">
-          <div class="relac-card-num">03</div>
-          <div class="relac-card-content">
-            <div class="relac-card-title">Cria continuidade no atendimento</div>
-            <div class="relac-card-desc">Histórico, preferências e contexto preservados. Cada retorno parece uma conversa que nunca parou.</div>
-          </div>
-        </div>
-        <div class="relac-card">
-          <div class="relac-card-num">04</div>
-          <div class="relac-card-content">
-            <div class="relac-card-title">Antecipa necessidades futuras</div>
-            <div class="relac-card-desc">Com dados suficientes, a plataforma começa a prever quando o cliente vai precisar de você — antes de ele saber.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- NOVA SEÇÃO — RECORRÊNCIA E RETORNO -->
-  <section class="section-recor">
-    <div class="section-inner">
-      <div class="section-label">
-        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        Recorrência e retorno
-      </div>
-      <div class="recor-layout">
-        <div class="recor-left">
-          <h2 class="section-headline recor-headline">Seu negócio começa a prever retornos.</h2>
-          <p class="recor-sub">O cliente que você atendeu hoje não é perdido amanhã. A IA mantém o relacionamento ativo, identifica o momento certo de reengajar e cria previsibilidade real no seu faturamento.</p>
-          <button class="btn-demo" onclick="openConv()">
-            Quero conhecer
-            <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <div class="recor-stats">
-          <div class="recor-stat">
-            <div class="recor-stat-value">+</div>
-            <div class="recor-stat-label">Recorrência</div>
-            <div class="recor-stat-desc">Clientes que voltam por conta própria — porque a experiência foi memorável.</div>
-          </div>
-          <div class="recor-stat">
-            <div class="recor-stat-value">↑</div>
-            <div class="recor-stat-label">Conversão</div>
-            <div class="recor-stat-desc">Leads que chegam preparados fecham mais rápido e com menos objeção.</div>
-          </div>
-          <div class="recor-stat">
-            <div class="recor-stat-value">∞</div>
-            <div class="recor-stat-label">Relacionamento</div>
-            <div class="recor-stat-desc">A conversa não termina no primeiro atendimento. Ela continua evoluindo.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- NOVA SEÇÃO — EXPERIÊNCIA DO CLIENTE -->
-  <section class="section-exp">
-    <div class="section-inner">
-      <div class="section-label">
-        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        Experiência do cliente
-      </div>
-      <h2 class="section-headline exp-headline">Como seu cliente sente o atendimento.</h2>
-      <p class="section-sub exp-sub">A tecnologia desaparece. O que fica é a sensação de ter sido entendido antes mesmo de explicar.</p>
-      <div class="exp-grid">
-        <div class="exp-item">
-          <div class="exp-item-icon">
-            <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 016 6c0 4-6 10-6 10S4 12 4 8a6 6 0 016-6z" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
-          </div>
-          <div class="exp-item-title">Menos repetição</div>
-          <div class="exp-item-desc">O cliente não precisa se apresentar do zero a cada vez. O contexto já está lá.</div>
-        </div>
-        <div class="exp-item">
-          <div class="exp-item-icon">
-            <svg viewBox="0 0 20 20" fill="none"><path d="M10 17V3M4 9l6-6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="exp-item-title">Mais clareza</div>
-          <div class="exp-item-desc">A jornada é clara, fluida e conduzida. Sem confusão, sem atrito desnecessário.</div>
-        </div>
-        <div class="exp-item">
-          <div class="exp-item-icon">
-            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="exp-item-title">Sensação premium</div>
-          <div class="exp-item-desc">A experiência reflete a identidade da sua marca — não uma automação genérica.</div>
-        </div>
-        <div class="exp-item">
-          <div class="exp-item-icon">
-            <svg viewBox="0 0 20 20" fill="none"><path d="M10 2l2.4 5.4L18 8.6l-4 3.9.9 5.5L10 15.4l-4.9 2.6.9-5.5-4-3.9 5.6-.8L10 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="exp-item-title">Personalização real</div>
-          <div class="exp-item-desc">Cada cliente sente que a conversa foi criada especificamente para o momento dele.</div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -1673,7 +1705,7 @@ body {
 </main>
 
 <!-- ═══════════════════════════════════════════════════════════
-     SCREEN CONVERSACIONAL — NOVA CAMADA PREMIUM
+     SCREEN CONVERSACIONAL
 ═══════════════════════════════════════════════════════════ -->
 <main class="screen" id="screen-conv">
 
@@ -1693,15 +1725,11 @@ body {
   </header>
 
   <div class="conv-scroll-area" id="conv-scroll-area">
-    <div class="conv-stage" id="conv-stage">
-      <!-- Mensagens injetadas pelo JS -->
-    </div>
+    <div class="conv-stage" id="conv-stage"></div>
   </div>
 
   <div class="conv-answer-area" id="conv-answer-area">
-    <div class="conv-answer-inner" id="conv-answer-inner">
-      <!-- Opções ou input injetado pelo JS -->
-    </div>
+    <div class="conv-answer-inner" id="conv-answer-inner"></div>
   </div>
 
 </main>
@@ -1819,24 +1847,19 @@ const COLOR_VARIANTS = [
 ];
 
 /* ── CONVERSA — SCRIPT ─────────────────────────────────────── */
-// Cada passo: { id, etapa, messages, type, options/placeholder, key, timed? }
 const CONV_STEPS = [
-  // Abertura
   {
-    id: 'intro',
-    etapa: 0,
+    id: 'intro', etapa: 0,
     messages: [
       { text: 'Oi! Antes de começar, quero te contar uma coisa…', delay: 0 },
-      { text: 'O que fazemos aqui não é criar uma página de perguntas. É entender o seu negócio fundo o suficiente para construir uma <strong>inteligência que trabalha por você</strong> — antes de qualquer cliente mandar "Oi".',  delay: 1400 },
+      { text: 'O que fazemos aqui não é criar uma página de perguntas. É entender o seu negócio fundo o suficiente para construir uma <strong>inteligência que trabalha por você</strong> — antes de qualquer cliente mandar "Oi".', delay: 1400 },
       { text: 'Posso fazer algumas perguntas rápidas para entender melhor a sua realidade?', delay: 3000, isQuestion: true },
     ],
     type: 'options',
     options: ['Pode sim, vamos lá!', 'Claro, pode começar']
   },
-  // Etapa 1 — Conexão
   {
-    id: 'nome',
-    etapa: 1,
+    id: 'nome', etapa: 1,
     messages: [
       { text: 'Ótimo! Vou começar pelo mais simples. <strong>Qual é o seu nome?</strong>', delay: 0 },
     ],
@@ -1845,82 +1868,66 @@ const CONV_STEPS = [
     key: 'nome'
   },
   {
-    id: 'nicho',
-    etapa: 1,
+    id: 'nicho', etapa: 1,
     messages: [
       { text: 'Prazer, {nome}! Feliz em ter você aqui. 🙌', delay: 0 },
       { text: 'Cada negócio tem uma forma única de se relacionar com clientes. E é esse jeito — o <em>seu</em> — que a gente quer preservar. <strong>Em que área você atua?</strong>', delay: 1300, isQuestion: true },
     ],
     type: 'options',
     options: ['Salão / Barbearia', 'Clínica / Saúde', 'Estética / Bem-estar', 'Nutrição / Fitness', 'E-commerce / Loja', 'Outro segmento'],
-    key: 'nicho',
-    timed: true
+    key: 'nicho', timed: true
   },
   {
-    id: 'atendimento',
-    etapa: 1,
+    id: 'atendimento', etapa: 1,
     messages: [
       { text: '{nicho} — um segmento onde a <strong>primeira impressão</strong> define tudo.', delay: 0 },
       { text: 'Me conta: como seus clientes chegam até você hoje?', delay: 900, isQuestion: true },
     ],
     type: 'options',
     options: ['Por agendamento prévio', 'Chegam por ordem de chegada', 'Misto — agendamento e espontâneo', 'Atendimento online'],
-    key: 'atendimento',
-    timed: true
+    key: 'atendimento', timed: true
   },
-  // Etapa 2 — Entendimento
   {
-    id: 'dificuldade',
-    etapa: 2,
+    id: 'dificuldade', etapa: 2,
     messages: [
       { text: 'Sabe o que a maioria dos negócios descobre tarde demais? Que o problema não era o produto — era a <strong>conversa antes do produto</strong>.', delay: 0, isInsight: true },
       { text: 'O que mais te consome hoje no dia a dia com os clientes?', delay: 1200, isQuestion: true },
     ],
     type: 'options',
     options: ['Responder as mesmas perguntas todo dia', 'Clientes que somem sem avisar', 'Agenda difícil de organizar', 'Clientes chegam sem entender o serviço', 'Tempo demais no celular'],
-    key: 'dificuldade',
-    timed: true
+    key: 'dificuldade', timed: true
   },
   {
-    id: 'perguntas',
-    etapa: 2,
+    id: 'perguntas', etapa: 2,
     messages: [
       { text: 'Faz total sentido. Essas situações drenam energia e desviam o foco do que realmente importa.', delay: 0 },
       { text: 'Quais perguntas seus clientes mais fazem <em>antes</em> de agendar ou comprar?', delay: 1000, isQuestion: true },
     ],
     type: 'options',
     options: ['Preços e formas de pagamento', 'Horários disponíveis', 'Como funciona o serviço', 'Se aceita convênio', 'Localização e como chegar'],
-    key: 'perguntas',
-    timed: true
+    key: 'perguntas', timed: true
   },
-  // Etapa 3 — Personalidade
   {
-    id: 'tom',
-    etapa: 3,
+    id: 'tom', etapa: 3,
     messages: [
       { text: 'Quanto mais eu entendo sua rotina, mais precisa fica a inteligência que vamos construir para você.', delay: 0, isInsight: true },
       { text: 'Quando um cliente conversa com a sua marca, como você quer que ele se <strong>sinta</strong>?', delay: 1100, isQuestion: true },
     ],
     type: 'options',
     options: ['Acolhido e à vontade', 'Confiante e seguro', 'Animado e engajado', 'Respeitado e bem atendido'],
-    key: 'tom',
-    timed: true
+    key: 'tom', timed: true
   },
   {
-    id: 'visual',
-    etapa: 3,
+    id: 'visual', etapa: 3,
     messages: [
       { text: 'Isso vai moldar como a experiência vai se comunicar com o seu cliente. Agora me conta — <strong>qual estética combina mais com a sua marca?</strong>', delay: 0, isQuestion: true },
     ],
     type: 'options',
     options: ['Sofisticado e premium', 'Moderno e tecnológico', 'Quente e acolhedor', 'Limpo e minimalista'],
-    key: 'visual',
-    timed: true
+    key: 'visual', timed: true
   },
-  // Etapa 4 — Expectativa
   {
-    id: 'melhoria',
-    etapa: 4,
+    id: 'melhoria', etapa: 4,
     messages: [
       { text: 'Cada empresa tem um ponto onde tudo poderia fluir melhor. E identificar esse ponto é o começo de tudo.', delay: 0, isInsight: true },
       { text: 'Se você pudesse mudar <strong>uma coisa agora</strong> na forma como seus clientes chegam até você, o que seria?', delay: 1200, isQuestion: true },
@@ -1929,10 +1936,8 @@ const CONV_STEPS = [
     placeholder: 'Ex: queria que já chegassem sabendo o preço e prontos para marcar…',
     key: 'melhoria'
   },
-  // Final
   {
-    id: 'fim',
-    etapa: 4,
+    id: 'fim', etapa: 4,
     messages: [
       { text: 'Isso é exatamente o tipo de clareza que a gente transforma em inteligência. 🎯', delay: 0 },
       { text: 'Já tenho o que preciso para entender o seu negócio e construir uma experiência que <strong>converte, retém e cria recorrência</strong> — no piloto automático.', delay: 1200 },
@@ -1942,12 +1947,8 @@ const CONV_STEPS = [
   }
 ];
 
-/* ── STATE CONVERSACIONAL ──────────────────────────────────── */
-let convState = {
-  step: 0,
-  answers: {},
-  running: false
-};
+/* ── STATE ─────────────────────────────────────────────────── */
+let convState = { step: 0, answers: {}, running: false };
 
 /* ── NAVIGATION ────────────────────────────────────────────── */
 const screenScroll = {};
@@ -1965,7 +1966,7 @@ function goScreen(id, mode = 'reset') {
   }
 }
 
-/* ── ABRIR CONVERSA ────────────────────────────────────────── */
+/* ── AJUSTE 2 — openConv vai direto para screen-conv sem auto-start na home ── */
 function openConv() {
   convState = { step: 0, answers: {}, running: false };
   document.getElementById('conv-stage').innerHTML = '';
@@ -1977,9 +1978,9 @@ function openConv() {
   answerArea.style.opacity = '1';
   answerArea.style.pointerEvents = 'auto';
   goScreen('screen-conv');
-  // Reseta scroll do container interno
   const scroller = document.getElementById('conv-scroll-area');
   if (scroller) scroller.scrollTop = 0;
+  /* Chatbot só inicia quando openConv() é chamado explicitamente via CTA */
   setTimeout(() => runConvStep(), 400);
 }
 
@@ -1990,7 +1991,6 @@ function runConvStep() {
   if (!step) return;
   convState.running = true;
 
-  // Atualiza progresso
   const totalSteps = CONV_STEPS.length;
   const pct = Math.round((convState.step / (totalSteps - 1)) * 100);
   document.getElementById('conv-progress-fill').style.width = pct + '%';
@@ -2000,25 +2000,18 @@ function runConvStep() {
     'Etapa 4 de 4 — Expectativas', 'Etapa 4 de 4 — Expectativas'];
   document.getElementById('conv-step-label').textContent = etapaLabels[convState.step] || '';
 
-  // Esconde área de resposta durante digitação
   const answerArea = document.getElementById('conv-answer-area');
   answerArea.style.opacity = '0';
   answerArea.style.pointerEvents = 'none';
 
-  // Renderiza mensagens em sequência
   const msgs = step.messages;
   let totalDelay = 0;
 
   msgs.forEach((msg, i) => {
     const baseDelay = msg.delay || 0;
-    // Mostrar indicador de digitação
-    setTimeout(() => {
-      if (i > 0) showTyping();
-    }, baseDelay);
-
+    setTimeout(() => { if (i > 0) showTyping(); }, baseDelay);
     const msgDelay = baseDelay + (i > 0 ? 900 : 0);
     totalDelay = msgDelay + 600;
-
     setTimeout(() => {
       removeTyping();
       addBubble(msg.text, msg.isInsight || false);
@@ -2026,7 +2019,6 @@ function runConvStep() {
     }, msgDelay);
   });
 
-  // Exibe área de resposta
   setTimeout(() => {
     convState.running = false;
     renderAnswerArea(step);
@@ -2041,15 +2033,8 @@ function showTyping() {
   const id = 'conv-typing-indicator';
   if (document.getElementById(id)) return;
   const el = document.createElement('div');
-  el.id = id;
-  el.className = 'conv-typing';
-  el.innerHTML = `
-    <div class="conv-avatar">A</div>
-    <div class="conv-typing-dots">
-      <div class="conv-typing-dot"></div>
-      <div class="conv-typing-dot"></div>
-      <div class="conv-typing-dot"></div>
-    </div>`;
+  el.id = id; el.className = 'conv-typing';
+  el.innerHTML = `<div class="conv-avatar">A</div><div class="conv-typing-dots"><div class="conv-typing-dot"></div><div class="conv-typing-dot"></div><div class="conv-typing-dot"></div></div>`;
   stage.appendChild(el);
   scrollConvBottom();
 }
@@ -2060,14 +2045,11 @@ function removeTyping() {
 }
 
 function addBubble(text, isInsight = false) {
-  // Interpolação de variáveis
   text = interpolate(text);
   const stage = document.getElementById('conv-stage');
   const msg = document.createElement('div');
   msg.className = 'conv-msg';
-  msg.innerHTML = `
-    <div class="conv-avatar">A</div>
-    <div class="conv-bubble${isInsight ? ' insight' : ''}">${text}</div>`;
+  msg.innerHTML = `<div class="conv-avatar">A</div><div class="conv-bubble${isInsight ? ' insight' : ''}">${text}</div>`;
   stage.appendChild(msg);
 }
 
@@ -2083,41 +2065,77 @@ function interpolate(str) {
   return str.replace(/\{(\w+)\}/g, (_, key) => convState.answers[key] || '');
 }
 
+/* ── AJUSTE 1 — TIMER COM SELEÇÃO MÚLTIPLA + BOTÃO CONTINUAR ── */
 function renderAnswerArea(step) {
   const inner = document.getElementById('conv-answer-inner');
   inner.innerHTML = '';
-  // Limpa qualquer timer anterior
   if (window._convTimer) { clearInterval(window._convTimer); window._convTimer = null; }
 
   if (step.type === 'options') {
     const hint = document.createElement('div');
     hint.className = 'conv-answer-hint';
-    hint.textContent = 'Escolha uma opção';
+    hint.textContent = 'Escolha uma ou mais opções';
     inner.appendChild(hint);
+
+    /* Container em coluna: opções + footer (timer + continuar) */
+    const optionsRow = document.createElement('div');
+    optionsRow.className = 'conv-options-row';
 
     const opts = document.createElement('div');
     opts.className = 'conv-options';
+
+    /* Estado de seleções múltiplas */
+    const selectedValues = new Set();
+
     step.options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'conv-option';
       btn.textContent = opt;
+      btn.setAttribute('data-value', opt);
+
       btn.onclick = () => {
-        if (window._convTimer) { clearInterval(window._convTimer); window._convTimer = null; }
-        handleConvOption(opt, step);
+        /* Toggle — não envia, apenas marca/desmarca */
+        if (selectedValues.has(opt)) {
+          selectedValues.delete(opt);
+          btn.classList.remove('selected');
+        } else {
+          selectedValues.add(opt);
+          btn.classList.add('selected');
+        }
+        /* Mostra/esconde botão Continuar */
+        updateContinueBtn(continueBtn, selectedValues);
       };
       opts.appendChild(btn);
     });
-    inner.appendChild(opts);
 
-    // Timer elegante de 25s apenas para steps com timed:true
+    /* Botão Continuar */
+    const continueBtn = document.createElement('button');
+    continueBtn.className = 'conv-continue-btn';
+    continueBtn.innerHTML = `Continuar <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    continueBtn.onclick = () => {
+      if (selectedValues.size === 0) return;
+      if (window._convTimer) { clearInterval(window._convTimer); window._convTimer = null; }
+      const value = [...selectedValues].join(', ');
+      handleConvOption(value, step);
+    };
+
+    /* Footer: timer (se timed) + botão continuar */
+    const footer = document.createElement('div');
+    footer.className = 'conv-options-footer';
+
+    optionsRow.appendChild(opts);
+
     if (step.timed) {
       const timerBar = document.createElement('div');
       timerBar.className = 'conv-timer-bar';
-      timerBar.innerHTML = `
-        <div class="conv-timer-track"><div class="conv-timer-fill" id="conv-timer-fill"></div></div>
-        <div class="conv-timer-label" id="conv-timer-label">25s</div>`;
-      inner.appendChild(timerBar);
+      timerBar.style.flex = '1';
+      timerBar.innerHTML = `<div class="conv-timer-track"><div class="conv-timer-fill" id="conv-timer-fill"></div></div><div class="conv-timer-label" id="conv-timer-label">25s</div>`;
 
+      footer.appendChild(timerBar);
+      footer.appendChild(continueBtn);
+      optionsRow.appendChild(footer);
+
+      /* Timer de 25s — ao acabar, envia automaticamente o que estiver selecionado */
       let secs = 25;
       const fill = timerBar.querySelector('#conv-timer-fill');
       const label = timerBar.querySelector('#conv-timer-label');
@@ -2132,13 +2150,20 @@ function renderAnswerArea(step) {
         if (secs <= 0) {
           clearInterval(window._convTimer);
           window._convTimer = null;
-          // Após 25s: avança automaticamente com a primeira opção não selecionada
-          // (apenas continua — não força resposta, mantém UX confortável)
-          label.textContent = '—';
-          fill.style.width = '0%';
+          /* Se nada selecionado, usa primeira opção como fallback silencioso */
+          if (selectedValues.size === 0) selectedValues.add(step.options[0]);
+          const value = [...selectedValues].join(', ');
+          handleConvOption(value, step);
         }
       }, 1000);
+
+    } else {
+      /* Sem timer — só mostra botão continuar */
+      footer.appendChild(continueBtn);
+      optionsRow.appendChild(footer);
     }
+
+    inner.appendChild(optionsRow);
 
   } else if (step.type === 'text') {
     const hint = document.createElement('div');
@@ -2181,11 +2206,22 @@ function renderAnswerArea(step) {
       </button>
       <div class="conv-completion-note">Você será levado direto ao WhatsApp com um resumo do seu negócio</div>`;
     stage.appendChild(completion);
-
-    // Esconde área de resposta no estado final
     const answerArea = document.getElementById('conv-answer-area');
     answerArea.style.display = 'none';
     scrollConvBottom();
+  }
+}
+
+/* Exibe/esconde o botão Continuar de acordo com seleções */
+function updateContinueBtn(btn, selectedValues) {
+  if (selectedValues.size > 0) {
+    btn.classList.add('visible');
+    const count = selectedValues.size;
+    btn.innerHTML = count > 1
+      ? `${count} selecionados · Continuar <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      : `Continuar <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  } else {
+    btn.classList.remove('visible');
   }
 }
 
@@ -2208,7 +2244,6 @@ function advanceConv() {
   const answerArea = document.getElementById('conv-answer-area');
   answerArea.style.opacity = '0';
   answerArea.style.pointerEvents = 'none';
-
   convState.step++;
   if (convState.step < CONV_STEPS.length) {
     setTimeout(() => runConvStep(), 500);
@@ -2218,9 +2253,7 @@ function advanceConv() {
 function scrollConvBottom() {
   setTimeout(() => {
     const scroller = document.getElementById('conv-scroll-area');
-    if (scroller) {
-      scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
-    }
+    if (scroller) scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
   }, 60);
 }
 
@@ -2228,7 +2261,6 @@ function scrollConvBottom() {
 function finishConv() {
   const a = convState.answers;
   const phone = '5583991816152';
-
   let msg = `*Olá! Vim pela experiência personalizada do Atelier* 👋\n\n`;
   msg += `*Sobre meu negócio:*\n`;
   if (a.nome)        msg += `• Nome: ${a.nome}\n`;
@@ -2241,7 +2273,6 @@ function finishConv() {
   if (a.visual)      msg += `• Identidade visual: ${a.visual}\n`;
   if (a.melhoria)    msg += `• O que mais quero melhorar: ${a.melhoria}\n`;
   msg += `\nGostaria de receber minha demonstração personalizada! 🚀`;
-
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
   showToast('Abrindo WhatsApp…', 'success');
@@ -2344,8 +2375,6 @@ function populateAndOpenForm(variant) {
   document.getElementById('formSummaryMark').textContent = variant.mark;
   document.getElementById('formSummaryName').textContent = variant.pt;
   document.getElementById('formSummaryLine').textContent = `${variant.en} — ${variant.hex}`;
-
-  // Preenche automaticamente com dados da conversa
   const a = convState.answers;
   if (a.nome) document.getElementById('fName').value = a.nome;
   if (a.tom) {
@@ -2374,7 +2403,6 @@ function handleSubmit() {
   const duvidas = document.getElementById('fDuvidas').value.trim();
   const v = currentVariant || COLOR_VARIANTS[0];
   const a = convState.answers;
-
   let msg = `*Novo pedido — Atelier*\n\n`;
   msg += `• *Identidade Visual:* ${v.pt} (${v.en}) — ${v.hex}\n`;
   msg += `\n*Dados do negócio:*\n`;
@@ -2383,7 +2411,6 @@ function handleSubmit() {
   if (tom)       msg += `• Tom desejado: ${tom}\n`;
   if (a.dificuldade) msg += `\n• Principal dificuldade: ${a.dificuldade}`;
   if (a.melhoria)    msg += `\n• O que quer melhorar: ${a.melhoria}`;
-
   const url = `https://wa.me/5583991816152?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
   showToast('Abrindo WhatsApp…', 'success');
