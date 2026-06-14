@@ -2,2446 +2,2299 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Atelier — Pré-atendimento inteligente</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Automatize toda a jornada do seu cliente — do primeiro contato ao próximo agendamento.">
+<title>Fluxo — Automação de Atendimento e Agendamento</title>
 <style>
 
-/* ═══════════════════════════════════════════════════════════
-   RESET & TOKENS
-═══════════════════════════════════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 :root {
-  --green-hero:     #1a7a3c;
-  --green-hero-dk:  #145e2e;
-  --green-hero-lt:  #22994a;
-  --yellow-hl:      #f5c800;
-  --yellow-hl-dk:   #d4ac00;
+  --bg:           #000000;
+  --fg:           #ffffff;
+  --fg-60:        rgba(255,255,255,0.60);
+  --fg-40:        rgba(255,255,255,0.40);
+  --fg-20:        rgba(255,255,255,0.20);
+  --fg-10:        rgba(255,255,255,0.10);
+  --fg-06:        rgba(255,255,255,0.06);
+  --fg-04:        rgba(255,255,255,0.04);
+  --border:       rgba(255,255,255,0.09);
+  --border-hover: rgba(255,255,255,0.20);
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --max-w:   1000px;
+  --max-w-sm: 660px;
+  --section-y: 120px;
+  --section-y-sm: 72px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-  --blue-section:   #1a3a7a;
-  --blue-dk:        #122654;
-  --blue-lt:        #234da0;
-
-  /* AJUSTE 3 — Vinho premium substitui vermelho */
-  --wine-section:   #3d0c1f;
-  --wine-dk:        #2a0714;
-  --wine-lt:        #5c1230;
-
-  /* Cores internas "Sem" e "Com" dentro da seção */
-  --antes-sem-bg:   #7a0e1e;
-  --antes-sem-lt:   #a01828;
-  --antes-com-bg:   #122654;
-  --antes-com-lt:   #1a3a7a;
-
-  --white:          #ffffff;
-  --off-white:      #f6f7f9;
-  --ink:            #0d1117;
-  --ink-mid:        #3a4050;
-  --ink-soft:       #5a6070;
-  --ink-dim:        #8a909a;
-  --hair:           #e0e3ea;
-  --hair-soft:      #eceff5;
-
-  --blue-ui:        #1a5ce6;
-  --blue-ui-dk:     #1448c0;
-  --blue-tint:      rgba(26,92,230,0.08);
-  --blue-glow:      rgba(26,92,230,0.2);
-
-  --green-ui:       #16a34a;
-  --red-ui:         #dc2626;
-
-  --display:        'Plus Jakarta Sans', system-ui, sans-serif;
-  --body:           'DM Sans', system-ui, sans-serif;
-  --mono:           'JetBrains Mono', ui-monospace, monospace;
-
-  --shadow-sm:      0 1px 3px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.05);
-  --shadow-md:      0 4px 16px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.06);
-  --shadow-lg:      0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-blue:    0 4px 14px rgba(26,92,230,0.3), 0 1px 3px rgba(26,92,230,0.15);
-
-  --r-sm: 8px;
-  --r-md: 14px;
-  --r-lg: 20px;
-  --r-xl: 28px;
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: var(--body);
-  background: var(--off-white);
-  color: var(--ink);
-  font-size: 16px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  line-height: 1.6;
   overflow-x: hidden;
 }
 
-::selection { background: var(--yellow-hl); color: var(--ink); }
-
-/* ═══════════════════════════════════════════════════════════
-   SCREENS
-═══════════════════════════════════════════════════════════ */
-.screen { display: none; min-height: 100vh; }
-#screen-conv.screen { min-height: unset; }
-.screen.active { display: block; animation: screenIn 0.28s cubic-bezier(.2,.7,.2,1) both; }
-#screen-conv.active { display: flex; }
-
-@keyframes screenIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+h1, h2, h3, h4 {
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   NAV
-═══════════════════════════════════════════════════════════ */
-.nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(26,122,60,0.97);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.12);
-}
-.nav-inner {
-  max-width: 1280px; margin: 0 auto; padding: 0 28px;
-  height: 58px; display: flex; align-items: center;
-  justify-content: space-between; gap: 16px;
-}
-.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; }
-.nav-brand-mark {
-  width: 30px; height: 30px; background: var(--yellow-hl);
-  border-radius: 8px; display: flex; align-items: center; justify-content: center;
-  font-family: var(--display); font-size: 15px; font-weight: 800;
-  color: var(--ink); letter-spacing: -0.04em; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.nav-brand-name { font-family: var(--display); font-size: 18px; font-weight: 800; color: var(--white); letter-spacing: -0.02em; }
-.nav-right { display: flex; align-items: center; gap: 14px; }
-.nav-status { display: flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.75); letter-spacing: 0.04em; }
-.nav-status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--yellow-hl); box-shadow: 0 0 0 3px rgba(245,200,0,0.25); animation: blink 2s ease-in-out infinite; }
-@keyframes blink { 0%,100%{ opacity:1; } 50%{ opacity:0.5; } }
-.nav-cta {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 18px; background: var(--yellow-hl); color: var(--ink);
-  font-family: var(--body); font-size: 13px; font-weight: 700;
-  border: none; border-radius: 8px; cursor: pointer; text-decoration: none;
-  transition: background 0.15s, transform 0.12s; letter-spacing: -0.01em; white-space: nowrap;
-}
-.nav-cta:hover { background: var(--yellow-hl-dk); transform: translateY(-1px); }
-.nav-cta:active { transform: scale(0.97); }
-@media (max-width: 600px) {
-  .nav-inner { padding: 0 18px; }
-  .nav-status { display: none; }
-  .nav-cta { padding: 8px 14px; font-size: 12px; }
+h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); }
+h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+h3 { font-size: clamp(1.1rem, 2vw, 1.3rem); }
+
+p {
+  color: var(--fg-60);
+  font-size: 1rem;
+  line-height: 1.75;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   HERO — VERDE
-═══════════════════════════════════════════════════════════ */
-.hero {
-  background: var(--green-hero);
-  position: relative; overflow: hidden;
-}
-.hero::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 24px 24px; pointer-events: none;
-}
-.hero::after {
-  content: ''; position: absolute; top: -120px; right: -120px;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(245,200,0,0.08) 0%, transparent 65%);
-  pointer-events: none;
-}
-.hero-inner {
-  max-width: 1280px; margin: 0 auto; padding: 80px 28px 72px;
-  position: relative; z-index: 2;
-  display: grid; grid-template-columns: 1fr; gap: 48px;
-}
-@media (min-width: 900px) {
-  .hero-inner { grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; }
-}
-.hero-label {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--yellow-hl); margin-bottom: 22px;
-}
-.hero-label-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--yellow-hl); box-shadow: 0 0 0 3px rgba(245,200,0,0.25); animation: blink 2s ease-in-out infinite; }
-.hero-headline {
-  font-family: var(--display);
-  font-size: clamp(38px, 5.5vw, 66px);
-  font-weight: 800; line-height: 1.05; letter-spacing: -0.025em;
-  color: var(--yellow-hl); margin-bottom: 22px;
-}
-.hero-subheadline {
-  font-size: clamp(16px, 1.8vw, 20px); font-weight: 400;
-  line-height: 1.55; color: rgba(255,255,255,0.82);
-  max-width: 44ch; margin-bottom: 12px;
-}
-.hero-complement { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.5); margin-bottom: 36px; letter-spacing: -0.005em; }
-.hero-cta {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 16px 28px; background: var(--yellow-hl); color: var(--ink);
-  font-family: var(--body); font-size: 16px; font-weight: 700;
-  border: none; border-radius: 12px; cursor: pointer; text-decoration: none;
-  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
-  letter-spacing: -0.01em;
-  box-shadow: 0 4px 16px rgba(245,200,0,0.35), 0 1px 3px rgba(0,0,0,0.15);
-}
-.hero-cta:hover { background: var(--yellow-hl-dk); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,200,0,0.45), 0 2px 6px rgba(0,0,0,0.18); }
-.hero-cta:active { transform: scale(0.97); }
-.hero-cta svg { width: 16px; height: 16px; }
-
-.hero-visual { display: flex; flex-direction: column; gap: 12px; position: relative; }
-.hero-card {
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
-  border-radius: var(--r-md); padding: 18px 20px;
-  display: flex; align-items: flex-start; gap: 14px;
-  backdrop-filter: blur(6px); transition: background 0.2s;
-}
-.hero-card:hover { background: rgba(255,255,255,0.12); }
-.hero-card-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--yellow-hl); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--ink); }
-.hero-card-icon svg { width: 18px; height: 18px; }
-.hero-card-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 3px; letter-spacing: -0.01em; }
-.hero-card-desc { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.45; }
-
-/* ═══════════════════════════════════════════════════════════
-   SEÇÃO PROBLEMA — AZUL
-═══════════════════════════════════════════════════════════ */
-.section-problema { background: var(--blue-section); position: relative; overflow: hidden; }
-.section-problema::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 28px 28px; pointer-events: none;
-}
-.section-inner { max-width: 1280px; margin: 0 auto; padding: 80px 28px; position: relative; z-index: 2; }
-.section-label {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--yellow-hl); margin-bottom: 20px;
-}
-.section-headline {
-  font-family: var(--display);
-  font-size: clamp(34px, 4.5vw, 58px); font-weight: 800;
-  line-height: 1.08; letter-spacing: -0.025em;
-  color: var(--yellow-hl); margin-bottom: 20px; max-width: 20ch;
-}
-.section-sub {
-  font-size: clamp(16px, 1.7vw, 19px); font-weight: 400;
-  line-height: 1.55; color: rgba(255,255,255,0.78); max-width: 48ch; margin-bottom: 48px;
-}
-.problema-grid { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: center; }
-@media (min-width: 860px) { .problema-grid { grid-template-columns: 1fr 1fr; gap: 48px; } }
-.problema-img {
-  width: 100%; aspect-ratio: 1 / 1; border-radius: var(--r-xl);
-  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-  overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative;
-}
-.problema-illustration { width: 80%; max-width: 320px; opacity: 0.9; }
-.problema-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 36px; }
-.problema-item {
-  display: flex; align-items: flex-start; gap: 14px;
-  padding: 16px 18px; background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-md);
-}
-.problema-item-num {
-  width: 28px; height: 28px; border-radius: 7px; background: var(--yellow-hl);
-  color: var(--ink); font-size: 13px; font-weight: 800;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.problema-item-text { font-size: 15px; font-weight: 500; color: rgba(255,255,255,0.9); line-height: 1.4; }
-.btn-demo {
-  display: inline-flex; align-items: center; gap: 9px;
-  padding: 15px 26px; background: var(--yellow-hl); color: var(--ink);
-  font-family: var(--body); font-size: 15px; font-weight: 700;
-  border: none; border-radius: 11px; cursor: pointer; text-decoration: none;
-  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
-  letter-spacing: -0.01em; box-shadow: 0 4px 14px rgba(245,200,0,0.3);
-}
-.btn-demo:hover { background: var(--yellow-hl-dk); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(245,200,0,0.4); }
-.btn-demo:active { transform: scale(0.97); }
-.btn-demo svg { width: 15px; height: 15px; }
-
-/* ═══════════════════════════════════════════════════════════
-   AJUSTE 3 — SEÇÃO ANTES E DEPOIS — VINHO PREMIUM
-═══════════════════════════════════════════════════════════ */
-.section-antes {
-  background: var(--wine-section);
-  position: relative; overflow: hidden;
-}
-.section-antes::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 26px 26px; pointer-events: none;
-}
-/* Gradiente sutil no topo para profundidade */
-.section-antes::after {
-  content: ''; position: absolute; top: 0; left: 0; right: 0;
-  height: 200px;
-  background: linear-gradient(180deg, rgba(90,18,40,0.4) 0%, transparent 100%);
-  pointer-events: none;
-}
-
-.antes-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-@media (min-width: 760px) { .antes-grid { grid-template-columns: 1fr 1fr; gap: 24px; } }
-
-/* Coluna SEM — vermelho forte sobre fundo vinho */
-.antes-col {
-  border-radius: var(--r-lg); padding: 32px 28px;
-  display: flex; flex-direction: column; gap: 16px;
-  position: relative; z-index: 1;
-}
-.antes-col.sem {
-  background: linear-gradient(145deg, rgba(140,14,30,0.6) 0%, rgba(100,8,20,0.5) 100%);
-  border: 1px solid rgba(200,40,60,0.25);
-  box-shadow: inset 0 1px 0 rgba(255,100,100,0.08), 0 4px 20px rgba(0,0,0,0.3);
-}
-.antes-col.com {
-  background: linear-gradient(145deg, rgba(22,44,120,0.6) 0%, rgba(14,30,90,0.5) 100%);
-  border: 1px solid rgba(60,100,220,0.3);
-  box-shadow: inset 0 1px 0 rgba(100,140,255,0.1), 0 4px 20px rgba(0,0,0,0.3);
-}
-
-.antes-col-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.antes-col-badge {
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 5px 11px; border-radius: 100px;
-}
-/* Badge "Sem" — vermelho forte, legível sobre vinho */
-.antes-col.sem .antes-col-badge {
-  background: rgba(200,30,50,0.4);
-  color: #ffb3be;
-  border: 1px solid rgba(220,60,80,0.4);
-}
-/* Badge "Com" — azul premium */
-.antes-col.com .antes-col-badge {
-  background: rgba(30,70,180,0.4);
-  color: #a5c0ff;
-  border: 1px solid rgba(60,110,230,0.4);
-}
-.antes-col-title {
-  font-family: var(--display); font-size: clamp(22px, 3vw, 30px);
-  font-weight: 800; letter-spacing: -0.02em;
-  color: var(--white); line-height: 1.1;
-}
-.antes-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 14px 16px; border-radius: var(--r-md);
-}
-.antes-col.sem .antes-item { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); }
-.antes-col.com .antes-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
-.antes-item-icon {
-  width: 22px; height: 22px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-top: 1px;
-}
-/* Ícone "X" — vermelho nítido */
-.antes-col.sem .antes-item-icon {
-  background: rgba(200,30,50,0.35);
-  color: #ff8a97;
-}
-/* Ícone "✓" — azul/verde premium */
-.antes-col.com .antes-item-icon {
-  background: rgba(26,80,200,0.4);
-  color: #93c5fd;
-}
-.antes-item-icon svg { width: 11px; height: 11px; }
-.antes-item-text {
-  font-size: 14px; font-weight: 500;
-  color: rgba(255,255,255,0.88); line-height: 1.4;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   CARROSSEL DE CARDS
-═══════════════════════════════════════════════════════════ */
-.section-cards { background: var(--white); padding: 80px 0; overflow: hidden; }
-.cards-head { max-width: 1280px; margin: 0 auto 40px; padding: 0 28px; }
-.cards-head-label { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-ui); margin-bottom: 10px; }
-.cards-head-title { font-family: var(--display); font-size: clamp(28px, 3.5vw, 42px); font-weight: 800; letter-spacing: -0.025em; color: var(--ink); line-height: 1.1; }
-.carousel-track-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; padding: 0 28px 8px; }
-.carousel-track-wrap::-webkit-scrollbar { display: none; }
-.carousel-track-wrap.grabbing { cursor: grabbing; }
-.carousel-track { display: flex; gap: 16px; width: max-content; padding-right: 28px; }
-.carousel-card { flex-shrink: 0; width: clamp(280px, 38vw, 360px); min-height: 300px; border-radius: var(--r-xl); padding: 36px 32px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; transition: transform 0.3s cubic-bezier(.2,.7,.2,1); cursor: default; }
-.carousel-card:hover { transform: translateY(-5px); }
-.carousel-card.c-blue   { background: #1a3a7a; }
-.carousel-card.c-purple { background: #4a1a8a; }
-.carousel-card.c-yellow { background: #d4a800; }
-.carousel-card.c-green  { background: #1a5e34; }
-.carousel-card::after { content: ''; position: absolute; bottom: -40px; right: -40px; width: 140px; height: 140px; border-radius: 50%; opacity: 0.12; }
-.carousel-card.c-blue::after   { background: var(--white); }
-.carousel-card.c-purple::after { background: var(--white); }
-.carousel-card.c-yellow::after { background: var(--ink); }
-.carousel-card.c-green::after  { background: var(--white); }
-.carousel-card-num { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; margin-bottom: 24px; position: relative; z-index: 1; }
-.c-yellow .carousel-card-num { color: var(--ink); }
-.c-blue .carousel-card-num, .c-purple .carousel-card-num, .c-green .carousel-card-num { color: var(--white); }
-.carousel-card-body { position: relative; z-index: 1; }
-.carousel-card-title { font-family: var(--display); font-size: clamp(22px, 2.8vw, 30px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 14px; }
-.c-yellow .carousel-card-title { color: var(--ink); }
-.c-blue .carousel-card-title, .c-purple .carousel-card-title, .c-green .carousel-card-title { color: var(--white); }
-.carousel-card-desc { font-size: 14px; font-weight: 400; line-height: 1.55; }
-.c-yellow .carousel-card-desc { color: rgba(0,0,0,0.65); }
-.c-blue .carousel-card-desc, .c-purple .carousel-card-desc, .c-green .carousel-card-desc { color: rgba(255,255,255,0.65); }
-
-/* ═══════════════════════════════════════════════════════════
-   SEÇÃO INTEGRAÇÕES — ROXO
-═══════════════════════════════════════════════════════════ */
-.section-integracoes { background: #3a1a6a; position: relative; overflow: hidden; }
-.section-integracoes::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-  background-size: 24px 24px; pointer-events: none;
-}
-.integ-grid { display: flex; flex-wrap: wrap; gap: 12px; margin: 36px 0; }
-.integ-pill {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 20px; background: rgba(255,255,255,0.09);
-  border: 1px solid rgba(255,255,255,0.14); border-radius: 100px;
-  font-size: 15px; font-weight: 600; color: var(--white); transition: background 0.18s;
-}
-.integ-pill:hover { background: rgba(255,255,255,0.15); }
-.integ-pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow-hl); }
-.integ-sub { font-size: 17px; font-weight: 400; color: rgba(255,255,255,0.65); max-width: 40ch; line-height: 1.55; margin-bottom: 36px; }
-
-/* ═══════════════════════════════════════════════════════════
-   SEÇÃO CTA FINAL
-═══════════════════════════════════════════════════════════ */
-.section-cta-final {
-  background: var(--off-white);
-  padding: 80px 28px;
-}
-.cta-final-inner {
-  max-width: 720px;
+.container {
+  max-width: var(--max-w);
   margin: 0 auto;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  padding: 0 32px;
 }
-.cta-final-label {
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase; color: var(--green-hero);
-  display: flex; align-items: center; gap: 8px;
-}
-.cta-final-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green-hero); animation: blink 2s ease-in-out infinite; }
-.cta-final-title {
-  font-family: var(--display);
-  font-size: clamp(32px, 4.5vw, 52px);
-  font-weight: 800; line-height: 1.08; letter-spacing: -0.025em;
-  color: var(--ink);
-}
-.cta-final-title .accent { color: var(--green-hero); }
-.cta-final-sub {
-  font-size: clamp(16px, 1.7vw, 18px); font-weight: 400;
-  line-height: 1.6; color: var(--ink-mid); max-width: 44ch;
-}
-.cta-final-btn {
-  display: inline-flex; align-items: center; gap: 12px;
-  padding: 18px 36px; background: var(--green-hero); color: var(--white);
-  font-family: var(--body); font-size: 17px; font-weight: 700;
-  border: none; border-radius: 14px; cursor: pointer;
-  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
-  letter-spacing: -0.01em;
-  box-shadow: 0 6px 20px rgba(26,122,60,0.35), 0 1px 4px rgba(0,0,0,0.12);
-}
-.cta-final-btn:hover { background: var(--green-hero-dk); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(26,122,60,0.45); }
-.cta-final-btn:active { transform: scale(0.97); }
-.cta-final-btn svg { width: 18px; height: 18px; }
-.cta-final-note {
-  font-size: 13px; color: var(--ink-dim);
-  display: flex; align-items: center; gap: 6px;
-}
-.cta-final-note svg { width: 13px; height: 13px; color: var(--green-ui); }
 
-/* ═══════════════════════════════════════════════════════════
-   SEÇÃO RELACIONAMENTO INTELIGENTE
-═══════════════════════════════════════════════════════════ */
-.section-relac {
-  background: var(--ink);
-  position: relative; overflow: hidden;
+.container--sm {
+  max-width: var(--max-w-sm);
+  margin: 0 auto;
+  padding: 0 32px;
 }
-.section-relac::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 26px 26px; pointer-events: none;
+
+.section {
+  padding: var(--section-y) 0;
 }
-.section-relac::after {
-  content: ''; position: absolute;
-  top: -200px; right: -200px;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(245,200,0,0.06) 0%, transparent 65%);
+
+/* ============================================================
+   PARTICLE CANVAS — camada de fundo global
+   ============================================================ */
+#particle-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
   pointer-events: none;
 }
-.relac-headline { color: var(--yellow-hl); max-width: 22ch; }
-.relac-sub { color: rgba(255,255,255,0.65); margin-bottom: 48px; }
-.relac-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-@media (max-width: 720px) { .relac-grid { grid-template-columns: 1fr; gap: 12px; } }
-.relac-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--r-md);
-  padding: 24px 22px;
-  display: flex; gap: 16px; align-items: flex-start;
-  transition: background 0.2s, border-color 0.2s;
-}
-.relac-card:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(245,200,0,0.2);
-}
-.relac-card-num {
-  font-family: var(--mono); font-size: 11px; font-weight: 700;
-  color: var(--yellow-hl); letter-spacing: 0.06em;
-  margin-top: 2px; flex-shrink: 0;
-}
-.relac-card-title {
-  font-family: var(--display); font-size: 16px; font-weight: 800;
-  color: var(--white); letter-spacing: -0.015em; margin-bottom: 7px; line-height: 1.2;
-}
-.relac-card-desc {
-  font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.5);
+
+/* Garantir que todo conteúdo fique acima do canvas */
+#navbar,
+.nav-mobile,
+main,
+section,
+.band,
+footer,
+hr {
+  position: relative;
+  z-index: 1;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SEÇÃO RECORRÊNCIA
-═══════════════════════════════════════════════════════════ */
-.section-recor {
-  background: var(--green-hero);
-  position: relative; overflow: hidden;
-}
-.section-recor::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 24px 24px; pointer-events: none;
-}
-.recor-layout {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 64px; align-items: center;
-}
-@media (max-width: 860px) { .recor-layout { grid-template-columns: 1fr; gap: 40px; } }
-.recor-headline { color: var(--yellow-hl); max-width: 20ch; }
-.recor-sub {
-  font-size: clamp(15px, 1.6vw, 17px); line-height: 1.6;
-  color: rgba(255,255,255,0.75); margin-bottom: 32px; max-width: 44ch;
-}
-.recor-stats {
-  display: flex; flex-direction: column; gap: 20px;
-}
-.recor-stat {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.14);
-  border-radius: var(--r-md); padding: 22px 24px;
-  display: grid; grid-template-columns: 40px 1fr; grid-template-rows: auto auto;
-  gap: 4px 14px; align-items: start;
-}
-.recor-stat-value {
-  font-family: var(--display); font-size: 28px; font-weight: 800;
-  color: var(--yellow-hl); line-height: 1; grid-row: 1 / 3; align-self: center;
-}
-.recor-stat-label {
-  font-family: var(--display); font-size: 15px; font-weight: 800;
-  color: var(--white); letter-spacing: -0.01em;
-}
-.recor-stat-desc {
-  font-size: 12.5px; color: rgba(255,255,255,0.6); line-height: 1.5;
+/* ============================================================
+   FADE-IN ANIMATIONS
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SEÇÃO EXPERIÊNCIA DO CLIENTE
-═══════════════════════════════════════════════════════════ */
-.section-exp {
-  background: var(--white);
-  padding-bottom: 80px;
-}
-.exp-headline { color: var(--ink); max-width: 24ch; }
-.exp-sub { color: var(--ink-soft); margin-bottom: 48px; }
-.exp-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
-}
-@media (min-width: 860px) { .exp-grid { grid-template-columns: repeat(4, 1fr); } }
-@media (max-width: 560px) { .exp-grid { grid-template-columns: 1fr; gap: 14px; } }
-.exp-item {
-  background: var(--off-white);
-  border: 1.5px solid var(--hair);
-  border-radius: var(--r-lg); padding: 28px 22px;
-  display: flex; flex-direction: column; gap: 12px;
-  transition: border-color 0.2s, transform 0.25s cubic-bezier(.2,.7,.2,1);
-}
-.exp-item:hover { border-color: var(--green-hero); transform: translateY(-3px); }
-.exp-item-icon {
-  width: 40px; height: 40px; border-radius: 11px;
-  background: rgba(26,122,60,0.1); border: 1px solid rgba(26,122,60,0.15);
-  display: flex; align-items: center; justify-content: center;
-}
-.exp-item-icon svg { width: 18px; height: 18px; color: var(--green-hero); }
-.exp-item-title {
-  font-family: var(--display); font-size: 16px; font-weight: 800;
-  color: var(--ink); letter-spacing: -0.015em; line-height: 1.2;
-}
-.exp-item-desc {
-  font-size: 13px; line-height: 1.6; color: var(--ink-soft);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   AJUSTE 1 — TIMER COM SELEÇÃO MÚLTIPLA + BOTÃO CONTINUAR
-═══════════════════════════════════════════════════════════ */
-.conv-timer-bar {
-  display: flex; align-items: center; gap: 10px;
-}
-.conv-timer-track {
-  flex: 1; height: 2px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 2px; overflow: hidden;
-}
-.conv-timer-fill {
-  height: 100%;
-  background: rgba(245,200,0,0.55);
-  border-radius: 2px;
-  transition: width 1s linear;
-  width: 100%;
-}
-.conv-timer-label {
-  font-family: var(--mono); font-size: 10px; font-weight: 600;
-  letter-spacing: 0.06em; color: rgba(255,255,255,0.28);
-  white-space: nowrap; flex-shrink: 0;
-  transition: color 0.3s;
-}
-.conv-timer-label.ending { color: rgba(245,200,0,0.6); }
-
-/* Opção selecionada — estado visual */
-.conv-option.selected {
-  background: rgba(245,200,0,0.18);
-  border-color: rgba(245,200,0,0.6);
-  color: var(--yellow-hl);
-}
-.conv-option.selected::before {
-  content: '✓ ';
-  font-weight: 700;
-}
-
-/* Botão Continuar — aparece após seleção */
-.conv-continue-btn {
-  display: inline-flex; align-items: center; gap: 9px;
-  padding: 12px 24px;
-  background: var(--yellow-hl); color: var(--ink);
-  font-family: var(--body); font-size: 14px; font-weight: 700;
-  border: none; border-radius: 10px; cursor: pointer;
-  transition: background 0.15s, transform 0.12s, opacity 0.2s;
-  letter-spacing: -0.01em;
-  box-shadow: 0 4px 12px rgba(245,200,0,0.3);
-  opacity: 0; pointer-events: none;
-  transform: translateY(4px);
-}
-.conv-continue-btn.visible {
-  opacity: 1; pointer-events: auto;
+.reveal.visible {
+  opacity: 1;
   transform: translateY(0);
-  transition: background 0.15s, transform 0.2s cubic-bezier(.2,.7,.2,1), opacity 0.2s;
-}
-.conv-continue-btn:hover { background: var(--yellow-hl-dk); transform: translateY(-1px); }
-.conv-continue-btn:active { transform: scale(0.97); }
-.conv-continue-btn svg { width: 14px; height: 14px; }
-
-/* Row que contém opções + botão continuar lado a lado */
-.conv-options-row {
-  display: flex; flex-direction: column; gap: 10px;
-}
-.conv-options-footer {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  flex-wrap: wrap;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════════════════════════ */
-.footer {
-  background: var(--ink); padding: 28px 28px;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 14px; flex-wrap: wrap; max-width: 100%;
-}
-.footer-brand { display: flex; align-items: center; gap: 10px; }
-.footer-brand-mark { width: 26px; height: 26px; background: var(--yellow-hl); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 13px; font-weight: 800; color: var(--ink); }
-.footer-brand-name { font-family: var(--display); font-size: 15px; font-weight: 800; color: var(--white); letter-spacing: -0.02em; }
-.footer-meta { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: rgba(255,255,255,0.4); }
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }
 
-/* ═══════════════════════════════════════════════════════════
-   MASTHEAD COMPARTILHADO
-═══════════════════════════════════════════════════════════ */
-.masthead {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(26,122,60,0.97); backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.12);
-}
-.masthead-inner {
-  max-width: 1280px; margin: 0 auto; padding: 0 28px;
-  height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
-}
-.mast-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; }
-.mast-brand-mark { width: 30px; height: 30px; background: var(--yellow-hl); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 15px; font-weight: 800; color: var(--ink); letter-spacing: -0.04em; }
-.mast-brand-name { font-family: var(--display); font-size: 18px; font-weight: 800; color: var(--white); letter-spacing: -0.02em; }
-.mast-meta { display: flex; align-items: center; gap: 14px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: rgba(255,255,255,0.6); }
-.mast-status {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 5px 11px; background: rgba(22,163,74,0.25); color: #86efac;
-  border: 1px solid rgba(22,163,74,0.3); border-radius: 100px;
-  font-size: 11px; font-weight: 600;
-}
-.mast-status .dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 0 3px rgba(74,222,128,0.2); animation: blink 2s ease-in-out infinite; }
-@media (max-width: 640px) {
-  .masthead-inner { padding: 0 18px; }
-  .mast-meta span:not(.mast-status) { display: none; }
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, background 0.3s, backdrop-filter 0.3s;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SCREEN INTER
-═══════════════════════════════════════════════════════════ */
-#screen-inter { background: var(--blue-section); }
-.inter-wrap { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
-.inter-breadcrumb { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: rgba(255,255,255,0.5); margin-bottom: 40px; }
-.inter-breadcrumb-back { background: none; border: none; font: inherit; letter-spacing: inherit; color: var(--yellow-hl); cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 4px 8px 4px 4px; border-radius: 6px; transition: background 0.16s; }
-.inter-breadcrumb-back:hover { background: rgba(245,200,0,0.12); }
-.inter-breadcrumb-back svg { width: 13px; height: 13px; }
-.inter-breadcrumb-sep { color: rgba(255,255,255,0.2); }
-.inter-breadcrumb-current { color: var(--white); font-weight: 600; }
-.inter-nicho-badge { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yellow-hl); background: rgba(245,200,0,0.1); border: 1px solid rgba(245,200,0,0.25); padding: 6px 12px; border-radius: 100px; margin-bottom: 24px; }
-.inter-nicho-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--yellow-hl); }
-.inter-hero { margin-bottom: 48px; }
-.inter-hero-title { font-family: var(--display); font-weight: 800; font-size: clamp(32px, 5vw, 54px); line-height: 1.1; letter-spacing: -0.025em; color: var(--white); max-width: 22ch; margin-bottom: 18px; }
-.inter-hero-title .accent { color: var(--yellow-hl); }
-.inter-hero-lede { font-size: clamp(15px, 1.6vw, 17px); font-weight: 400; line-height: 1.6; color: rgba(255,255,255,0.65); max-width: 52ch; }
-.inter-problem-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 48px; }
-@media (min-width: 720px) { .inter-problem-grid { grid-template-columns: 1fr 1fr; gap: 16px; } }
-.inter-problem-card { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.1); border-radius: var(--r-md); padding: 24px; display: flex; flex-direction: column; gap: 12px; }
-.inter-problem-card.highlight { border-color: rgba(245,200,0,0.35); background: rgba(245,200,0,0.07); }
-.inter-card-icon-row { display: flex; align-items: center; gap: 12px; }
-.inter-card-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.inter-card-icon.red-icon { background: rgba(220,38,38,0.2); }
-.inter-card-icon.red-icon svg { color: #fca5a5; }
-.inter-card-icon.blue-icon { background: rgba(245,200,0,0.15); }
-.inter-card-icon.blue-icon svg { color: var(--yellow-hl); }
-.inter-card-icon svg { width: 17px; height: 17px; }
-.inter-card-label { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
-.inter-problem-card.highlight .inter-card-label { color: var(--yellow-hl); }
-.inter-card-title { font-family: var(--display); font-size: 17px; font-weight: 800; letter-spacing: -0.015em; color: var(--white); line-height: 1.2; }
-.inter-card-desc { font-size: 13.5px; line-height: 1.6; color: rgba(255,255,255,0.6); }
-.inter-benefits-head { margin-bottom: 20px; }
-.inter-benefits-eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--yellow-hl); margin-bottom: 8px; }
-.inter-benefits-title { font-family: var(--display); font-size: clamp(20px, 2.5vw, 26px); font-weight: 800; letter-spacing: -0.02em; color: var(--white); }
-.inter-benefits-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 48px; }
-@media (min-width: 600px) { .inter-benefits-grid { grid-template-columns: 1fr 1fr; gap: 12px; } }
-.inter-benefit { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-md); padding: 18px 20px; display: flex; align-items: flex-start; gap: 14px; }
-.inter-benefit-num { width: 28px; height: 28px; border-radius: 7px; background: var(--yellow-hl); color: var(--ink); font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.inter-benefit-title { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; color: var(--white); margin-bottom: 4px; }
-.inter-benefit-desc { font-size: 12.5px; line-height: 1.55; color: rgba(255,255,255,0.55); }
-.inter-cta-block { background: var(--yellow-hl); border-radius: var(--r-lg); padding: 40px 36px; display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
-.inter-cta-eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(0,0,0,0.45); }
-.inter-cta-title { font-family: var(--display); font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--ink); line-height: 1.1; max-width: 28ch; }
-.inter-cta-sub { font-size: 14px; font-weight: 400; line-height: 1.55; color: rgba(0,0,0,0.6); max-width: 40ch; }
-.inter-cta-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 26px; background: var(--ink); color: var(--white); border: none; border-radius: 11px; font-family: var(--body); font-size: 15px; font-weight: 700; letter-spacing: -0.01em; cursor: pointer; transition: background 0.15s, transform 0.12s; }
-.inter-cta-btn:hover { background: #1a2030; transform: translateY(-1px); }
-.inter-cta-btn svg { width: 15px; height: 15px; }
-.inter-cta-note { font-size: 12px; color: rgba(0,0,0,0.45); display: flex; align-items: center; gap: 6px; }
-.inter-cta-note svg { width: 13px; height: 13px; }
+#navbar.scrolled {
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom-color: var(--border);
+}
 
-/* ═══════════════════════════════════════════════════════════
-   SCREEN VARIATIONS
-═══════════════════════════════════════════════════════════ */
-#screen-variations { background: var(--off-white); }
-.var-head { max-width: 1280px; margin: 0 auto; padding: 32px 24px 24px; background: var(--off-white); }
-.breadcrumb { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink-dim); margin-bottom: 24px; }
-.breadcrumb-back { background: none; border: none; font: inherit; letter-spacing: inherit; color: var(--blue-ui); cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 4px 8px 4px 4px; border-radius: 6px; transition: background 0.16s; }
-.breadcrumb-back:hover { background: var(--blue-tint); }
-.breadcrumb-back svg { width: 13px; height: 13px; }
-.breadcrumb-sep { color: var(--ink-dim); }
-.breadcrumb-current { color: var(--ink); font-weight: 600; }
-.var-title-grid { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: end; padding-bottom: 24px; border-bottom: 1px solid var(--hair); }
-@media (min-width: 880px) { .var-title-grid { grid-template-columns: 1.5fr 1fr; gap: 36px; } }
-.var-line-num { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--blue-ui); background: var(--blue-tint); border: 1px solid rgba(26,92,230,0.18); padding: 5px 11px; border-radius: 100px; margin-bottom: 16px; }
-.var-title { font-family: var(--display); font-weight: 800; font-size: clamp(40px, 7vw, 72px); line-height: 1.02; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 10px; }
-.var-meta-lede { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--ink-mid); max-width: 36ch; }
-.var-meta-side { padding-bottom: 8px; display: flex; gap: 24px; }
-.var-stat-num { font-family: var(--display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); line-height: 1; margin-bottom: 4px; }
-.var-stat-num .small { font-size: 13px; color: var(--ink-dim); vertical-align: super; font-weight: 700; }
-.var-stat-label { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); }
-.collection { max-width: 1280px; margin: 0 auto; padding: 32px 24px 100px; background: var(--off-white); }
-.collection-list-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
-.collection-list-title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.005em; display: flex; align-items: center; gap: 10px; }
-.collection-list-title::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--blue-ui); box-shadow: 0 0 0 3px var(--blue-tint); }
-.collection-list-meta { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink-dim); }
-.var-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-@media (min-width: 520px) { .var-grid { gap: 14px; } }
-@media (min-width: 820px) { .var-grid { grid-template-columns: 1fr 1fr 1fr; } }
-@media (min-width: 1080px) { .var-grid { grid-template-columns: 1fr 1fr 1fr 1fr; } }
-.var-card { position: relative; background: var(--white); border: 2px solid var(--hair); border-radius: var(--r-md); overflow: hidden; cursor: pointer; display: flex; flex-direction: column; transition: border-color 0.22s, transform 0.3s cubic-bezier(.2,.7,.2,1), box-shadow 0.25s; box-shadow: var(--shadow-sm); font-family: inherit; text-align: left; padding: 0; width: 100%; color: inherit; -webkit-appearance: none; appearance: none; -webkit-tap-highlight-color: transparent; -webkit-mask-image: -webkit-radial-gradient(white, black); }
-.var-card:focus-visible { outline: none; border-color: var(--blue-ui); box-shadow: 0 0 0 4px var(--blue-glow); }
-.var-card:hover { border-color: var(--green-hero); transform: translateY(-3px); box-shadow: var(--shadow-md), 0 0 0 4px rgba(26,122,60,0.08); }
-.var-card.selected { border-color: var(--green-hero); box-shadow: 0 0 0 4px rgba(26,122,60,0.15), var(--shadow-md); }
-.var-card.selected::after { content: ''; position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; background: var(--green-hero); color: #fff; border-radius: 50%; z-index: 5; box-shadow: 0 4px 12px rgba(26,122,60,0.35), 0 0 0 3px #fff; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8l3 3 6-6.5' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; }
-.var-card-stage { position: relative; width: 100%; height: 220px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: var(--var-color); }
-.var-card.signature .var-card-stage { background-color: var(--var-color); background-image: radial-gradient(ellipse 80% 60% at 50% 0%, var(--var-light) 0%, var(--var-color) 50%, var(--var-deep) 100%); }
-.var-card-mark { position: relative; z-index: 2; font-size: 96px; font-family: var(--display); font-weight: 800; letter-spacing: -0.05em; color: rgba(255,255,255,0.96); text-shadow: 0 2px 24px rgba(0,0,0,0.18); line-height: 1; transition: transform 0.4s cubic-bezier(.2,.7,.2,1); }
-.var-card:hover .var-card-mark { transform: scale(1.04); }
-.var-card-code { position: absolute; top: 12px; left: 12px; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.95); background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 5px; z-index: 4; backdrop-filter: blur(6px); }
-.var-card-hex { position: absolute; top: 12px; right: 12px; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.04em; color: rgba(255,255,255,0.95); background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 5px; z-index: 4; backdrop-filter: blur(6px); text-transform: uppercase; }
-.var-card-body { padding: 14px 16px; background: var(--white); border-top: 1px solid var(--hair); text-align: left; display: flex; flex-direction: column; gap: 10px; }
-.var-card-body-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.var-card-swatch-mark { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.18), 0 0 0 1.5px var(--white), 0 0 0 2.5px var(--hair); }
-.var-card-name { font-family: var(--display); font-size: 17px; font-weight: 800; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 3px; line-height: 1.1; }
-.var-card-name-en { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); }
-.var-card-action { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 1px solid var(--hair-soft); font-size: 12.5px; font-weight: 600; color: var(--green-hero); letter-spacing: -0.005em; transition: color 0.18s; }
-.var-card-action svg { width: 13px; height: 13px; transition: transform 0.32s cubic-bezier(.2,.7,.2,1); }
-.var-card:hover .var-card-action svg { transform: translateX(4px); }
+.nav-logo {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  text-decoration: none;
+}
 
-/* ═══════════════════════════════════════════════════════════
-   SCREEN DEMO
-═══════════════════════════════════════════════════════════ */
-#screen-demo { background: var(--off-white); }
-.demo-head { max-width: 1280px; margin: 0 auto; padding: 24px 24px 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-.demo-info {}
-.demo-line-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--blue-ui); margin-bottom: 6px; }
-.demo-title { font-family: var(--display); font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; color: var(--ink); }
-.demo-actions { display: flex; gap: 8px; align-items: center; }
-.demo-btn { display: inline-flex; align-items: center; gap: 7px; padding: 11px 16px; font-family: var(--body); font-size: 13px; font-weight: 600; letter-spacing: -0.005em; border-radius: 8px; cursor: pointer; text-decoration: none; border: 1.5px solid transparent; transition: all 0.16s; white-space: nowrap; }
-.demo-btn:active { transform: scale(0.97); }
-.demo-btn-ghost { background: var(--white); border-color: var(--hair); color: var(--ink-mid); }
-.demo-btn-ghost:hover { border-color: var(--ink-dim); color: var(--ink); }
-.demo-btn-solid { background: var(--green-hero); color: #fff; border-color: var(--green-hero-dk); box-shadow: 0 4px 12px rgba(26,122,60,0.3); }
-.demo-btn-solid:hover { background: var(--green-hero-dk); }
-.demo-btn svg { width: 13px; height: 13px; }
-.demo-frame-wrap { max-width: 1280px; margin: 0 auto; padding: 0 24px 80px; }
-.demo-stage { position: relative; background: linear-gradient(180deg, #e8ebf2 0%, #d8dce8 100%); border: 1.5px solid var(--hair); border-radius: var(--r-lg); padding: 36px 16px 28px; display: flex; flex-direction: column; align-items: center; gap: 18px; overflow: hidden; }
-.demo-stage::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px); background-size: 22px 22px; pointer-events: none; opacity: 0.5; }
-.demo-meta-chip { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-ui); background: rgba(255,255,255,0.85); border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 100px; backdrop-filter: blur(6px); }
-.demo-meta-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green-ui); animation: blink 2s ease-in-out infinite; }
-.demo-phone { position: relative; z-index: 2; width: 100%; max-width: clamp(360px, 82vw, 560px); aspect-ratio: 9 / 19.5; background: linear-gradient(135deg, #2a2f3d 0%, #0a0d14 50%, #2a2f3d 100%); border-radius: 50px; padding: 10px; box-shadow: 0 0 0 1.5px #0a0d14, 0 0 0 2.5px rgba(255,255,255,0.04), 0 1px 0 rgba(255,255,255,0.12) inset, 0 -1px 0 rgba(0,0,0,0.4) inset, 0 30px 60px -15px rgba(0,0,0,0.4), 0 60px 120px -30px rgba(0,0,0,0.45); }
-.demo-phone::before { content: ''; position: absolute; top: 110px; left: -2.5px; width: 3px; height: 30px; background: linear-gradient(90deg, #1a1d28, #2c303d); border-radius: 2px 0 0 2px; box-shadow: 0 56px 0 0 #2c303d, 0 56px 0 1px #1a1d28, 0 96px 0 0 #2c303d, 0 96px 0 1px #1a1d28; }
-.demo-phone::after { content: ''; position: absolute; top: 130px; right: -2.5px; width: 3px; height: 56px; background: linear-gradient(-90deg, #1a1d28, #2c303d); border-radius: 0 2px 2px 0; }
-.demo-phone-screen { position: relative; width: 100%; height: 100%; background: #fafafa; border-radius: 42px; overflow: hidden; }
-.demo-phone-island { position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 100px; height: 28px; background: #0a0d14; border-radius: 100px; z-index: 5; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-.demo-phone-loading { position: absolute; inset: 0; background: linear-gradient(90deg, #f0f2f6 0%, #fafbfd 50%, #f0f2f6 100%); background-size: 200% 100%; animation: shimmer 1.4s ease-in-out infinite; z-index: 3; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; border-radius: 42px; }
-.demo-phone-loading.hidden { opacity: 0; pointer-events: none; transition: opacity 0.4s; }
-.demo-phone-loading-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--ink); display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--display); font-size: 14px; font-weight: 800; }
-.demo-phone-loading-text { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
-.demo-phone-iframe { width: 100%; height: 100%; border: none; display: block; background: #fff; }
-@keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
-.demo-stage-hint { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: var(--ink-mid); }
-.demo-stage-hint svg { width: 13px; height: 13px; color: var(--blue-ui); }
+.nav-logo span { color: var(--fg-40); }
 
-/* ═══════════════════════════════════════════════════════════
-   SCREEN CONVERSACIONAL
-═══════════════════════════════════════════════════════════ */
-#screen-conv {
-  background: #0a0f1a;
-  height: 100dvh;
-  height: 100svh;
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--fg-60);
+  text-decoration: none;
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--fg); }
+
+.nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: var(--fg);
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.nav-mobile {
+  display: none;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 32px 32px;
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.nav-mobile.open {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-mobile ul {
+  list-style: none;
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.nav-mobile ul a {
+  color: var(--fg-60);
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 22px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font);
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s var(--ease);
+  white-space: nowrap;
+  border: none;
+  line-height: 1;
+}
+
+.btn--primary {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.btn--primary:hover {
+  background: rgba(255,255,255,0.88);
+  transform: translateY(-1px);
+}
+
+.btn--primary:active { transform: translateY(0); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--fg-60);
+  border: 1px solid var(--border-hover);
+}
+
+.btn--ghost:hover {
+  color: var(--fg);
+  border-color: var(--fg-40);
+}
+
+.btn--large {
+  padding: 14px 32px;
+  font-size: 0.95rem;
+  border-radius: 4px;
+  min-height: 50px;
+}
+
+/* ============================================================
+   LABEL / EYEBROW
+   ============================================================ */
+.eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-40);
+  margin-bottom: 20px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 32px 80px;
+  position: relative;
   overflow: hidden;
 }
 
-.conv-scroll-area {
-  flex: 1 1 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  scroll-behavior: smooth;
-}
-
-.conv-masthead {
-  position: sticky; top: 0; z-index: 100;
-  flex-shrink: 0;
-  background: rgba(10,15,26,0.98);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-}
-.conv-masthead-inner {
-  max-width: 800px; margin: 0 auto; padding: 0 24px;
-  height: 58px; display: flex; align-items: center; justify-content: space-between;
-}
-.conv-brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.conv-brand-mark { width: 28px; height: 28px; background: var(--yellow-hl); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: var(--display); font-size: 14px; font-weight: 800; color: var(--ink); }
-.conv-brand-name { font-family: var(--display); font-size: 17px; font-weight: 800; color: var(--white); letter-spacing: -0.02em; }
-.conv-progress-area { display: flex; align-items: center; gap: 10px; }
-.conv-step-label { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.35); }
-.conv-progress-bar {
-  width: 120px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden;
-}
-.conv-progress-fill {
-  height: 100%; background: var(--yellow-hl); border-radius: 2px;
-  transition: width 0.5s cubic-bezier(.4,0,.2,1);
-}
-
-.conv-stage {
-  max-width: 800px; margin: 0 auto;
-  padding: 32px 24px 32px;
-  display: flex; flex-direction: column; gap: 0;
-  min-height: 100%;
-}
-
-.conv-msg {
-  display: flex; align-items: flex-start; gap: 12px;
-  margin-bottom: 20px;
-  animation: msgIn 0.4s cubic-bezier(.2,.7,.2,1) both;
-}
-@keyframes msgIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.conv-avatar {
-  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-  background: linear-gradient(135deg, var(--yellow-hl) 0%, #d4a800 100%);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--display); font-size: 13px; font-weight: 800; color: var(--ink);
-  box-shadow: 0 2px 8px rgba(245,200,0,0.3);
-  margin-top: 2px;
-}
-.conv-bubble {
-  max-width: 72ch; padding: 14px 18px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-radius: 4px 18px 18px 18px;
-  font-size: 15px; line-height: 1.65; color: rgba(255,255,255,0.88);
-  font-weight: 400; position: relative;
-}
-.conv-bubble strong { color: var(--white); font-weight: 700; }
-.conv-bubble.insight {
-  background: rgba(245,200,0,0.07);
-  border-color: rgba(245,200,0,0.2);
-  color: rgba(255,255,255,0.8);
-  font-size: 14px;
-  border-radius: 4px 16px 16px 16px;
-}
-.conv-bubble.insight::before {
+#hero::before {
   content: '';
-  display: inline-block; width: 6px; height: 6px;
-  border-radius: 50%; background: var(--yellow-hl);
-  margin-right: 8px; vertical-align: middle;
-  box-shadow: 0 0 0 3px rgba(245,200,0,0.2);
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 600px;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.04) 0%, transparent 70%);
+  pointer-events: none;
 }
 
-.conv-cursor {
-  display: inline-block; width: 2px; height: 1em;
-  background: var(--yellow-hl); border-radius: 1px;
-  margin-left: 2px; vertical-align: text-bottom;
-  animation: cursorBlink 0.9s ease-in-out infinite;
-}
-@keyframes cursorBlink {
-  0%,100%{ opacity: 1; }
-  50%    { opacity: 0; }
-}
-
-.conv-typing {
-  display: flex; align-items: center; gap: 12px;
-  padding: 14px 0; margin-bottom: 12px;
-  animation: msgIn 0.3s ease both;
-}
-.conv-typing-dots {
-  display: flex; gap: 5px; align-items: center;
-  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.09);
-  padding: 10px 16px; border-radius: 18px;
-}
-.conv-typing-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  animation: typingPulse 1.2s ease-in-out infinite;
-}
-.conv-typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.conv-typing-dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes typingPulse {
-  0%,80%,100%{ transform: scale(0.8); opacity: 0.4; }
-  40%        { transform: scale(1.1); opacity: 1; }
-}
-
-.conv-answer-area {
-  position: sticky;
-  bottom: 0;
-  flex-shrink: 0;
-  z-index: 50;
-  background: rgba(10,15,26,0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255,255,255,0.07);
-  padding: 14px 24px calc(16px + env(safe-area-inset-bottom, 0px));
-  animation: slideUp 0.35s cubic-bezier(.2,.7,.2,1) both;
-  transition: opacity 0.2s ease;
-}
-@keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to   { transform: translateY(0); opacity: 1; }
-}
-.conv-answer-inner { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
-.conv-answer-hint {
-  font-family: var(--mono); font-size: 10px; font-weight: 600;
-  letter-spacing: 0.07em; text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
-}
-
-.conv-options { display: flex; flex-wrap: wrap; gap: 8px; }
-.conv-option {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 10px 18px;
-  background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(255,255,255,0.12);
-  border-radius: 100px;
-  font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.8);
-  cursor: pointer; transition: all 0.18s; letter-spacing: -0.005em;
-  -webkit-tap-highlight-color: transparent;
-}
-.conv-option:hover {
-  background: rgba(245,200,0,0.1);
-  border-color: rgba(245,200,0,0.4);
-  color: var(--yellow-hl);
-}
-.conv-option:active { transform: scale(0.96); }
-
-.conv-input-row { display: flex; gap: 10px; align-items: flex-end; }
-.conv-text-input {
-  flex: 1; padding: 13px 18px;
-  background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  color: var(--white);
-  font-family: var(--body); font-size: 15px; font-weight: 400;
-  outline: none; transition: border-color 0.18s, background 0.18s;
-  resize: none; line-height: 1.5;
-}
-.conv-text-input::placeholder { color: rgba(255,255,255,0.25); }
-.conv-text-input:focus { border-color: rgba(245,200,0,0.5); background: rgba(255,255,255,0.08); }
-.conv-send-btn {
-  width: 46px; height: 46px; border-radius: 12px;
-  background: var(--yellow-hl); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; transition: background 0.15s, transform 0.12s;
-  box-shadow: 0 4px 12px rgba(245,200,0,0.3);
-}
-.conv-send-btn:hover { background: var(--yellow-hl-dk); }
-.conv-send-btn:active { transform: scale(0.93); }
-.conv-send-btn svg { width: 18px; height: 18px; color: var(--ink); }
-
-.conv-user-msg {
-  display: flex; justify-content: flex-end;
-  margin-bottom: 20px;
-  animation: msgIn 0.3s ease both;
-}
-.conv-user-bubble {
-  max-width: 72ch; padding: 12px 18px;
-  background: var(--green-hero);
-  border-radius: 18px 4px 18px 18px;
-  font-size: 15px; line-height: 1.55; color: var(--white); font-weight: 500;
-}
-
-.conv-completion {
-  text-align: center; padding: 40px 24px;
-  animation: msgIn 0.5s ease both;
-  display: flex; flex-direction: column; align-items: center; gap: 16px;
-}
-.conv-completion-icon {
-  width: 64px; height: 64px; border-radius: 50%;
-  background: rgba(22,163,74,0.15);
-  border: 2px solid rgba(22,163,74,0.35);
-  display: flex; align-items: center; justify-content: center;
+.hero-inner {
+  max-width: 780px;
   margin: 0 auto;
 }
-.conv-completion-icon svg { width: 28px; height: 28px; color: #4ade80; }
-.conv-completion-title {
-  font-family: var(--display);
-  font-size: clamp(24px, 4vw, 34px); font-weight: 800;
-  letter-spacing: -0.02em; color: var(--white); line-height: 1.15;
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-hover);
+  border-radius: 100px;
+  font-size: 0.775rem;
+  color: var(--fg-60);
+  letter-spacing: 0.04em;
+  margin-bottom: 32px;
 }
-.conv-completion-sub { font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.6); max-width: 38ch; }
-.conv-completion-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 16px 32px; background: #25d366; color: var(--white);
-  font-family: var(--body); font-size: 16px; font-weight: 700;
-  border: none; border-radius: 12px; cursor: pointer;
-  transition: background 0.15s, transform 0.12s;
-  box-shadow: 0 6px 20px rgba(37,211,102,0.35);
+
+.hero-badge-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
+}
+
+#hero h1 {
+  margin-bottom: 24px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--fg-40);
+  max-width: 520px;
+  margin: 0 auto 48px;
+  line-height: 1.7;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--fg-20);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  animation: scrollBounce 2.4s ease-in-out infinite;
+}
+
+.scroll-hint::after {
+  content: '';
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(to bottom, var(--fg-20), transparent);
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+  50% { transform: translateX(-50%) translateY(4px); opacity: 1; }
+}
+
+/* ============================================================
+   SECTION: PROBLEMA
+   ============================================================ */
+#problema { padding: var(--section-y) 0; }
+
+#problema .section-header { margin-bottom: 60px; }
+#problema h2 { margin-bottom: 16px; max-width: 540px; }
+#problema .lead { max-width: 460px; color: var(--fg-40); }
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+
+.problem-card {
+  background: var(--bg);
+  padding: 28px 28px;
+  transition: background 0.25s;
+  cursor: default;
+}
+
+.problem-card:hover { background: var(--fg-04); }
+
+.problem-card-icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.problem-card-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--fg-40);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.problem-card h4 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  color: var(--fg);
+  line-height: 1.3;
+}
+
+.problem-card p {
+  font-size: 0.8rem;
+  color: var(--fg-40);
+  line-height: 1.6;
+}
+
+.transition-quote {
+  text-align: center;
+  padding: 0 32px;
+}
+
+.transition-quote blockquote {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: var(--fg-40);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 auto;
+  position: relative;
+  padding: 0 24px;
+}
+
+/* ============================================================
+   TRANSITION BAND
+   ============================================================ */
+.band {
+  padding: 80px 32px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.band p {
+  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+  color: var(--fg-40);
+  font-style: italic;
+  max-width: 600px;
+  margin: 0 auto;
+  letter-spacing: -0.01em;
+  line-height: 1.65;
+}
+
+/* ============================================================
+   SECTION: ANTES DO WHATSAPP
+   ============================================================ */
+#pre-atendimento { padding: var(--section-y) 0; }
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.two-col .text-side { max-width: 400px; }
+.two-col .text-side h2 { margin-bottom: 20px; }
+.two-col .text-side p { margin-bottom: 12px; }
+
+.flow-diagram { position: relative; }
+
+.flow-track {
+  position: relative;
+  padding-left: 28px;
+}
+
+.flow-track::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--fg-20), transparent);
+}
+
+.flow-step {
+  position: relative;
+  padding: 0 0 28px 0;
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+
+.flow-step.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.flow-step:last-child { padding-bottom: 0; }
+
+.flow-step-dot {
+  position: absolute;
+  left: -28px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--fg-20);
+  border: 1px solid var(--fg-20);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.flow-step:hover .flow-step-dot {
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+.flow-step-label {
+  font-size: 0.875rem;
+  color: var(--fg-60);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  padding-top: 0;
+}
+
+.flow-step-label span {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--fg-20);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.flow-step-dot.highlight {
+  background: #25D366;
+  border-color: #25D366;
+  box-shadow: 0 0 8px rgba(37, 211, 102, 0.45);
+}
+
+/* ============================================================
+   SECTION: AGENDAMENTO
+   ============================================================ */
+#agendamento { padding: var(--section-y) 0; }
+
+.sched-header {
+  margin-bottom: 60px;
+  max-width: 540px;
+}
+
+.sched-header h2 { margin-bottom: 16px; }
+
+.sched-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.sched-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+  cursor: default;
+}
+
+.sched-item:last-child { border-bottom: none; }
+.sched-item:hover { background: var(--fg-04); }
+
+.sched-num {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--fg-20);
+  min-width: 28px;
+  padding-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sched-content h4 {
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.sched-content p {
+  font-size: 0.8rem;
+  color: var(--fg-40);
+  line-height: 1.55;
+}
+
+/* ============================================================
+   SECTION: CONTINUIDADE — TIMELINE
+   ============================================================ */
+#continuidade { padding: var(--section-y) 0; }
+
+.timeline-header {
+  margin-bottom: 60px;
+  max-width: 540px;
+}
+
+.timeline-header h2 { margin-bottom: 16px; }
+
+.timeline {
+  position: relative;
+  padding-left: 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+
+.tl-item {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  padding: 0 0 48px 0;
+  position: relative;
+}
+
+.tl-item:last-child { padding-bottom: 0; }
+
+.tl-marker {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  padding-top: 3px;
+}
+
+.tl-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--fg-20);
+  border: 1px solid var(--fg-10);
+  position: relative;
+  z-index: 1;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.tl-item:hover .tl-dot {
+  background: var(--fg);
+  transform: scale(1.3);
+}
+
+.tl-body { flex: 1; }
+
+.tl-step-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-20);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.tl-body h4 {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 6px;
   letter-spacing: -0.01em;
 }
-.conv-completion-btn:hover { background: #1eb558; transform: translateY(-2px); }
-.conv-completion-btn svg { width: 18px; height: 18px; }
-.conv-completion-note {
-  font-size: 12px; color: rgba(255,255,255,0.3);
-  display: flex; align-items: center; gap: 6px;
+
+.tl-body p {
+  font-size: 0.83rem;
+  color: var(--fg-40);
+  line-height: 1.6;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SCREEN FORM
-═══════════════════════════════════════════════════════════ */
-#screen-form { background: var(--off-white); }
-.form-wrap { max-width: 620px; margin: 0 auto; padding: 32px 20px 80px; }
-.form-back { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.04em; color: var(--blue-ui); cursor: pointer; margin-bottom: 22px; background: none; border: none; padding: 6px 10px 6px 6px; border-radius: 6px; transition: background 0.16s; }
-.form-back:hover { background: var(--blue-tint); }
-.form-back svg { width: 13px; height: 13px; }
-.form-summary { background: var(--white); border: 1.5px solid var(--hair); border-radius: var(--r-md); padding: 16px 18px; display: flex; align-items: center; gap: 14px; margin-bottom: 18px; box-shadow: var(--shadow-sm); }
-.form-summary-chroma { width: 56px; height: 56px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 26px; font-family: var(--display); font-weight: 800; color: rgba(255,255,255,0.95); letter-spacing: -0.04em; text-shadow: 0 1px 2px rgba(0,0,0,0.15); position: relative; overflow: hidden; }
-.form-summary-chroma::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 100% at 0% 0%, rgba(255,255,255,0.18) 0%, transparent 60%), radial-gradient(ellipse 100% 70% at 100% 100%, rgba(0,0,0,0.18) 0%, transparent 60%); }
-.form-summary-chroma > span { position: relative; z-index: 1; }
-.form-summary-info { flex: 1; min-width: 0; }
-.form-summary-label { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-hero); margin-bottom: 3px; }
-.form-summary-name { font-family: var(--display); font-size: 17px; font-weight: 800; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 2px; line-height: 1.1; }
-.form-summary-line { font-size: 12px; color: var(--ink-mid); font-weight: 500; }
-.form-summary-change { background: none; border: 1.5px solid var(--hair); font: inherit; font-size: 12px; font-weight: 600; color: var(--ink-mid); cursor: pointer; padding: 7px 12px; border-radius: 7px; transition: all 0.16s; flex-shrink: 0; }
-.form-summary-change:hover { background: rgba(26,122,60,0.08); border-color: var(--green-hero); color: var(--green-hero); }
-.form-card { background: var(--white); border: 1.5px solid var(--hair); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 12px; }
-.form-card-head { padding: 14px 18px; border-bottom: 1px solid var(--hair); display: flex; align-items: center; gap: 10px; }
-.form-card-icon { width: 30px; height: 30px; border-radius: 8px; background: rgba(26,122,60,0.1); border: 1px solid rgba(26,122,60,0.18); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.form-card-icon svg { width: 15px; height: 15px; color: var(--green-hero); }
-.form-card-title { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
-.form-card-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
-.form-field { position: relative; }
-.form-label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink-mid); margin-bottom: 6px; letter-spacing: -0.005em; }
-.form-label .req { color: var(--green-hero); font-weight: 700; }
-.form-label .opt { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-dim); background: var(--off-white); padding: 2px 6px; border-radius: 4px; margin-left: 4px; }
-.form-input, .form-select, .form-textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--hair); border-radius: 9px; background: var(--white); color: var(--ink); font-family: var(--body); font-size: 15px; font-weight: 500; outline: none; transition: border-color 0.16s, box-shadow 0.16s; -webkit-appearance: none; appearance: none; letter-spacing: -0.005em; }
-.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--green-hero); box-shadow: 0 0 0 4px rgba(26,122,60,0.1); }
-.form-input::placeholder, .form-textarea::placeholder { color: var(--ink-dim); font-weight: 400; }
-.form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%237a8194' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; cursor: pointer; }
-.form-textarea { resize: vertical; min-height: 88px; line-height: 1.55; font-size: 14px; }
-.form-submit-area { margin-top: 6px; }
-.form-submit { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; background: var(--green-ui); color: #fff; border: none; border-radius: 11px; font-family: var(--body); font-size: 15px; font-weight: 700; letter-spacing: -0.01em; cursor: pointer; transition: background 0.18s, transform 0.12s; box-shadow: 0 4px 12px rgba(22,163,74,0.28); }
-.form-submit:hover { background: #15803d; }
-.form-submit:active { transform: scale(0.99); }
-.form-submit svg { width: 18px; height: 18px; }
-.form-submit-note { text-align: center; font-size: 12px; color: var(--ink-dim); margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-.form-submit-note svg { width: 13px; height: 13px; color: var(--green-ui); }
-
-/* ═══════════════════════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════════════════════ */
-.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.22s, transform 0.28s cubic-bezier(.2,.7,.2,1); white-space: nowrap; box-shadow: 0 8px 24px rgba(10,14,26,0.25); display: flex; align-items: center; gap: 8px; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-.toast svg { width: 14px; height: 14px; }
-
-/* ═══════════════════════════════════════════════════════════
-   MOBILE
-═══════════════════════════════════════════════════════════ */
-@media (max-width: 720px) {
-  .hero-inner { padding: 56px 20px 48px; }
-  .section-inner { padding: 56px 20px; }
-  .cards-head { padding: 0 20px; margin-bottom: 28px; }
-  .carousel-track-wrap { padding: 0 20px 8px; }
-  .footer { padding: 24px 20px; }
-  .inter-wrap { padding: 28px 16px 60px; }
-  .inter-cta-block { padding: 28px 20px; }
-  .demo-head { padding: 20px; }
-  .demo-frame-wrap { padding: 0 16px 48px; }
-  .form-wrap { padding: 24px 16px 80px; }
-  .var-head { padding: 24px 20px 18px; }
-  .collection { padding: 24px 16px 80px; }
-  .demo-actions { width: 100%; flex-wrap: wrap; }
-  .demo-btn { flex: 1; justify-content: center; }
-  .conv-stage { padding: 28px 16px 28px; }
-  .conv-answer-area { padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
-  .conv-option { font-size: 13px; padding: 9px 14px; }
-}
-@media (max-width: 480px) {
-  .carousel-card { width: clamp(240px, 78vw, 300px); }
-  .var-card-stage { height: 150px; }
-  .var-card-mark { font-size: 64px; }
-  .var-card-code, .var-card-hex { font-size: 9px; padding: 3px 6px; top: 8px; }
-  .var-card-code { left: 8px; } .var-card-hex { right: 8px; }
-  .var-card-body { padding: 12px; gap: 8px; }
-  .var-card-name { font-size: 14px; }
-  .var-card-name-en { font-size: 9px; }
-  .var-card-action { font-size: 11.5px; }
-  .conv-bubble { font-size: 14px; }
+/* ============================================================
+   SECTION: JORNADA
+   ============================================================ */
+#jornada {
+  padding: var(--section-y) 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--hair); border-radius: 3px; }
+#jornada::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.jornada-header {
+  max-width: 560px;
+  margin: 0 auto 72px;
+}
+
+.jornada-header h2 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  margin-bottom: 16px;
+}
+
+.jornada-header p {
+  color: var(--fg-40);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.horiz-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+  position: relative;
+}
+
+.horiz-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  position: relative;
+  cursor: default;
+}
+
+.horiz-node:hover .hn-dot { background: var(--fg); transform: scale(1.4); }
+.horiz-node:hover .hn-label { color: var(--fg); }
+
+.hn-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fg-20);
+  transition: background 0.25s, transform 0.25s;
+}
+
+.hn-label {
+  font-size: 0.78rem;
+  color: var(--fg-40);
+  letter-spacing: 0.03em;
+  text-align: center;
+  white-space: nowrap;
+  transition: color 0.25s;
+}
+
+.horiz-arrow {
+  color: var(--fg-20);
+  font-size: 0.9rem;
+  line-height: 1;
+  margin-bottom: 22px;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   SECTION: BENEFÍCIOS
+   ============================================================ */
+#beneficios { padding: var(--section-y) 0; }
+
+.beneficios-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.beneficios-header h2 { margin-bottom: 16px; }
+.beneficios-header p { max-width: 440px; margin: 0 auto; color: var(--fg-40); }
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.benefit-card {
+  background: var(--bg);
+  padding: 36px 32px;
+  transition: background 0.25s;
+  cursor: default;
+}
+
+.benefit-card:hover { background: var(--fg-04); }
+
+.benefit-icon {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.benefit-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: var(--fg-40);
+  stroke-width: 1.4;
+  fill: none;
+  transition: stroke 0.25s;
+}
+
+.benefit-card:hover .benefit-icon svg { stroke: var(--fg); }
+
+.benefit-card h4 {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.benefit-card p {
+  font-size: 0.8rem;
+  color: var(--fg-40);
+  line-height: 1.6;
+}
+
+.benefit-card--wide {
+  grid-column: span 3;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.benefit-card--wide .benefit-content { flex: 1; }
+.benefit-card--wide .benefit-stat { flex-shrink: 0; text-align: right; }
+
+.benefit-stat .stat-num {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--fg-20);
+  line-height: 1;
+}
+
+.benefit-stat .stat-label {
+  font-size: 0.72rem;
+  color: var(--fg-20);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   SECTION: CTA FINAL
+   ============================================================ */
+#cta {
+  padding: var(--section-y) 0;
+  text-align: center;
+  position: relative;
+}
+
+#cta::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 400px;
+  background: radial-gradient(ellipse at center bottom, rgba(255,255,255,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.cta-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.cta-inner .eyebrow { margin-bottom: 24px; }
+
+.cta-inner h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin-bottom: 20px;
+  letter-spacing: -0.03em;
+}
+
+.cta-inner > p {
+  color: var(--fg-40);
+  max-width: 420px;
+  margin: 0 auto 40px;
+  font-size: 0.95rem;
+}
+
+.cta-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-note {
+  margin-top: 20px;
+  font-size: 0.75rem;
+  color: var(--fg-20);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 48px 0 40px;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.footer-brand h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  margin-bottom: 8px;
+}
+
+.footer-brand p {
+  font-size: 0.8rem;
+  color: var(--fg-20);
+  line-height: 1.6;
+  max-width: 240px;
+}
+
+.footer-links { display: flex; gap: 48px; }
+
+.footer-col h5 {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-20);
+  margin-bottom: 16px;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-col ul a {
+  color: var(--fg-40);
+  font-size: 0.83rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-col ul a:hover { color: var(--fg); }
+
+.footer-bottom {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-bottom p {
+  font-size: 0.75rem;
+  color: var(--fg-20);
+}
+
+/* ============================================================
+   RESPONSIVE — TABLET (≤ 860px)
+   ============================================================ */
+@media (max-width: 860px) {
+  .nav-links,
+  .nav-cta .btn--ghost { display: none; }
+
+  .nav-toggle { display: flex; }
+
+  .problem-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .two-col {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+
+  .two-col .text-side { max-width: 100%; }
+
+  .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .benefit-card--wide { grid-column: span 2; }
+
+  .footer-links { gap: 32px; }
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE (≤ 600px)
+   ============================================================ */
+@media (max-width: 600px) {
+  :root { --section-y: var(--section-y-sm); }
+
+  .container,
+  .container--sm { padding: 0 20px; }
+
+  #navbar { padding: 0 20px; }
+
+  .nav-mobile { padding: 20px 20px 28px; }
+
+  #hero {
+    padding: 100px 20px 80px;
+    min-height: 100svh;
+  }
+
+  #hero h1 { letter-spacing: -0.02em; }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .problem-grid { grid-template-columns: 1fr; }
+
+  .benefits-grid { grid-template-columns: 1fr; }
+
+  .benefit-card--wide {
+    grid-column: span 1;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .benefit-card--wide .benefit-stat { text-align: left; }
+
+  .horiz-flow {
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+  }
+
+  .horiz-node {
+    flex-direction: row;
+    gap: 14px;
+    padding: 12px 0;
+    justify-content: flex-start;
+    width: 200px;
+  }
+
+  .hn-label {
+    white-space: normal;
+    text-align: left;
+  }
+
+  .horiz-arrow {
+    transform: rotate(90deg);
+    margin-bottom: 0;
+    margin-left: 16px;
+    align-self: flex-start;
+  }
+
+  .tl-item { gap: 24px; }
+
+  .footer-inner {
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+    gap: 28px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cta-actions { flex-direction: column; align-items: center; }
+
+  .cta-actions .btn {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .band { padding: 56px 20px; }
+
+  .sched-item {
+    padding: 22px 20px;
+    gap: 18px;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .flow-step { opacity: 1; transform: none; }
+  .scroll-hint { animation: none; }
+  #particle-background { display: none; }
+}
 
 </style>
 </head>
+
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════
-     SCREEN HOME
-═══════════════════════════════════════════════════════════ -->
-<main class="screen active" id="screen-home">
+<!-- ============================================================
+     CANVAS — PARTÍCULAS (camada de fundo)
+     ============================================================ -->
+<canvas id="particle-background" aria-hidden="true"></canvas>
 
-  <nav class="nav">
-    <div class="nav-inner">
-      <a class="nav-brand" href="#" onclick="goScreen('screen-home'); return false;">
-        <span class="nav-brand-mark">A</span>
-        <span class="nav-brand-name">Atelier</span>
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<nav id="navbar" role="navigation" aria-label="Navegação principal">
+  <a href="#" class="nav-logo" aria-label="Fluxo — página inicial">Fluxo<span>.</span></a>
+
+  <ul class="nav-links" aria-label="Links de navegação">
+    <li><a href="#problema">O Problema</a></li>
+    <li><a href="#pre-atendimento">Solução</a></li>
+    <li><a href="#jornada">Jornada</a></li>
+    <li><a href="#beneficios">Benefícios</a></li>
+  </ul>
+
+  <div class="nav-cta">
+    <a href="#cta" class="btn btn--ghost" style="font-size:0.82rem;padding:8px 16px;">Saiba mais</a>
+    <a href="#cta" class="btn btn--primary" style="font-size:0.82rem;padding:8px 16px;">Falar com especialista</a>
+  </div>
+
+  <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile menu -->
+<div class="nav-mobile" id="navMobile" aria-hidden="true">
+  <ul>
+    <li><a href="#problema" class="nav-mobile-link">O Problema</a></li>
+    <li><a href="#pre-atendimento" class="nav-mobile-link">Solução</a></li>
+    <li><a href="#agendamento" class="nav-mobile-link">Agendamento</a></li>
+    <li><a href="#jornada" class="nav-mobile-link">A Jornada</a></li>
+    <li><a href="#beneficios" class="nav-mobile-link">Benefícios</a></li>
+  </ul>
+  <a href="#cta" class="btn btn--primary btn--large nav-mobile-link" style="width:100%;">Falar com especialista →</a>
+</div>
+
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section id="hero" aria-label="Apresentação">
+  <div class="hero-inner">
+    <div class="hero-badge reveal">
+      <span class="hero-badge-dot" aria-hidden="true"></span>
+      Automação de atendimento e agendamento
+    </div>
+
+    <h1 class="reveal reveal-delay-1">
+      Transforme mensagens em agendamentos sem depender de atendimento manual.
+    </h1>
+
+    <p class="hero-sub reveal reveal-delay-2">
+      O cliente é atendido, direcionado, agenda e retorna para novos atendimentos
+      dentro de um único fluxo automatizado.
+    </p>
+
+    <div class="hero-actions reveal reveal-delay-3">
+      <a href="#cta" class="btn btn--primary btn--large">Automatizar minha operação →</a>
+      <a href="#problema" class="btn btn--ghost btn--large">Ver como funciona</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">Role</div>
+</section>
+
+<hr class="divider">
+
+<!-- ============================================================
+     SEÇÃO 1 — O PROBLEMA
+     ============================================================ -->
+<section id="problema" class="section" aria-labelledby="problema-title">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow reveal">O problema</span>
+      <h2 id="problema-title" class="reveal reveal-delay-1">
+        Toda nova conversa exige o mesmo trabalho.
+      </h2>
+      <p class="lead reveal reveal-delay-2">
+        Sua equipe repete as mesmas respostas, todos os dias, para clientes diferentes.
+        O crescimento gera mais carga operacional, não mais resultado.
+      </p>
+    </div>
+
+    <div class="problem-grid" role="list">
+
+      <div class="problem-card reveal" role="listitem">
+        <div class="problem-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h4>Perguntas repetidas</h4>
+        <p>As mesmas dúvidas chegam todos os dias, consumindo atenção da equipe sem gerar valor real.</p>
+      </div>
+
+      <div class="problem-card reveal reveal-delay-1" role="listitem">
+        <div class="problem-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h4>Explicar serviços do zero</h4>
+        <p>Cada novo contato exige apresentar toda a oferta de serviços desde o início, sem contexto prévio.</p>
+      </div>
+
+      <div class="problem-card reveal reveal-delay-2" role="listitem">
+        <div class="problem-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <h4>Encaminhamentos manuais</h4>
+        <p>Direcionar clientes entre diferentes canais ou atendentes ocupa tempo e gera falhas de comunicação.</p>
+      </div>
+
+      <div class="problem-card reveal reveal-delay-1" role="listitem">
+        <div class="problem-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <h4>Organizar agendas manualmente</h4>
+        <p>Consultar disponibilidade, confirmar horários e registrar agendamentos consome energia que poderia ir para o cliente.</p>
+      </div>
+
+      <div class="problem-card reveal reveal-delay-2" role="listitem">
+        <div class="problem-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h4>Histórico disperso</h4>
+        <p>Informações sobre o cliente ficam espalhadas entre conversas antigas, sem uma fonte única de verdade.</p>
+      </div>
+
+      <div class="problem-card reveal reveal-delay-3" role="listitem">
+        <div class="problem-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h4>Escala impossível</h4>
+        <p>Quanto mais clientes chegam, mais atendentes são necessários. A operação não cresce sem aumentar custo.</p>
+      </div>
+
+    </div>
+
+    <div class="transition-quote reveal">
+      <blockquote>
+        "Quanto mais clientes chegam, mais tempo sua equipe gasta repetindo processos."
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<div class="band" aria-hidden="true">
+  <p class="reveal">Existe uma forma diferente de receber os seus clientes.</p>
+</div>
+
+<!-- ============================================================
+     SEÇÃO 2 — PRÉ-ATENDIMENTO
+     ============================================================ -->
+<section id="pre-atendimento" class="section" aria-labelledby="pre-title">
+  <div class="container">
+    <div class="two-col">
+
+      <div class="text-side">
+        <span class="eyebrow reveal">Pré-atendimento</span>
+        <h2 id="pre-title" class="reveal reveal-delay-1">
+          Tudo começa antes do WhatsApp.
+        </h2>
+        <p class="reveal reveal-delay-2">
+          O cliente passa por um fluxo guiado antes de iniciar qualquer conversa.
+          Ele escolhe o serviço, responde perguntas relevantes e é direcionado corretamente.
+        </p>
+        <p class="reveal reveal-delay-3" style="margin-top:12px;">
+          Quando a conversa começa no WhatsApp, o sistema já sabe exatamente o que o cliente precisa.
+          Sua equipe recebe contexto, não perguntas.
+        </p>
+      </div>
+
+      <div class="flow-diagram" aria-label="Fluxo de pré-atendimento">
+        <div class="flow-track">
+          <div class="flow-step" data-delay="0">
+            <div class="flow-step-dot"></div>
+            <div class="flow-step-label">
+              Cliente acessa o link
+              <span>Direto de um anúncio, site ou QR code</span>
+            </div>
+          </div>
+          <div class="flow-step" data-delay="100">
+            <div class="flow-step-dot"></div>
+            <div class="flow-step-label">
+              Escolhe o serviço
+              <span>Sem necessidade de explicar nada</span>
+            </div>
+          </div>
+          <div class="flow-step" data-delay="200">
+            <div class="flow-step-dot"></div>
+            <div class="flow-step-label">
+              Responde perguntas relevantes
+              <span>Informações coletadas automaticamente</span>
+            </div>
+          </div>
+          <div class="flow-step" data-delay="300">
+            <div class="flow-step-dot"></div>
+            <div class="flow-step-label">
+              É direcionado corretamente
+              <span>Fluxo inteligente baseado nas respostas</span>
+            </div>
+          </div>
+          <div class="flow-step" data-delay="400">
+            <div class="flow-step-dot highlight"></div>
+            <div class="flow-step-label">
+              Chega ao WhatsApp preparado
+              <span>Com dados, contexto e expectativa alinhada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <p class="reveal">Quando o cliente chega ao WhatsApp, todas as informações já foram organizadas.</p>
+</div>
+
+<!-- ============================================================
+     SEÇÃO 3 — AGENDAMENTO
+     ============================================================ -->
+<section id="agendamento" class="section" aria-labelledby="sched-title">
+  <div class="container">
+    <div class="sched-header">
+      <span class="eyebrow reveal">Agendamento</span>
+      <h2 id="sched-title" class="reveal reveal-delay-1">O agendamento acontece automaticamente.</h2>
+      <p class="reveal reveal-delay-2">
+        Sem trocas de mensagem para confirmar horário. Sem consultas manuais.
+        O sistema calcula e apresenta apenas as opções disponíveis e válidas.
+      </p>
+    </div>
+
+    <div class="sched-list" role="list">
+      <div class="sched-item reveal" role="listitem">
+        <div class="sched-num">01</div>
+        <div class="sched-content">
+          <h4>Cálculo de disponibilidade em tempo real</h4>
+          <p>O sistema consulta a agenda e identifica janelas abertas automaticamente, sem necessidade de verificação manual.</p>
+        </div>
+      </div>
+      <div class="sched-item reveal reveal-delay-1" role="listitem">
+        <div class="sched-num">02</div>
+        <div class="sched-content">
+          <h4>Duração calculada por tipo de serviço</h4>
+          <p>Cada procedimento tem sua duração configurada. O sistema reserva o tempo exato necessário.</p>
+        </div>
+      </div>
+      <div class="sched-item reveal reveal-delay-2" role="listitem">
+        <div class="sched-num">03</div>
+        <div class="sched-content">
+          <h4>Combinação de múltiplos procedimentos</h4>
+          <p>Quando o cliente escolhe mais de um serviço, os tempos são somados e a disponibilidade é recalculada automaticamente.</p>
+        </div>
+      </div>
+      <div class="sched-item reveal reveal-delay-3" role="listitem">
+        <div class="sched-num">04</div>
+        <div class="sched-content">
+          <h4>Apenas horários válidos são exibidos</h4>
+          <p>O cliente só enxerga o que realmente está disponível. Sem conflitos, sem cancelamentos, sem retrabalho.</p>
+        </div>
+      </div>
+      <div class="sched-item reveal reveal-delay-4" role="listitem">
+        <div class="sched-num">05</div>
+        <div class="sched-content">
+          <h4>Confirmação e registro automático</h4>
+          <p>O agendamento é gravado, o cliente recebe confirmação e sua equipe é notificada — sem qualquer intervenção manual.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <p class="reveal">Mas a experiência não termina após o agendamento.</p>
+</div>
+
+<!-- ============================================================
+     SEÇÃO 4 — CONTINUIDADE
+     ============================================================ -->
+<section id="continuidade" class="section" aria-labelledby="cont-title">
+  <div class="container">
+    <div class="timeline-header">
+      <span class="eyebrow reveal">Continuidade</span>
+      <h2 id="cont-title" class="reveal reveal-delay-1">Cada conversa continua de onde a última parou.</h2>
+      <p class="reveal reveal-delay-2">
+        O histórico de cada cliente acompanha toda a jornada.
+        Nenhuma informação se perde entre atendimentos.
+      </p>
+    </div>
+
+    <div class="timeline" role="list" aria-label="Linha do tempo da jornada do cliente">
+      <div class="tl-item reveal" role="listitem">
+        <div class="tl-marker"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-step-label">Etapa 01</div>
+          <h4>Primeiro contato</h4>
+          <p>Cliente descobre o serviço e inicia o fluxo de pré-atendimento. Todas as informações são coletadas e armazenadas desde esse momento.</p>
+        </div>
+      </div>
+      <div class="tl-item reveal reveal-delay-1" role="listitem">
+        <div class="tl-marker"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-step-label">Etapa 02</div>
+          <h4>Agendamento confirmado</h4>
+          <p>Horário reservado automaticamente. Cliente e equipe recebem confirmação. Nenhuma mensagem manual foi necessária.</p>
+        </div>
+      </div>
+      <div class="tl-item reveal reveal-delay-2" role="listitem">
+        <div class="tl-marker"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-step-label">Etapa 03</div>
+          <h4>Atendimento realizado</h4>
+          <p>Equipe atende o cliente já contextualizada. Dados do atendimento são registrados e somados ao histórico existente.</p>
+        </div>
+      </div>
+      <div class="tl-item reveal reveal-delay-3" role="listitem">
+        <div class="tl-marker"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-step-label">Etapa 04</div>
+          <h4>Relacionamento recorrente</h4>
+          <p>No momento certo, o sistema inicia o contato para retorno. A mensagem já conhece o cliente e o que foi feito anteriormente.</p>
+        </div>
+      </div>
+      <div class="tl-item reveal reveal-delay-4" role="listitem">
+        <div class="tl-marker"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-step-label">Etapa 05</div>
+          <h4>Novo ciclo — com menos atrito</h4>
+          <p>O cliente retorna com histórico completo disponível. O próximo agendamento acontece com ainda mais fluidez que o primeiro.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ============================================================
+     SEÇÃO 5 — JORNADA
+     ============================================================ -->
+<section id="jornada" class="section" aria-labelledby="jornada-title">
+  <div class="container">
+    <div class="jornada-header reveal">
+      <span class="eyebrow">A visão completa</span>
+      <h2 id="jornada-title">Uma única jornada.</h2>
+      <p>
+        Não são ferramentas isoladas. É um fluxo contínuo que acompanha o cliente
+        do primeiro contato aos próximos agendamentos.
+      </p>
+    </div>
+
+    <div class="horiz-flow reveal reveal-delay-1" role="list" aria-label="Etapas da jornada completa">
+      <div class="horiz-node" role="listitem">
+        <div class="hn-dot"></div>
+        <div class="hn-label">Descoberta</div>
+      </div>
+      <div class="horiz-arrow" aria-hidden="true">→</div>
+      <div class="horiz-node" role="listitem">
+        <div class="hn-dot"></div>
+        <div class="hn-label">Pré-atendimento</div>
+      </div>
+      <div class="horiz-arrow" aria-hidden="true">→</div>
+      <div class="horiz-node" role="listitem">
+        <div class="hn-dot" style="background:#25D366;box-shadow:0 0 6px rgba(37,211,102,0.4)"></div>
+        <div class="hn-label">WhatsApp</div>
+      </div>
+      <div class="horiz-arrow" aria-hidden="true">→</div>
+      <div class="horiz-node" role="listitem">
+        <div class="hn-dot"></div>
+        <div class="hn-label">Agendamento</div>
+      </div>
+      <div class="horiz-arrow" aria-hidden="true">→</div>
+      <div class="horiz-node" role="listitem">
+        <div class="hn-dot"></div>
+        <div class="hn-label">Atendimento</div>
+      </div>
+      <div class="horiz-arrow" aria-hidden="true">→</div>
+      <div class="horiz-node" role="listitem">
+        <div class="hn-dot"></div>
+        <div class="hn-label">Retorno</div>
+      </div>
+      <div class="horiz-arrow" aria-hidden="true">→</div>
+      <div class="horiz-node" role="listitem">
+        <div class="hn-dot" style="background:var(--fg-20);"></div>
+        <div class="hn-label">Novo ciclo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ============================================================
+     SEÇÃO 6 — BENEFÍCIOS
+     ============================================================ -->
+<section id="beneficios" class="section" aria-labelledby="beneficios-title">
+  <div class="container">
+    <div class="beneficios-header">
+      <span class="eyebrow reveal">Resultados</span>
+      <h2 id="beneficios-title" class="reveal reveal-delay-1">O que muda na sua operação.</h2>
+      <p class="reveal reveal-delay-2">Menos carga para a equipe. Mais resultado para o negócio.</p>
+    </div>
+
+    <div class="benefits-grid" role="list">
+      <div class="benefit-card reveal" role="listitem">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <h4>Menos tempo operacional</h4>
+        <p>A equipe para de repetir processos e passa a focar no que importa: o atendimento de qualidade.</p>
+      </div>
+      <div class="benefit-card reveal reveal-delay-1" role="listitem">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        </div>
+        <h4>Mais agendamentos confirmados</h4>
+        <p>O fluxo automático reduz o abandono. Clientes chegam ao agendamento sem fricção e sem espera.</p>
+      </div>
+      <div class="benefit-card reveal reveal-delay-2" role="listitem">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h4>Atendimento consistente</h4>
+        <p>Cada cliente passa pela mesma experiência de qualidade, independente de quem está de plantão.</p>
+      </div>
+      <div class="benefit-card reveal" role="listitem">
+        <div class="benefit-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        </div>
+        <h4>Histórico centralizado</h4>
+        <p>Todas as informações do cliente em um único lugar, acessíveis desde o primeiro atendimento.</p>
+      </div>
+      <div class="benefit-card benefit-card--wide reveal reveal-delay-1" role="listitem">
+        <div class="benefit-content">
+          <div class="benefit-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+          <h4>Experiência premium para o cliente</h4>
+          <p>
+            O cliente sente que está sendo atendido por uma operação profissional e ágil.
+            A automação é invisível. A experiência é memorável.
+          </p>
+        </div>
+        <div class="benefit-stat" aria-label="Zero intervenção manual necessária">
+          <div class="stat-num">0</div>
+          <div class="stat-label">Intervenção manual necessária</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ============================================================
+     CTA FINAL
+     ============================================================ -->
+<section id="cta" class="section" aria-labelledby="cta-title">
+  <div class="cta-inner container">
+    <span class="eyebrow reveal">Próximo passo</span>
+    <h2 id="cta-title" class="reveal reveal-delay-1">
+      Pronto para automatizar toda a jornada do seu cliente?
+    </h2>
+    <p class="reveal reveal-delay-2">
+      Uma conversa de 30 minutos é suficiente para entender se a solução faz sentido para a sua operação.
+    </p>
+    <div class="cta-actions reveal reveal-delay-3">
+      <a href="#" class="btn btn--primary btn--large" onclick="alert('Agendamento em breve.')">
+        Falar com especialista →
       </a>
-      <div class="nav-right">
-        <div class="nav-status">
-          <span class="dot"></span>
-          Aceitando pedidos
-        </div>
-        <button class="nav-cta" onclick="openConv()">
-          Solicitar demonstração
-          <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
+      <a href="#problema" class="btn btn--ghost btn--large">Ver como funciona</a>
     </div>
-  </nav>
+    <p class="cta-note reveal reveal-delay-4">Sem compromisso. Sem contrato de longo prazo para começar.</p>
+  </div>
+</section>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-left">
-        <div class="hero-label">
-          <span class="hero-label-dot"></span>
-          IA de relacionamento e conversão · 2026
-        </div>
-        <h1 class="hero-headline">Seu atendimento começa antes do WhatsApp.</h1>
-        <p class="hero-subheadline">A IA que entende o que o seu cliente procura antes da conversa começar — e transforma visitantes em clientes automaticamente.</p>
-        <button class="hero-cta" onclick="openConv()">
-          Solicitar demonstração
-          <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>Fluxo.</h3>
+        <p>Automação de atendimento e agendamento para empresas que crescem com inteligência.</p>
       </div>
-
-      <div class="hero-visual">
-        <div class="hero-card">
-          <div class="hero-card-icon">
-            <svg viewBox="0 0 18 18" fill="none"><path d="M9 2a5.5 5.5 0 100 11A5.5 5.5 0 009 2zm0 0v5.5l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="7.5" r="0" fill="none"/><path d="M14.5 14.5l-2.8-2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
-          <div>
-            <div class="hero-card-title">Inteligência antes do primeiro contato</div>
-            <div class="hero-card-desc">O sistema entende intenção, contexto e preferência — antes do seu cliente digitar "Olá".</div>
-          </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h5>Produto</h5>
+          <ul>
+            <li><a href="#pre-atendimento">Pré-atendimento</a></li>
+            <li><a href="#agendamento">Agendamento</a></li>
+            <li><a href="#continuidade">Continuidade</a></li>
+            <li><a href="#beneficios">Benefícios</a></li>
+          </ul>
         </div>
-        <div class="hero-card">
-          <div class="hero-card-icon">
-            <svg viewBox="0 0 18 18" fill="none"><path d="M2 14c0-3.3 2.7-6 6-6h2c3.3 0 6 2.7 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M14 8l2 2-2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div>
-            <div class="hero-card-title">Clientes mais preparados. Conversas mais inteligentes.</div>
-            <div class="hero-card-desc">Você entra na conversa com contexto completo. Sem repetição. Só para fechar.</div>
-          </div>
-        </div>
-        <div class="hero-card">
-          <div class="hero-card-icon">
-            <svg viewBox="0 0 18 18" fill="none"><path d="M3 9.5C3 6.46 5.46 4 8.5 4S14 6.46 14 9.5M6 14c0-1.66 1.12-3 2.5-3S11 12.34 11 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8.5" cy="9.5" r="1.5" fill="currentColor"/></svg>
-          </div>
-          <div>
-            <div class="hero-card-title">Relacionamento que gera recorrência</div>
-            <div class="hero-card-desc">A IA aprende padrões, antecipa retornos e mantém o cliente conectado à sua marca.</div>
-          </div>
+        <div class="footer-col">
+          <h5>Empresa</h5>
+          <ul>
+            <li><a href="#">Sobre nós</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#cta">Contato</a></li>
+            <li><a href="#">Política de privacidade</a></li>
+          </ul>
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- SEÇÃO PROBLEMA -->
-  <section class="section-problema">
-    <div class="section-inner">
-      <div class="section-label">
-        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        O problema real
-      </div>
-      <h2 class="section-headline">A conversa errada custa mais do que você imagina</h2>
-      <div class="problema-grid">
-        <div class="problema-img">
-          <svg class="problema-illustration" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="60" y="20" width="180" height="260" rx="20" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
-            <rect x="110" y="28" width="80" height="12" rx="6" fill="rgba(0,0,0,0.3)"/>
-            <rect x="80" y="60" width="120" height="32" rx="10" fill="rgba(245,200,0,0.25)"/>
-            <text x="95" y="81" font-size="11" fill="rgba(255,255,255,0.9)" font-family="monospace">Qual o preço?</text>
-            <rect x="100" y="104" width="120" height="32" rx="10" fill="rgba(255,255,255,0.12)"/>
-            <text x="115" y="125" font-size="10" fill="rgba(255,255,255,0.7)" font-family="monospace">Tem horário livre?</text>
-            <rect x="78" y="148" width="144" height="52" rx="10" fill="rgba(26,122,60,0.35)" stroke="rgba(26,122,60,0.4)" stroke-width="1"/>
-            <text x="92" y="168" font-size="10" fill="rgba(255,255,255,0.9)" font-family="monospace">✓ Contexto mapeado</text>
-            <text x="92" y="183" font-size="10" fill="rgba(245,200,0,0.9)" font-family="monospace">Cliente inteligente</text>
-            <line x1="88" y1="215" x2="212" y2="215" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-            <rect x="84" y="224" width="65" height="18" rx="9" fill="rgba(22,163,74,0.3)" stroke="rgba(22,163,74,0.4)" stroke-width="1"/>
-            <text x="100" y="237" font-size="8.5" fill="#86efac" font-family="monospace">Automático</text>
-            <rect x="157" y="224" width="58" height="18" rx="9" fill="rgba(245,200,0,0.18)" stroke="rgba(245,200,0,0.3)" stroke-width="1"/>
-            <text x="169" y="237" font-size="8.5" fill="#f5c800" font-family="monospace">24h / dia</text>
-          </svg>
-        </div>
-        <div class="problema-content">
-          <p class="section-sub">Toda conversa genérica é uma oportunidade perdida. Quando o cliente chega sem contexto, você gasta energia respondendo o óbvio — e perde o momento certo de converter.</p>
-          <button class="btn-demo" onclick="openConv()">
-            Solicitar demonstração
-            <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SEÇÃO ANTES E DEPOIS — VINHO PREMIUM (AJUSTE 3) -->
-  <section class="section-antes">
-    <div class="section-inner">
-      <div class="section-label">
-        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        Antes e depois
-      </div>
-      <h2 class="section-headline" style="max-width:none;margin-bottom:36px;">a camada inteligente muda tudo</h2>
-      <div class="antes-grid">
-        <div class="antes-col sem">
-          <div class="antes-col-header">
-            <div class="antes-col-badge">Sem Atelier</div>
-          </div>
-          <div class="antes-col-title">Relacionamento reativo</div>
-          <div class="antes-item">
-            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div class="antes-item-text">Você responde as mesmas perguntas todos os dias</div>
-          </div>
-          <div class="antes-item">
-            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div class="antes-item-text">Nenhum contexto sobre quem está chegando</div>
-          </div>
-          <div class="antes-item">
-            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div class="antes-item-text">Cliente some e você não sabe o motivo</div>
-          </div>
-          <div class="antes-item">
-            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
-            <div class="antes-item-text">Sem previsibilidade. Sem recorrência. Sem dados.</div>
-          </div>
-        </div>
-        <div class="antes-col com">
-          <div class="antes-col-header">
-            <div class="antes-col-badge">Com Atelier</div>
-          </div>
-          <div class="antes-col-title">Inteligência contínua</div>
-          <div class="antes-item">
-            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="antes-item-text">Cliente chega com contexto, intenção e histórico mapeados</div>
-          </div>
-          <div class="antes-item">
-            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="antes-item-text">A IA aprende padrões e antecipa necessidades</div>
-          </div>
-          <div class="antes-item">
-            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="antes-item-text">Relacionamento contínuo — o cliente volta sem você pedir</div>
-          </div>
-          <div class="antes-item">
-            <div class="antes-item-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="antes-item-text">Previsibilidade real. Você só entra para fechar.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SEÇÃO RELACIONAMENTO INTELIGENTE -->
-  <section class="section-relac">
-    <div class="section-inner">
-      <div class="section-label">
-        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        Relacionamento inteligente
-      </div>
-      <h2 class="section-headline relac-headline">A IA que aprende como seus clientes compram.</h2>
-      <p class="section-sub relac-sub">Cada interação revela padrões. A plataforma entende preferências, identifica comportamentos recorrentes e constrói uma visão completa de quem está chegando até você — antes mesmo da conversa começar.</p>
-      <div class="relac-grid">
-        <div class="relac-card">
-          <div class="relac-card-num">01</div>
-          <div class="relac-card-content">
-            <div class="relac-card-title">Mapeia intenção antes do contato</div>
-            <div class="relac-card-desc">O sistema entende o que o cliente procura — e prepara você com contexto real, não suposições.</div>
-          </div>
-        </div>
-        <div class="relac-card">
-          <div class="relac-card-num">02</div>
-          <div class="relac-card-content">
-            <div class="relac-card-title">Identifica padrões de decisão</div>
-            <div class="relac-card-desc">A IA reconhece como cada perfil de cliente toma decisões — e adapta a experiência em tempo real.</div>
-          </div>
-        </div>
-        <div class="relac-card">
-          <div class="relac-card-num">03</div>
-          <div class="relac-card-content">
-            <div class="relac-card-title">Cria continuidade no atendimento</div>
-            <div class="relac-card-desc">Histórico, preferências e contexto preservados. Cada retorno parece uma conversa que nunca parou.</div>
-          </div>
-        </div>
-        <div class="relac-card">
-          <div class="relac-card-num">04</div>
-          <div class="relac-card-content">
-            <div class="relac-card-title">Antecipa necessidades futuras</div>
-            <div class="relac-card-desc">Com dados suficientes, a plataforma começa a prever quando o cliente vai precisar de você — antes de ele saber.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SEÇÃO RECORRÊNCIA E RETORNO -->
-  <section class="section-recor">
-    <div class="section-inner">
-      <div class="section-label">
-        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        Recorrência e retorno
-      </div>
-      <div class="recor-layout">
-        <div class="recor-left">
-          <h2 class="section-headline recor-headline">Seu negócio começa a prever retornos.</h2>
-          <p class="recor-sub">O cliente que você atendeu hoje não é perdido amanhã. A IA mantém o relacionamento ativo, identifica o momento certo de reengajar e cria previsibilidade real no seu faturamento.</p>
-          <button class="btn-demo" onclick="openConv()">
-            Quero conhecer
-            <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <div class="recor-stats">
-          <div class="recor-stat">
-            <div class="recor-stat-value">+</div>
-            <div class="recor-stat-label">Recorrência</div>
-            <div class="recor-stat-desc">Clientes que voltam por conta própria — porque a experiência foi memorável.</div>
-          </div>
-          <div class="recor-stat">
-            <div class="recor-stat-value">↑</div>
-            <div class="recor-stat-label">Conversão</div>
-            <div class="recor-stat-desc">Leads que chegam preparados fecham mais rápido e com menos objeção.</div>
-          </div>
-          <div class="recor-stat">
-            <div class="recor-stat-value">∞</div>
-            <div class="recor-stat-label">Relacionamento</div>
-            <div class="recor-stat-desc">A conversa não termina no primeiro atendimento. Ela continua evoluindo.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CARROSSEL -->
-  <section class="section-cards">
-    <div class="cards-head">
-      <div class="cards-head-label">O que a IA entrega</div>
-      <h2 class="cards-head-title">Automatize o início. Humanize o fechamento.</h2>
-    </div>
-    <div class="carousel-track-wrap" id="carouselWrap">
-      <div class="carousel-track" id="carouselTrack">
-        <div class="carousel-card c-blue">
-          <div class="carousel-card-num">01 — Conversão</div>
-          <div class="carousel-card-body">
-            <div class="carousel-card-title">visitantes viram clientes automaticamente</div>
-            <div class="carousel-card-desc">A IA conduz o visitante por uma jornada inteligente antes do primeiro contato humano — e entrega um lead qualificado.</div>
-          </div>
-        </div>
-        <div class="carousel-card c-purple">
-          <div class="carousel-card-num">02 — Inteligência</div>
-          <div class="carousel-card-body">
-            <div class="carousel-card-title">aprende como seus clientes decidem</div>
-            <div class="carousel-card-desc">O sistema mapeia padrões de comportamento, preferências e intenção — e melhora a cada interação.</div>
-          </div>
-        </div>
-        <div class="carousel-card c-yellow">
-          <div class="carousel-card-num">03 — Recorrência</div>
-          <div class="carousel-card-body">
-            <div class="carousel-card-title">seu negócio começa a prever retornos</div>
-            <div class="carousel-card-desc">A IA identifica janelas de reengajamento e mantém o relacionamento ativo — sem esforço manual.</div>
-          </div>
-        </div>
-        <div class="carousel-card c-green">
-          <div class="carousel-card-num">04 — Personalização</div>
-          <div class="carousel-card-body">
-            <div class="carousel-card-title">cada cliente sente que foi feito para ele</div>
-            <div class="carousel-card-desc">Tom, linguagem, identidade e fluxo criados para a sua marca. Não existe "padrão" aqui.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- INTEGRAÇÕES -->
-  <section class="section-integracoes">
-    <div class="section-inner">
-      <div class="section-label">
-        <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="currentColor"/></svg>
-        Onde a IA está presente
-      </div>
-      <h2 class="section-headline">a camada inteligente em todos os canais</h2>
-      <div class="integ-grid">
-        <div class="integ-pill"><span class="integ-pill-dot"></span> Instagram</div>
-        <div class="integ-pill"><span class="integ-pill-dot"></span> WhatsApp</div>
-        <div class="integ-pill"><span class="integ-pill-dot"></span> Site</div>
-        <div class="integ-pill"><span class="integ-pill-dot"></span> Facebook</div>
-        <div class="integ-pill"><span class="integ-pill-dot"></span> Shopify</div>
-      </div>
-      <p class="integ-sub">Um link. Qualquer canal. A mesma inteligência trabalhando 24h por você.</p>
-      <button class="btn-demo" onclick="openConv()">
-        Solicitar demonstração
-        <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </div>
-  </section>
-
-  <!-- CTA FINAL -->
-  <section class="section-cta-final">
-    <div class="cta-final-inner">
-      <div class="cta-final-label">
-        <span class="dot"></span>
-        Próximo passo
-      </div>
-      <h2 class="cta-final-title">A camada inteligente entre<br><span class="accent">sua empresa e seus clientes.</span></h2>
-      <p class="cta-final-sub">Vamos entender o seu negócio, mapear seus clientes e construir uma inteligência que converte, retém e gera recorrência — automaticamente.</p>
-      <button class="cta-final-btn" onclick="openConv()">
-        Solicitar demonstração
-        <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="cta-final-note">
-        <svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6l2.5 2.5 5-5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Experiência personalizada · resposta em minutos
-      </div>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="footer-brand">
-      <div class="footer-brand-mark">A</div>
-      <div class="footer-brand-name">Atelier</div>
-    </div>
-    <div class="footer-meta">© 2026 · João Pessoa / BR</div>
-  </footer>
-
-</main>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SCREEN INTERMEDIÁRIA
-═══════════════════════════════════════════════════════════ -->
-<main class="screen" id="screen-inter">
-  <header class="masthead">
-    <div class="masthead-inner">
-      <a class="mast-brand" href="#" onclick="goScreen('screen-home'); return false;">
-        <span class="mast-brand-mark">A</span>
-        <span class="mast-brand-name">Atelier</span>
-      </a>
-      <div class="mast-meta">
-        <span id="inter-nicho-meta">—</span>
-        <span class="mast-status"><span class="dot"></span> Aceitando pedidos</span>
-      </div>
-    </div>
-  </header>
-  <div class="inter-wrap">
-    <div class="inter-breadcrumb">
-      <button class="inter-breadcrumb-back" onclick="goScreen('screen-home','restore')">
-        <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Início
-      </button>
-      <span class="inter-breadcrumb-sep">/</span>
-      <span class="inter-breadcrumb-current" id="inter-bc-name">—</span>
-    </div>
-    <div class="inter-hero">
-      <div class="inter-nicho-badge">
-        <span class="dot"></span>
-        <span id="inter-badge-text">Pré-atendimento</span>
-      </div>
-      <h1 class="inter-hero-title" id="inter-hero-title">
-        Seu WhatsApp recebe mensagens.<br>
-        A plataforma <span class="accent">qualifica clientes.</span>
-      </h1>
-      <p class="inter-hero-lede">Antes de qualquer cliente enviar uma mensagem, ele já respondeu o que precisa, quando quer ser atendido e o que espera do serviço. Você entra na conversa pronto para fechar.</p>
-    </div>
-    <div class="inter-problem-grid">
-      <div class="inter-problem-card">
-        <div class="inter-card-icon-row">
-          <div class="inter-card-icon red-icon">
-            <svg viewBox="0 0 17 17" fill="none"><circle cx="8.5" cy="8.5" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 5v4M8.5 11v.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-          </div>
-          <div class="inter-card-label">Sem pré-atendimento</div>
-        </div>
-        <div class="inter-card-title">Mensagens repetitivas que consomem seu dia</div>
-        <div class="inter-card-desc">"Qual o preço?" · "Vocês têm horário?" — as mesmas perguntas chegam dezenas de vezes.</div>
-      </div>
-      <div class="inter-problem-card highlight">
-        <div class="inter-card-icon-row">
-          <div class="inter-card-icon blue-icon">
-            <svg viewBox="0 0 17 17" fill="none"><path d="M2.5 8.5l4 4 8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="inter-card-label">Com Atelier</div>
-        </div>
-        <div class="inter-card-title">Cliente qualificado antes do primeiro "Olá"</div>
-        <div class="inter-card-desc">Ele passa por uma experiência guiada que coleta serviço, disponibilidade e histórico.</div>
-      </div>
-    </div>
-    <div class="inter-benefits-head">
-      <div class="inter-benefits-eyebrow">O que muda na prática</div>
-      <h2 class="inter-benefits-title">Menos ruído. Mais consultas fechadas.</h2>
-    </div>
-    <div class="inter-benefits-grid" id="inter-benefits-grid"></div>
-    <div class="inter-cta-block">
-      <div class="inter-cta-eyebrow">Próximo passo</div>
-      <div class="inter-cta-title">Escolha a identidade visual da sua plataforma</div>
-      <div class="inter-cta-sub">A experiência já está pronta. Agora é só escolher as cores que representam sua marca — e em 48h você está no ar.</div>
-      <button class="inter-cta-btn" onclick="openVariationsFromInter()">
-        Escolher identidade visual
-        <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="inter-cta-note">
-        <svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        10 variações disponíveis · R$67/mês · entrega em 48h
-      </div>
+    <div class="footer-bottom">
+      <p>© 2025 Fluxo. Todos os direitos reservados.</p>
+      <p>Feito para empresas que valorizam o tempo.</p>
     </div>
   </div>
-  <footer class="footer">
-    <div class="footer-brand"><div class="footer-brand-mark">A</div><div class="footer-brand-name">Atelier</div></div>
-    <div class="footer-meta">© 2026 · João Pessoa / BR</div>
-  </footer>
-</main>
+</footer>
 
-<!-- ═══════════════════════════════════════════════════════════
-     SCREEN VARIATIONS
-═══════════════════════════════════════════════════════════ -->
-<main class="screen" id="screen-variations">
-  <header class="masthead">
-    <div class="masthead-inner">
-      <a class="mast-brand" href="#" onclick="goScreen('screen-home'); return false;">
-        <span class="mast-brand-mark">A</span>
-        <span class="mast-brand-name">Atelier</span>
-      </a>
-      <div class="mast-meta">
-        <span id="var-count-meta">— variações</span>
-        <span class="mast-status"><span class="dot"></span> Aceitando pedidos</span>
-      </div>
-    </div>
-  </header>
-  <div class="var-head">
-    <div class="breadcrumb">
-      <button class="breadcrumb-back" onclick="goScreen('screen-conv','restore')">
-        <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Voltar
-      </button>
-      <span class="breadcrumb-sep">/</span>
-      <span class="breadcrumb-current">Identidade Visual</span>
-    </div>
-    <div class="var-title-grid">
-      <div>
-        <div class="var-line-num">Identidade Visual</div>
-        <h1 class="var-title">Escolha sua cor</h1>
-        <p class="var-meta-lede">Design, acabamento e branding. Escolha a variação que representa sua marca.</p>
-      </div>
-      <div class="var-meta-side">
-        <div>
-          <div class="var-stat-num" id="var-stat-count">10</div>
-          <div class="var-stat-label">Variações</div>
-        </div>
-        <div>
-          <div class="var-stat-num">48<span class="small">h</span></div>
-          <div class="var-stat-label">Entrega</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <section class="collection">
-    <div class="collection-list-head">
-      <div class="collection-list-title">Variações Cromáticas</div>
-      <div class="collection-list-meta" id="var-list-meta">—</div>
-    </div>
-    <div class="var-grid" id="var-grid"></div>
-  </section>
-  <footer class="footer">
-    <div class="footer-brand"><div class="footer-brand-mark">A</div><div class="footer-brand-name">Atelier</div></div>
-    <div class="footer-meta">© 2026</div>
-  </footer>
-</main>
 
-<!-- ═══════════════════════════════════════════════════════════
-     SCREEN DEMO
-═══════════════════════════════════════════════════════════ -->
-<main class="screen" id="screen-demo">
-  <header class="masthead">
-    <div class="masthead-inner">
-      <a class="mast-brand" href="#" onclick="goScreen('screen-home'); return false;">
-        <span class="mast-brand-mark">A</span>
-        <span class="mast-brand-name">Atelier</span>
-      </a>
-      <div class="mast-meta">
-        <span id="demo-line-tag">—</span>
-        <span class="mast-status"><span class="dot"></span> Pré-visualização</span>
-      </div>
-    </div>
-  </header>
-  <div class="demo-head">
-    <div class="demo-info">
-      <div class="demo-line-tag" id="demo-breadcrumb">—</div>
-      <h1 class="demo-title" id="demo-title">—</h1>
-    </div>
-    <div class="demo-actions">
-      <button class="demo-btn demo-btn-ghost" onclick="goBackToVariations()">
-        <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Variações
-      </button>
-      <a class="demo-btn demo-btn-ghost" id="demo-open-link" href="#" target="_blank" rel="noopener">
-        <svg viewBox="0 0 14 14" fill="none"><path d="M5.5 2H2.5A.5.5 0 002 2.5v9a.5.5 0 00.5.5h9a.5.5 0 00.5-.5v-3M8.5 1.5H12.5m0 0v4M12.5 1.5L6.5 7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Abrir
-      </a>
-      <button class="demo-btn demo-btn-solid" onclick="selectFromDemo()">
-        Selecionar esta
-        <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </div>
-  </div>
-  <div class="demo-frame-wrap">
-    <div class="demo-stage">
-      <div style="position:relative;z-index:2;">
-        <span class="demo-meta-chip"><span class="demo-meta-dot"></span> Experiência ao vivo · interativa</span>
-      </div>
-      <div class="demo-phone">
-        <div class="demo-phone-screen">
-          <div class="demo-phone-island"></div>
-          <div class="demo-phone-loading" id="demoLoading">
-            <div class="demo-phone-loading-mark">A</div>
-            <div class="demo-phone-loading-text">Carregando experiência</div>
-          </div>
-          <iframe id="demo-iframe" class="demo-phone-iframe" src="about:blank" title="Demonstração" frameborder="0" scrolling="yes" allow="autoplay; fullscreen" referrerpolicy="no-referrer-when-downgrade" onload="hideDemoLoading()"></iframe>
-        </div>
-      </div>
-      <div class="demo-stage-hint">
-        <svg viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3.5 7.5L7 11l3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Toque, role e explore como seu cliente vai ver
-      </div>
-    </div>
-  </div>
-</main>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SCREEN CONVERSACIONAL
-═══════════════════════════════════════════════════════════ -->
-<main class="screen" id="screen-conv">
-
-  <header class="conv-masthead">
-    <div class="conv-masthead-inner">
-      <div class="conv-brand" onclick="goScreen('screen-home')">
-        <div class="conv-brand-mark">A</div>
-        <div class="conv-brand-name">Atelier</div>
-      </div>
-      <div class="conv-progress-area">
-        <div class="conv-step-label" id="conv-step-label">Etapa 1 de 4</div>
-        <div class="conv-progress-bar">
-          <div class="conv-progress-fill" id="conv-progress-fill" style="width:0%"></div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="conv-scroll-area" id="conv-scroll-area">
-    <div class="conv-stage" id="conv-stage"></div>
-  </div>
-
-  <div class="conv-answer-area" id="conv-answer-area">
-    <div class="conv-answer-inner" id="conv-answer-inner"></div>
-  </div>
-
-</main>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SCREEN FORM
-═══════════════════════════════════════════════════════════ -->
-<main class="screen" id="screen-form">
-  <header class="masthead">
-    <div class="masthead-inner">
-      <a class="mast-brand" href="#" onclick="goScreen('screen-home'); return false;">
-        <span class="mast-brand-mark">A</span>
-        <span class="mast-brand-name">Atelier</span>
-      </a>
-      <div class="mast-meta">
-        <span class="mast-status" style="background:rgba(245,200,0,0.15);color:#f5c800;border-color:rgba(245,200,0,0.25);">
-          <span class="dot" style="background:var(--yellow-hl);box-shadow:0 0 0 3px rgba(245,200,0,0.2);"></span>
-          Finalizando pedido
-        </span>
-      </div>
-    </div>
-  </header>
-  <div class="form-wrap">
-    <button class="form-back" onclick="goBackToVariationsFromForm()">
-      <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Trocar variação
-    </button>
-    <div class="form-summary" id="formSummary">
-      <div class="form-summary-chroma" id="formSummaryChroma"><span id="formSummaryMark">—</span></div>
-      <div class="form-summary-info">
-        <div class="form-summary-label">Variação selecionada</div>
-        <div class="form-summary-name" id="formSummaryName">—</div>
-        <div class="form-summary-line" id="formSummaryLine">—</div>
-      </div>
-      <button class="form-summary-change" onclick="goBackToVariationsFromForm()">Trocar</button>
-    </div>
-    <div class="form-card">
-      <div class="form-card-head">
-        <div class="form-card-icon">
-          <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 12c0-2.485 2.015-4.5 4.5-4.5s4.5 2.015 4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        </div>
-        <span class="form-card-title">Suas informações</span>
-      </div>
-      <div class="form-card-body">
-        <div class="form-field">
-          <label class="form-label" for="fName">Nome do responsável <span class="req">*</span></label>
-          <input class="form-input" type="text" id="fName" placeholder="Ex: Ana Lima" autocomplete="name">
-        </div>
-        <div class="form-field">
-          <label class="form-label" for="fNicho">Nicho do negócio <span class="req">*</span></label>
-          <select class="form-select" id="fNicho">
-            <option value="" disabled selected>Selecione…</option>
-            <option>Salão de Beleza</option><option>Barbearia</option>
-            <option>Clínica Odontológica</option><option>Clínica de Estética</option>
-            <option>Clínica Médica</option><option>Spa &amp; Bem-estar</option>
-            <option>Nutrição &amp; Saúde</option><option>Personal Trainer</option>
-            <option>E-commerce / Loja</option><option>Outro</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label class="form-label" for="fTipoAtend">Tipo de atendimento <span class="req">*</span></label>
-          <select class="form-select" id="fTipoAtend">
-            <option value="" disabled selected>Como você atende hoje?</option>
-            <option>Presencial com agendamento</option><option>Presencial sem agendamento</option>
-            <option>Online (videochamada)</option><option>Misto (presencial + online)</option>
-            <option>Delivery / Entrega</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label class="form-label" for="fDuvidas">Principais dúvidas dos seus clientes <span class="opt">opcional</span></label>
-          <textarea class="form-textarea" id="fDuvidas" placeholder="Ex: Preço, disponibilidade de horário, se aceita plano…" rows="3"></textarea>
-        </div>
-        <div class="form-field">
-          <label class="form-label" for="fTom">Tom da conversa <span class="opt">opcional</span></label>
-          <select class="form-select" id="fTom">
-            <option value="" disabled selected>Como quer que seu atendimento soe?</option>
-            <option>Profissional e formal</option><option>Amigável e próximo</option>
-            <option>Descontraído e divertido</option><option>Sofisticado e premium</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="form-submit-area">
-      <button class="form-submit" onclick="handleSubmit()">
-        <svg viewBox="0 0 18 18" fill="none"><path d="M9 1c-4.418 0-8 3.582-8 8 0 1.395.358 2.706.985 3.847L1 17l4.273-1.012A7.977 7.977 0 009 17c4.418 0 8-3.582 8-8s-3.582-8-8-8z" fill="currentColor"/></svg>
-        Enviar pedido por WhatsApp
-      </button>
-      <div class="form-submit-note">
-        <svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6l2.5 2.5 5-5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Atendimento direto. Resposta em minutos.
-      </div>
-    </div>
-  </div>
-</main>
-
-<div class="toast" id="toast"></div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     DATA & JS
-═══════════════════════════════════════════════════════════ -->
+<!-- ============================================================
+     JAVASCRIPT — NAVBAR + REVEALS (original)
+     ============================================================ -->
 <script>
+/* ============================================================
+   NAVBAR — scroll state + mobile toggle
+   ============================================================ */
+(function () {
+  var navbar = document.getElementById('navbar');
+  var toggle = document.getElementById('navToggle');
+  var mobile = document.getElementById('navMobile');
+  var mobileLinks = document.querySelectorAll('.nav-mobile-link');
+  var menuOpen = false;
 
-/* ── DATA ──────────────────────────────────────────────────── */
-const COLOR_VARIANTS = [
-  { id:'sapphire', pt:'Azul Clássico',   en:'Classic Blue',    hex:'#1e4d8c', light:'#3d6cad', deep:'#102f5c', mark:'A', link:'https://Acessar.github.io/coverazul'        },
-  { id:'blush',    pt:'Rosa Delicado',   en:'Soft Blush',      hex:'#c95a7b', light:'#d97a98', deep:'#8a3a55', mark:'R', link:'https://Acessar.github.io/coverrosa'        },
-  { id:'amethyst', pt:'Roxo Premium',    en:'Royal Amethyst',  hex:'#6a3aa0', light:'#8a5dc0', deep:'#3e1f66', mark:'R', link:'https://Acessar.github.io/coverroxo'        },
-  { id:'golden',   pt:'Dourado Luxe',    en:'Golden Luxe',     hex:'#a07835', light:'#bc9555', deep:'#664a1d', mark:'D', link:'https://Acessar.github.io/coverdourado'     },
-  { id:'emerald',  pt:'Verde Esmeralda', en:'Forest Emerald',  hex:'#1c5a3a', light:'#3a8060', deep:'#0e3522', mark:'E', link:'https://Acessar.github.io/coververdeescuro' },
-  { id:'ruby',     pt:'Vermelho Ousado', en:'Crimson Ruby',    hex:'#9b1c2d', light:'#c0354a', deep:'#5e0e1a', mark:'V', link:'https://Acessar.github.io/coverred'         },
-  { id:'mocha',    pt:'Marrom Veludo',   en:'Velvet Mocha',    hex:'#5a3a2e', light:'#7d5848', deep:'#36211a', mark:'M', link:'https://Acessar.github.io/covermarrom'      },
-  { id:'sunset',   pt:'Laranja Sunset',  en:'Burnt Sunset',    hex:'#c04a1a', light:'#dc6e3a', deep:'#7a2c0e', mark:'L', link:'https://Acessar.github.io/coverlaranja'     },
-  { id:'crystal',  pt:'Ciano Crystal',   en:'Crystal Cyan',    hex:'#0e7490', light:'#2c9bb8', deep:'#06465a', mark:'C', link:'https://Acessar.github.io/coverciano'       },
-  { id:'lime',     pt:'Verde Lima',      en:'Lime Glow',       hex:'#4a8c3a', light:'#6cab5d', deep:'#2c5722', mark:'V', link:'https://Acessar.github.io/coververdelimao'  },
-];
-
-/* ── CONVERSA — SCRIPT ─────────────────────────────────────── */
-const CONV_STEPS = [
-  {
-    id: 'intro', etapa: 0,
-    messages: [
-      { text: 'Oi! Antes de começar, quero te contar uma coisa…', delay: 0 },
-      { text: 'O que fazemos aqui não é criar uma página de perguntas. É entender o seu negócio fundo o suficiente para construir uma <strong>inteligência que trabalha por você</strong> — antes de qualquer cliente mandar "Oi".', delay: 1400 },
-      { text: 'Posso fazer algumas perguntas rápidas para entender melhor a sua realidade?', delay: 3000, isQuestion: true },
-    ],
-    type: 'options',
-    options: ['Pode sim, vamos lá!', 'Claro, pode começar']
-  },
-  {
-    id: 'nome', etapa: 1,
-    messages: [
-      { text: 'Ótimo! Vou começar pelo mais simples. <strong>Qual é o seu nome?</strong>', delay: 0 },
-    ],
-    type: 'text',
-    placeholder: 'Ex: Ana Lima, João Costa…',
-    key: 'nome'
-  },
-  {
-    id: 'nicho', etapa: 1,
-    messages: [
-      { text: 'Prazer, {nome}! Feliz em ter você aqui. 🙌', delay: 0 },
-      { text: 'Cada negócio tem uma forma única de se relacionar com clientes. E é esse jeito — o <em>seu</em> — que a gente quer preservar. <strong>Em que área você atua?</strong>', delay: 1300, isQuestion: true },
-    ],
-    type: 'options',
-    options: ['Salão / Barbearia', 'Clínica / Saúde', 'Estética / Bem-estar', 'Nutrição / Fitness', 'E-commerce / Loja', 'Outro segmento'],
-    key: 'nicho', timed: true
-  },
-  {
-    id: 'atendimento', etapa: 1,
-    messages: [
-      { text: '{nicho} — um segmento onde a <strong>primeira impressão</strong> define tudo.', delay: 0 },
-      { text: 'Me conta: como seus clientes chegam até você hoje?', delay: 900, isQuestion: true },
-    ],
-    type: 'options',
-    options: ['Por agendamento prévio', 'Chegam por ordem de chegada', 'Misto — agendamento e espontâneo', 'Atendimento online'],
-    key: 'atendimento', timed: true
-  },
-  {
-    id: 'dificuldade', etapa: 2,
-    messages: [
-      { text: 'Sabe o que a maioria dos negócios descobre tarde demais? Que o problema não era o produto — era a <strong>conversa antes do produto</strong>.', delay: 0, isInsight: true },
-      { text: 'O que mais te consome hoje no dia a dia com os clientes?', delay: 1200, isQuestion: true },
-    ],
-    type: 'options',
-    options: ['Responder as mesmas perguntas todo dia', 'Clientes que somem sem avisar', 'Agenda difícil de organizar', 'Clientes chegam sem entender o serviço', 'Tempo demais no celular'],
-    key: 'dificuldade', timed: true
-  },
-  {
-    id: 'perguntas', etapa: 2,
-    messages: [
-      { text: 'Faz total sentido. Essas situações drenam energia e desviam o foco do que realmente importa.', delay: 0 },
-      { text: 'Quais perguntas seus clientes mais fazem <em>antes</em> de agendar ou comprar?', delay: 1000, isQuestion: true },
-    ],
-    type: 'options',
-    options: ['Preços e formas de pagamento', 'Horários disponíveis', 'Como funciona o serviço', 'Se aceita convênio', 'Localização e como chegar'],
-    key: 'perguntas', timed: true
-  },
-  {
-    id: 'tom', etapa: 3,
-    messages: [
-      { text: 'Quanto mais eu entendo sua rotina, mais precisa fica a inteligência que vamos construir para você.', delay: 0, isInsight: true },
-      { text: 'Quando um cliente conversa com a sua marca, como você quer que ele se <strong>sinta</strong>?', delay: 1100, isQuestion: true },
-    ],
-    type: 'options',
-    options: ['Acolhido e à vontade', 'Confiante e seguro', 'Animado e engajado', 'Respeitado e bem atendido'],
-    key: 'tom', timed: true
-  },
-  {
-    id: 'visual', etapa: 3,
-    messages: [
-      { text: 'Isso vai moldar como a experiência vai se comunicar com o seu cliente. Agora me conta — <strong>qual estética combina mais com a sua marca?</strong>', delay: 0, isQuestion: true },
-    ],
-    type: 'options',
-    options: ['Sofisticado e premium', 'Moderno e tecnológico', 'Quente e acolhedor', 'Limpo e minimalista'],
-    key: 'visual', timed: true
-  },
-  {
-    id: 'melhoria', etapa: 4,
-    messages: [
-      { text: 'Cada empresa tem um ponto onde tudo poderia fluir melhor. E identificar esse ponto é o começo de tudo.', delay: 0, isInsight: true },
-      { text: 'Se você pudesse mudar <strong>uma coisa agora</strong> na forma como seus clientes chegam até você, o que seria?', delay: 1200, isQuestion: true },
-    ],
-    type: 'text',
-    placeholder: 'Ex: queria que já chegassem sabendo o preço e prontos para marcar…',
-    key: 'melhoria'
-  },
-  {
-    id: 'fim', etapa: 4,
-    messages: [
-      { text: 'Isso é exatamente o tipo de clareza que a gente transforma em inteligência. 🎯', delay: 0 },
-      { text: 'Já tenho o que preciso para entender o seu negócio e construir uma experiência que <strong>converte, retém e cria recorrência</strong> — no piloto automático.', delay: 1200 },
-      { text: 'Quando você continuar, vou gerar um resumo personalizado e te levar diretamente para a conversa. Sem formulário. Sem burocracia.', delay: 2600 },
-    ],
-    type: 'final'
+  function onScroll() {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
   }
-];
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-/* ── STATE ─────────────────────────────────────────────────── */
-let convState = { step: 0, answers: {}, running: false };
-
-/* ── NAVIGATION ────────────────────────────────────────────── */
-const screenScroll = {};
-let currentVariant = null;
-
-function goScreen(id, mode = 'reset') {
-  const current = document.querySelector('.screen.active');
-  if (current) screenScroll[current.id] = window.scrollY;
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if (mode === 'restore' && typeof screenScroll[id] === 'number') {
-    requestAnimationFrame(() => window.scrollTo({ top: screenScroll[id], behavior: 'instant' }));
-  } else {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+  function openMenu() {
+    menuOpen = true;
+    toggle.classList.add('open');
+    mobile.classList.add('open');
+    toggle.setAttribute('aria-expanded', 'true');
+    mobile.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
   }
-}
 
-/* ── AJUSTE 2 — openConv vai direto para screen-conv sem auto-start na home ── */
-function openConv() {
-  convState = { step: 0, answers: {}, running: false };
-  document.getElementById('conv-stage').innerHTML = '';
-  document.getElementById('conv-answer-inner').innerHTML = '';
-  document.getElementById('conv-progress-fill').style.width = '0%';
-  document.getElementById('conv-step-label').textContent = 'Aquecendo…';
-  const answerArea = document.getElementById('conv-answer-area');
-  answerArea.style.display = '';
-  answerArea.style.opacity = '1';
-  answerArea.style.pointerEvents = 'auto';
-  goScreen('screen-conv');
-  const scroller = document.getElementById('conv-scroll-area');
-  if (scroller) scroller.scrollTop = 0;
-  /* Chatbot só inicia quando openConv() é chamado explicitamente via CTA */
-  setTimeout(() => runConvStep(), 400);
-}
+  function closeMenu() {
+    menuOpen = false;
+    toggle.classList.remove('open');
+    mobile.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    mobile.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
 
-/* ── ENGINE CONVERSACIONAL ─────────────────────────────────── */
-function runConvStep() {
-  if (convState.running) return;
-  const step = CONV_STEPS[convState.step];
-  if (!step) return;
-  convState.running = true;
-
-  const totalSteps = CONV_STEPS.length;
-  const pct = Math.round((convState.step / (totalSteps - 1)) * 100);
-  document.getElementById('conv-progress-fill').style.width = pct + '%';
-  const etapaLabels = ['Começando…', 'Etapa 1 de 4 — Conexão', 'Etapa 1 de 4 — Conexão', 'Etapa 1 de 4 — Conexão',
-    'Etapa 2 de 4 — Seu negócio', 'Etapa 2 de 4 — Seu negócio',
-    'Etapa 3 de 4 — Personalidade', 'Etapa 3 de 4 — Personalidade',
-    'Etapa 4 de 4 — Expectativas', 'Etapa 4 de 4 — Expectativas'];
-  document.getElementById('conv-step-label').textContent = etapaLabels[convState.step] || '';
-
-  const answerArea = document.getElementById('conv-answer-area');
-  answerArea.style.opacity = '0';
-  answerArea.style.pointerEvents = 'none';
-
-  const msgs = step.messages;
-  let totalDelay = 0;
-
-  msgs.forEach((msg, i) => {
-    const baseDelay = msg.delay || 0;
-    setTimeout(() => { if (i > 0) showTyping(); }, baseDelay);
-    const msgDelay = baseDelay + (i > 0 ? 900 : 0);
-    totalDelay = msgDelay + 600;
-    setTimeout(() => {
-      removeTyping();
-      addBubble(msg.text, msg.isInsight || false);
-      scrollConvBottom();
-    }, msgDelay);
+  toggle.addEventListener('click', function () {
+    if (menuOpen) { closeMenu(); } else { openMenu(); }
   });
 
-  setTimeout(() => {
-    convState.running = false;
-    renderAnswerArea(step);
-    answerArea.style.opacity = '1';
-    answerArea.style.pointerEvents = 'auto';
-    scrollConvBottom();
-  }, totalDelay + 200);
-}
-
-function showTyping() {
-  const stage = document.getElementById('conv-stage');
-  const id = 'conv-typing-indicator';
-  if (document.getElementById(id)) return;
-  const el = document.createElement('div');
-  el.id = id; el.className = 'conv-typing';
-  el.innerHTML = `<div class="conv-avatar">A</div><div class="conv-typing-dots"><div class="conv-typing-dot"></div><div class="conv-typing-dot"></div><div class="conv-typing-dot"></div></div>`;
-  stage.appendChild(el);
-  scrollConvBottom();
-}
-
-function removeTyping() {
-  const el = document.getElementById('conv-typing-indicator');
-  if (el) el.remove();
-}
-
-function addBubble(text, isInsight = false) {
-  text = interpolate(text);
-  const stage = document.getElementById('conv-stage');
-  const msg = document.createElement('div');
-  msg.className = 'conv-msg';
-  msg.innerHTML = `<div class="conv-avatar">A</div><div class="conv-bubble${isInsight ? ' insight' : ''}">${text}</div>`;
-  stage.appendChild(msg);
-}
-
-function addUserBubble(text) {
-  const stage = document.getElementById('conv-stage');
-  const msg = document.createElement('div');
-  msg.className = 'conv-user-msg';
-  msg.innerHTML = `<div class="conv-user-bubble">${text}</div>`;
-  stage.appendChild(msg);
-}
-
-function interpolate(str) {
-  return str.replace(/\{(\w+)\}/g, (_, key) => convState.answers[key] || '');
-}
-
-/* ── AJUSTE 1 — TIMER COM SELEÇÃO MÚLTIPLA + BOTÃO CONTINUAR ── */
-function renderAnswerArea(step) {
-  const inner = document.getElementById('conv-answer-inner');
-  inner.innerHTML = '';
-  if (window._convTimer) { clearInterval(window._convTimer); window._convTimer = null; }
-
-  if (step.type === 'options') {
-    const hint = document.createElement('div');
-    hint.className = 'conv-answer-hint';
-    hint.textContent = 'Escolha uma ou mais opções';
-    inner.appendChild(hint);
-
-    /* Container em coluna: opções + footer (timer + continuar) */
-    const optionsRow = document.createElement('div');
-    optionsRow.className = 'conv-options-row';
-
-    const opts = document.createElement('div');
-    opts.className = 'conv-options';
-
-    /* Estado de seleções múltiplas */
-    const selectedValues = new Set();
-
-    step.options.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'conv-option';
-      btn.textContent = opt;
-      btn.setAttribute('data-value', opt);
-
-      btn.onclick = () => {
-        /* Toggle — não envia, apenas marca/desmarca */
-        if (selectedValues.has(opt)) {
-          selectedValues.delete(opt);
-          btn.classList.remove('selected');
-        } else {
-          selectedValues.add(opt);
-          btn.classList.add('selected');
-        }
-        /* Mostra/esconde botão Continuar */
-        updateContinueBtn(continueBtn, selectedValues);
-      };
-      opts.appendChild(btn);
-    });
-
-    /* Botão Continuar */
-    const continueBtn = document.createElement('button');
-    continueBtn.className = 'conv-continue-btn';
-    continueBtn.innerHTML = `Continuar <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-    continueBtn.onclick = () => {
-      if (selectedValues.size === 0) return;
-      if (window._convTimer) { clearInterval(window._convTimer); window._convTimer = null; }
-      const value = [...selectedValues].join(', ');
-      handleConvOption(value, step);
-    };
-
-    /* Footer: timer (se timed) + botão continuar */
-    const footer = document.createElement('div');
-    footer.className = 'conv-options-footer';
-
-    optionsRow.appendChild(opts);
-
-    if (step.timed) {
-      const timerBar = document.createElement('div');
-      timerBar.className = 'conv-timer-bar';
-      timerBar.style.flex = '1';
-      timerBar.innerHTML = `<div class="conv-timer-track"><div class="conv-timer-fill" id="conv-timer-fill"></div></div><div class="conv-timer-label" id="conv-timer-label">25s</div>`;
-
-      footer.appendChild(timerBar);
-      footer.appendChild(continueBtn);
-      optionsRow.appendChild(footer);
-
-      /* Timer de 25s — ao acabar, envia automaticamente o que estiver selecionado */
-      let secs = 25;
-      const fill = timerBar.querySelector('#conv-timer-fill');
-      const label = timerBar.querySelector('#conv-timer-label');
-      fill.style.width = '100%';
-
-      window._convTimer = setInterval(() => {
-        secs--;
-        const pct = Math.max(0, (secs / 25) * 100);
-        fill.style.width = pct + '%';
-        label.textContent = secs + 's';
-        if (secs <= 8) label.classList.add('ending');
-        if (secs <= 0) {
-          clearInterval(window._convTimer);
-          window._convTimer = null;
-          /* Se nada selecionado, usa primeira opção como fallback silencioso */
-          if (selectedValues.size === 0) selectedValues.add(step.options[0]);
-          const value = [...selectedValues].join(', ');
-          handleConvOption(value, step);
-        }
-      }, 1000);
-
-    } else {
-      /* Sem timer — só mostra botão continuar */
-      footer.appendChild(continueBtn);
-      optionsRow.appendChild(footer);
-    }
-
-    inner.appendChild(optionsRow);
-
-  } else if (step.type === 'text') {
-    const hint = document.createElement('div');
-    hint.className = 'conv-answer-hint';
-    hint.textContent = 'Digite sua resposta';
-    inner.appendChild(hint);
-
-    const row = document.createElement('div');
-    row.className = 'conv-input-row';
-    const input = document.createElement('textarea');
-    input.className = 'conv-text-input';
-    input.placeholder = step.placeholder || '';
-    input.rows = 2;
-    input.id = 'conv-text-field';
-    input.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitTextAnswer(step); }
-    });
-    const btn = document.createElement('button');
-    btn.className = 'conv-send-btn';
-    btn.innerHTML = `<svg viewBox="0 0 18 18" fill="none"><path d="M2 9l14-7-7 14V9H2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
-    btn.onclick = () => submitTextAnswer(step);
-    row.appendChild(input);
-    row.appendChild(btn);
-    inner.appendChild(row);
-    setTimeout(() => input.focus(), 300);
-
-  } else if (step.type === 'final') {
-    const stage = document.getElementById('conv-stage');
-    const completion = document.createElement('div');
-    completion.className = 'conv-completion';
-    completion.innerHTML = `
-      <div class="conv-completion-icon">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="conv-completion-title">Tudo pronto. Vamos criar<br>sua experiência personalizada.</div>
-      <div class="conv-completion-sub">Entendemos o que seu negócio precisa. Agora é só continuar para receber sua demonstração no WhatsApp.</div>
-      <button class="conv-completion-btn" onclick="finishConv()">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M3 20.5l1.4-5A9 9 0 1120.5 20.5L15 21.9 3 20.5zM8.5 12.5c0 2.2 1.8 4 4 4s4-1.8 4-4-1.8-4-4-4-4 1.8-4 4z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Continuar minha demonstração personalizada
-      </button>
-      <div class="conv-completion-note">Você será levado direto ao WhatsApp com um resumo do seu negócio</div>`;
-    stage.appendChild(completion);
-    const answerArea = document.getElementById('conv-answer-area');
-    answerArea.style.display = 'none';
-    scrollConvBottom();
-  }
-}
-
-/* Exibe/esconde o botão Continuar de acordo com seleções */
-function updateContinueBtn(btn, selectedValues) {
-  if (selectedValues.size > 0) {
-    btn.classList.add('visible');
-    const count = selectedValues.size;
-    btn.innerHTML = count > 1
-      ? `${count} selecionados · Continuar <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-      : `Continuar <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-  } else {
-    btn.classList.remove('visible');
-  }
-}
-
-function handleConvOption(value, step) {
-  if (step.key) convState.answers[step.key] = value;
-  addUserBubble(value);
-  advanceConv();
-}
-
-function submitTextAnswer(step) {
-  const input = document.getElementById('conv-text-field');
-  const val = input ? input.value.trim() : '';
-  if (!val) { input && input.focus(); return; }
-  if (step.key) convState.answers[step.key] = val;
-  addUserBubble(val);
-  advanceConv();
-}
-
-function advanceConv() {
-  const answerArea = document.getElementById('conv-answer-area');
-  answerArea.style.opacity = '0';
-  answerArea.style.pointerEvents = 'none';
-  convState.step++;
-  if (convState.step < CONV_STEPS.length) {
-    setTimeout(() => runConvStep(), 500);
-  }
-}
-
-function scrollConvBottom() {
-  setTimeout(() => {
-    const scroller = document.getElementById('conv-scroll-area');
-    if (scroller) scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
-  }, 60);
-}
-
-/* ── FINALIZAÇÃO — WHATSAPP ────────────────────────────────── */
-function finishConv() {
-  const a = convState.answers;
-  const phone = '5583991816152';
-  let msg = `*Olá! Vim pela experiência personalizada do Atelier* 👋\n\n`;
-  msg += `*Sobre meu negócio:*\n`;
-  if (a.nome)        msg += `• Nome: ${a.nome}\n`;
-  if (a.nicho)       msg += `• Área de atuação: ${a.nicho}\n`;
-  if (a.atendimento) msg += `• Como atendo: ${a.atendimento}\n`;
-  if (a.dificuldade) msg += `• Principal dificuldade hoje: ${a.dificuldade}\n`;
-  if (a.perguntas)   msg += `• Perguntas mais frequentes: ${a.perguntas}\n`;
-  msg += `\n*Sobre a experiência que quero criar:*\n`;
-  if (a.tom)         msg += `• Como quero que meu cliente se sinta: ${a.tom}\n`;
-  if (a.visual)      msg += `• Identidade visual: ${a.visual}\n`;
-  if (a.melhoria)    msg += `• O que mais quero melhorar: ${a.melhoria}\n`;
-  msg += `\nGostaria de receber minha demonstração personalizada! 🚀`;
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
-  showToast('Abrindo WhatsApp…', 'success');
-}
-
-/* ── CAROUSEL DRAG ─────────────────────────────────────────── */
-(function setupCarousel() {
-  const wrap = document.getElementById('carouselWrap');
-  if (!wrap) return;
-  let isDown = false, startX = 0, scrollLeft = 0;
-  wrap.addEventListener('mousedown', e => { isDown = true; wrap.classList.add('grabbing'); startX = e.pageX - wrap.offsetLeft; scrollLeft = wrap.scrollLeft; });
-  wrap.addEventListener('mouseleave', () => { isDown = false; wrap.classList.remove('grabbing'); });
-  wrap.addEventListener('mouseup', () => { isDown = false; wrap.classList.remove('grabbing'); });
-  wrap.addEventListener('mousemove', e => { if (!isDown) return; e.preventDefault(); const x = e.pageX - wrap.offsetLeft; wrap.scrollLeft = scrollLeft - (x - startX) * 1.2; });
-})();
-
-/* ── PREVIEW LOADING ───────────────────────────────────────── */
-function hideDemoLoading() {
-  const el = document.getElementById('demoLoading');
-  if (el) setTimeout(() => el.classList.add('hidden'), 400);
-}
-
-/* ── VARIATIONS ────────────────────────────────────────────── */
-function openVariationsFromInter() {
-  buildVariantGrid();
-  goScreen('screen-variations');
-}
-
-function buildVariantGrid() {
-  const grid = document.getElementById('var-grid');
-  grid.innerHTML = '';
-  const count = COLOR_VARIANTS.length;
-  document.getElementById('var-stat-count').textContent = String(count).padStart(2, '0');
-  document.getElementById('var-list-meta').textContent = `01 — ${String(count).padStart(2,'0')} variações`;
-  document.getElementById('var-count-meta').textContent = `${count} variações`;
-  COLOR_VARIANTS.forEach((v, i) => {
-    const card = document.createElement('button');
-    card.type = 'button';
-    card.className = 'var-card signature';
-    card.dataset.variantId = v.id;
-    card.style.setProperty('--var-color', v.hex);
-    card.style.setProperty('--var-light', v.light);
-    card.style.setProperty('--var-deep', v.deep);
-    card.setAttribute('aria-label', `Visualizar ${v.pt}`);
-    card.innerHTML = `
-      <div class="var-card-stage">
-        <div class="var-card-code">N° ${String(i+1).padStart(2,'0')}</div>
-        <div class="var-card-hex">${v.hex}</div>
-        <div class="var-card-mark">${v.mark}</div>
-      </div>
-      <div class="var-card-body">
-        <div class="var-card-body-row">
-          <div><div class="var-card-name">${v.pt}</div><div class="var-card-name-en">${v.en}</div></div>
-          <div class="var-card-swatch-mark" style="background:${v.hex}"></div>
-        </div>
-        <div class="var-card-action">
-          <span>Ver identidade visual</span>
-          <svg viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </div>`;
-    card.addEventListener('click', () => openDemo(v));
-    grid.appendChild(card);
+  mobileLinks.forEach(function (link) {
+    link.addEventListener('click', closeMenu);
   });
-}
 
-/* ── DEMO ──────────────────────────────────────────────────── */
-function openDemo(variant) {
-  currentVariant = variant;
-  document.querySelectorAll('.var-card').forEach(c => c.classList.remove('selected'));
-  const card = document.querySelector(`.var-card[data-variant-id="${variant.id}"]`);
-  if (card) card.classList.add('selected');
-  document.getElementById('demo-line-tag').textContent = `Identidade Visual / ${variant.pt}`;
-  document.getElementById('demo-breadcrumb').textContent = 'Identidade Visual';
-  document.getElementById('demo-title').textContent = variant.pt;
-  document.getElementById('demo-open-link').href = variant.link;
-  const loading = document.getElementById('demoLoading');
-  if (loading) loading.classList.remove('hidden');
-  document.getElementById('demo-iframe').src = variant.link;
-  goScreen('screen-demo');
-}
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && menuOpen) closeMenu();
+  });
+}());
 
-function goBackToVariations() {
-  document.getElementById('demo-iframe').src = 'about:blank';
-  goScreen('screen-variations', 'restore');
-}
+/* ============================================================
+   INTERSECTION OBSERVER — fade-in .reveal
+   ============================================================ */
+(function () {
+  var els = document.querySelectorAll('.reveal');
 
-function selectFromDemo() {
-  if (!currentVariant) return;
-  populateAndOpenForm(currentVariant);
-}
-
-function goBackToVariationsFromForm() {
-  goScreen('screen-variations', 'restore');
-}
-
-/* ── FORM ──────────────────────────────────────────────────── */
-function populateAndOpenForm(variant) {
-  const chroma = document.getElementById('formSummaryChroma');
-  chroma.style.background = variant.hex;
-  document.getElementById('formSummaryMark').textContent = variant.mark;
-  document.getElementById('formSummaryName').textContent = variant.pt;
-  document.getElementById('formSummaryLine').textContent = `${variant.en} — ${variant.hex}`;
-  const a = convState.answers;
-  if (a.nome) document.getElementById('fName').value = a.nome;
-  if (a.tom) {
-    const tomMap = {
-      'Acolhido e à vontade': 'Amigável e próximo',
-      'Confiante e seguro': 'Profissional e formal',
-      'Empolgado e animado': 'Descontraído e divertido',
-      'Respeitado e bem atendido': 'Sofisticado e premium'
-    };
-    const tomSelect = document.getElementById('fTom');
-    const mappedTom = tomMap[a.tom] || '';
-    for (let opt of tomSelect.options) {
-      if (opt.text === mappedTom) { opt.selected = true; break; }
-    }
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('visible'); });
+    return;
   }
-  goScreen('screen-form');
-  setTimeout(() => document.getElementById('fName').focus(), 200);
-}
 
-function handleSubmit() {
-  const name = document.getElementById('fName').value.trim();
-  const nicho = document.getElementById('fNicho').value;
-  const tipoAtend = document.getElementById('fTipoAtend').value;
-  if (!name || !nicho || !tipoAtend) { showToast('Preencha os campos obrigatórios', 'error'); return; }
-  const tom = document.getElementById('fTom').value;
-  const duvidas = document.getElementById('fDuvidas').value.trim();
-  const v = currentVariant || COLOR_VARIANTS[0];
-  const a = convState.answers;
-  let msg = `*Novo pedido — Atelier*\n\n`;
-  msg += `• *Identidade Visual:* ${v.pt} (${v.en}) — ${v.hex}\n`;
-  msg += `\n*Dados do negócio:*\n`;
-  msg += `• Nome: ${name}\n• Nicho: ${nicho}\n• Tipo de atendimento: ${tipoAtend}\n`;
-  if (duvidas)   msg += `• Dúvidas frequentes: ${duvidas}\n`;
-  if (tom)       msg += `• Tom desejado: ${tom}\n`;
-  if (a.dificuldade) msg += `\n• Principal dificuldade: ${a.dificuldade}`;
-  if (a.melhoria)    msg += `\n• O que quer melhorar: ${a.melhoria}`;
-  const url = `https://wa.me/5583991816152?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
-  showToast('Abrindo WhatsApp…', 'success');
-}
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-/* ── TOAST ─────────────────────────────────────────────────── */
-const toastEl = document.getElementById('toast');
-let toastT;
-function showToast(msg, type = 'default') {
-  const icons = {
-    success: `<svg viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    error:   `<svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3.5M7 9.5v.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`,
-  };
-  toastEl.innerHTML = (icons[type] || '') + `<span>${msg}</span>`;
-  toastEl.style.background = type === 'error' ? '#dc2626' : (type === 'success' ? '#16a34a' : '#0d1117');
-  toastEl.classList.add('show');
-  clearTimeout(toastT);
-  toastT = setTimeout(() => toastEl.classList.remove('show'), 2400);
-}
+  els.forEach(function (el) { observer.observe(el); });
+}());
 
-/* ── KEYBOARD ──────────────────────────────────────────────── */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    if (document.getElementById('screen-form').classList.contains('active'))        goBackToVariationsFromForm();
-    else if (document.getElementById('screen-demo').classList.contains('active'))   goBackToVariations();
-    else if (document.getElementById('screen-variations').classList.contains('active')) goScreen('screen-conv', 'restore');
-    else if (document.getElementById('screen-conv').classList.contains('active'))   goScreen('screen-home', 'restore');
-    else if (document.getElementById('screen-inter').classList.contains('active'))  goScreen('screen-home', 'restore');
+/* ============================================================
+   FLOW STEPS — sequential animated appearance
+   ============================================================ */
+(function () {
+  var steps = document.querySelectorAll('.flow-step');
+
+  if (!('IntersectionObserver' in window)) {
+    steps.forEach(function (s) { s.classList.add('visible'); });
+    return;
   }
-});
 
+  var triggered = false;
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && !triggered) {
+        triggered = true;
+        steps.forEach(function (step) {
+          var delay = parseInt(step.getAttribute('data-delay') || 0);
+          setTimeout(function () { step.classList.add('visible'); }, delay);
+        });
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+
+  var flowDiagram = document.querySelector('.flow-diagram');
+  if (flowDiagram) observer.observe(flowDiagram);
+}());
+
+/* ============================================================
+   SMOOTH SCROLL
+   ============================================================ */
+(function () {
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var href = link.getAttribute('href');
+      if (href === '#') return;
+      var target = document.querySelector(href);
+      if (!target) return;
+      e.preventDefault();
+      var top = target.getBoundingClientRect().top + window.scrollY - 72;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    });
+  });
+}());
+
+/* ============================================================
+   HORIZONTAL FLOW — progressive dot highlight
+   ============================================================ */
+(function () {
+  var nodes = document.querySelectorAll('.horiz-node');
+  if (!nodes.length || !('IntersectionObserver' in window)) return;
+
+  var triggered = false;
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && !triggered) {
+        triggered = true;
+        nodes.forEach(function (node, i) {
+          setTimeout(function () {
+            var dot = node.querySelector('.hn-dot');
+            var label = node.querySelector('.hn-label');
+            if (dot && !dot.style.background) {
+              dot.style.transition = 'background 0.3s';
+              dot.style.background = 'rgba(255,255,255,0.6)';
+            }
+            if (label) {
+              label.style.transition = 'color 0.3s';
+              label.style.color = 'rgba(255,255,255,0.7)';
+            }
+            if (i === nodes.length - 1) {
+              setTimeout(function () {
+                nodes.forEach(function (n) {
+                  var d = n.querySelector('.hn-dot');
+                  var l = n.querySelector('.hn-label');
+                  if (d && !d.style.boxShadow) d.style.background = '';
+                  if (l) l.style.color = '';
+                });
+              }, 1200);
+            }
+          }, i * 120);
+        });
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  var flow = document.querySelector('.horiz-flow');
+  if (flow) observer.observe(flow);
+}());
 </script>
+
+
+<!-- ============================================================
+     JAVASCRIPT — SISTEMA DE PARTÍCULAS
+     ============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ----------------------------------------------------------
+     CONFIGURAÇÃO GLOBAL
+     ---------------------------------------------------------- */
+  var canvas = document.getElementById('particle-background');
+  var ctx = canvas.getContext('2d');
+  var W = 0, H = 0;
+  var isMobile = false;
+  var PARTICLE_COUNT = 0;
+  var raf = null;
+
+  /* ----------------------------------------------------------
+     FORMAS: identificadores de seção → índice de forma
+     ---------------------------------------------------------- */
+  var SHAPES = {
+    HERO:        0,  // nebulosa difusa — presença inicial
+    PROBLEMA:    1,  // dispersão caótica — entropia / problema
+    PRE:         2,  // coluna estruturada — formulário / funil
+    AGENDAMENTO: 3,  // grade — calendário
+    CONTINUIDADE:4,  // rede conectada — grafo de relacionamento
+    JORNADA:     5,  // linha horizontal contínua — fluxo integrado
+    BENEFICIOS:  6,  // círculo — completude / resultado
+    CTA:         7,  // espiral — convergência premium
+  };
+
+  /* seção ativa atual e progresso de transição */
+  var currentShape = SHAPES.HERO;
+  var targetShape  = SHAPES.HERO;
+  var morphProgress = 1.0; // 0 → 1 (1 = totalmente na forma alvo)
+  var MORPH_SPEED = 0.018; // velocidade de interpolação por frame
+
+  /* ----------------------------------------------------------
+     PARTÍCULA
+     ---------------------------------------------------------- */
+  var particles = [];
+
+  /* Cada partícula pertence a uma "camada" (0, 1, 2):
+     0 = frente (maior, mais opaco)
+     1 = meio
+     2 = fundo (menor, mais suave) */
+  var LAYER_CONFIG = [
+    { opacityMax: 0.55, opacityMin: 0.25, sizeMax: 1.6, sizeMin: 0.9, count: 0.30 },
+    { opacityMax: 0.28, opacityMin: 0.10, sizeMax: 1.0, sizeMin: 0.5, count: 0.45 },
+    { opacityMax: 0.13, opacityMin: 0.04, sizeMax: 0.6, sizeMin: 0.3, count: 0.25 },
+  ];
+
+  /* Lerp linear */
+  function lerp(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  /* Lerp suave (ease-in-out cúbico) */
+  function smoothLerp(a, b, t) {
+    var s = t * t * (3 - 2 * t);
+    return a + (b - a) * s;
+  }
+
+  /* Número aleatório entre [min, max] */
+  function rand(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  /* Criar partículas */
+  function createParticles() {
+    particles = [];
+    LAYER_CONFIG.forEach(function (cfg, layerIdx) {
+      var count = Math.round(PARTICLE_COUNT * cfg.count);
+      for (var i = 0; i < count; i++) {
+        var p = {
+          /* posição atual */
+          x: rand(0, W),
+          y: rand(0, H),
+          /* destino atual (forma A) */
+          ax: 0, ay: 0,
+          /* destino seguinte (forma B) */
+          bx: 0, by: 0,
+          /* velocidade de vida própria (micro movimento) */
+          vx: rand(-0.08, 0.08),
+          vy: rand(-0.08, 0.08),
+          /* micro oscilação (respiração) */
+          phase:  rand(0, Math.PI * 2),
+          freq:   rand(0.004, 0.012),
+          ampX:   rand(0.3, 0.9),
+          ampY:   rand(0.3, 0.9),
+          /* visuais */
+          size:    rand(cfg.sizeMin, cfg.sizeMax),
+          opacity: rand(cfg.opacityMin, cfg.opacityMax),
+          opacityBase: 0, // calculado depois
+          layer: layerIdx,
+          /* fator de paralaxe (partículas mais ao fundo = mais lentas) */
+          parallax: 1 - layerIdx * 0.25,
+        };
+        p.opacityBase = p.opacity;
+        particles.push(p);
+      }
+    });
+  }
+
+  /* ----------------------------------------------------------
+     GERADOR DE FORMAS
+     Cada função recebe um índice [0, N-1] e retorna {x, y}
+     normalizado para o viewport atual.
+     ---------------------------------------------------------- */
+
+  /** Forma 0 — HERO: nebulosa difusa, galáxia suave */
+  function shapeHero(i, total) {
+    var t = i / total;
+    /* dois anéis gaussianos sobrepostos */
+    var angle = rand(0, Math.PI * 2);
+    var ring   = Math.random() < 0.6 ? 0.28 : 0.52;
+    var r      = W * ring * (0.5 + Math.random() * 0.5);
+    var spread = H * 0.38;
+    return {
+      x: W * 0.5 + Math.cos(angle) * r * (0.3 + Math.random() * 0.7),
+      y: H * 0.45 + (Math.random() - 0.5) * spread,
+    };
+  }
+
+  /** Forma 1 — PROBLEMA: dispersão caótica / entropia */
+  function shapeProblema(i, total) {
+    /* clusters irregulares + ruído */
+    var clusters = [
+      { cx: 0.15, cy: 0.25 }, { cx: 0.75, cy: 0.18 },
+      { cx: 0.42, cy: 0.55 }, { cx: 0.88, cy: 0.65 },
+      { cx: 0.22, cy: 0.78 }, { cx: 0.60, cy: 0.82 },
+    ];
+    var c = clusters[i % clusters.length];
+    return {
+      x: W * c.cx + (Math.random() - 0.5) * W * 0.32,
+      y: H * c.cy + (Math.random() - 0.5) * H * 0.28,
+    };
+  }
+
+  /** Forma 2 — PRÉ-ATENDIMENTO: funil / coluna estruturada */
+  function shapePre(i, total) {
+    var t = i / total;
+    /* funil: linhas horizontais que convergem para o centro */
+    var rows = 14;
+    var row  = Math.floor(t * rows);
+    var rowT = (t * rows) % 1;
+    var progress = row / (rows - 1); // 0 = topo, 1 = base
+    var funelW   = lerp(0.72, 0.18, progress);   // largura diminui
+    var centerX  = 0.5;
+    var startX   = centerX - funelW / 2;
+    return {
+      x: W * (startX + rowT * funelW),
+      y: H * (0.12 + progress * 0.76),
+    };
+  }
+
+  /** Forma 3 — AGENDAMENTO: grade de calendário */
+  function shapeAgendamento(i, total) {
+    var cols = 7, rows = Math.ceil(total / cols);
+    var col  = i % cols;
+    var row  = Math.floor(i / cols);
+    var gW   = 0.58, gH = 0.60;
+    var startX = (1 - gW) / 2, startY = (1 - gH) / 2;
+    return {
+      x: W * (startX + (col / (cols - 1)) * gW),
+      y: H * (startY + (row / Math.max(rows - 1, 1)) * gH),
+    };
+  }
+
+  /** Forma 4 — CONTINUIDADE: rede / grafo conectado */
+  function shapeContinuidade(i, total) {
+    /* nós principais + satélites */
+    var nodes = [
+      { x: 0.5,  y: 0.50 },
+      { x: 0.25, y: 0.28 }, { x: 0.75, y: 0.28 },
+      { x: 0.18, y: 0.62 }, { x: 0.82, y: 0.62 },
+      { x: 0.50, y: 0.78 }, { x: 0.50, y: 0.22 },
+    ];
+    var nodeIdx = i % nodes.length;
+    var n = nodes[nodeIdx];
+    var spread = 0.08 + (nodeIdx === 0 ? 0.04 : 0);
+    return {
+      x: W * n.x + (Math.random() - 0.5) * W * spread,
+      y: H * n.y + (Math.random() - 0.5) * H * spread,
+    };
+  }
+
+  /** Forma 5 — JORNADA: linha horizontal contínua com ondulação */
+  function shapeJornada(i, total) {
+    var t   = i / total;
+    var x   = W * (0.04 + t * 0.92);
+    /* ondulação suave */
+    var amp = H * 0.06;
+    var y   = H * 0.50 + Math.sin(t * Math.PI * 6) * amp * (0.5 + Math.random() * 0.5);
+    /* leve dispersão vertical por camada */
+    y += (Math.random() - 0.5) * H * 0.06;
+    return { x: x, y: y };
+  }
+
+  /** Forma 6 — BENEFÍCIOS: círculo / completude */
+  function shapeBeneficios(i, total) {
+    var t     = i / total;
+    var angle = t * Math.PI * 2;
+    /* anel duplo */
+    var ring  = i % 3 === 0 ? 0.38 : (i % 3 === 1 ? 0.28 : 0.18);
+    var noise = 0.04;
+    return {
+      x: W * 0.5 + Math.cos(angle) * W * ring + (Math.random() - 0.5) * W * noise,
+      y: H * 0.5 + Math.sin(angle) * H * ring + (Math.random() - 0.5) * H * noise,
+    };
+  }
+
+  /** Forma 7 — CTA: espiral convergindo ao centro */
+  function shapeCTA(i, total) {
+    var t     = i / total;
+    var turns = 3.5;
+    var angle = t * Math.PI * 2 * turns;
+    var r     = (1 - t) * 0.42; /* raio diminui = convergência */
+    return {
+      x: W * 0.5 + Math.cos(angle) * W * r,
+      y: H * 0.5 + Math.sin(angle) * H * r,
+    };
+  }
+
+  /* Mapa índice → função geradora */
+  var shapeFns = [
+    shapeHero, shapeProblema, shapePre, shapeAgendamento,
+    shapeContinuidade, shapeJornada, shapeBeneficios, shapeCTA,
+  ];
+
+  /* Pré-calcular coordenadas de uma forma para todas as partículas */
+  function computeShape(shapeIdx) {
+    var fn    = shapeFns[shapeIdx];
+    var total = particles.length;
+    /* shuffle de índices para distribuir uniformemente entre camadas */
+    var result = [];
+    for (var i = 0; i < total; i++) {
+      result.push(fn(i, total));
+    }
+    return result;
+  }
+
+  /* Coordenadas pré-calculadas para forma A e B */
+  var coordsA = [];
+  var coordsB = [];
+
+  /* ----------------------------------------------------------
+     DETECÇÃO DE SEÇÃO via IntersectionObserver
+     ---------------------------------------------------------- */
+  var sectionMap = [
+    { id: 'hero',           shape: SHAPES.HERO         },
+    { id: 'problema',       shape: SHAPES.PROBLEMA      },
+    { id: 'pre-atendimento',shape: SHAPES.PRE           },
+    { id: 'agendamento',    shape: SHAPES.AGENDAMENTO   },
+    { id: 'continuidade',   shape: SHAPES.CONTINUIDADE  },
+    { id: 'jornada',        shape: SHAPES.JORNADA       },
+    { id: 'beneficios',     shape: SHAPES.BENEFICIOS    },
+    { id: 'cta',            shape: SHAPES.CTA           },
+  ];
+
+  function setupSectionObserver() {
+    if (!('IntersectionObserver' in window)) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        sectionMap.forEach(function (s) {
+          if (entry.target.id === s.id && s.shape !== targetShape) {
+            /* Nova seção: A = estado atual interpolado, B = nova forma */
+            var progress = morphProgress;
+
+            /* Estado atual interpolado torna-se A */
+            for (var i = 0; i < particles.length; i++) {
+              coordsA[i] = {
+                x: smoothLerp(coordsA[i] ? coordsA[i].x : particles[i].x,
+                               coordsB[i] ? coordsB[i].x : particles[i].x,
+                               progress),
+                y: smoothLerp(coordsA[i] ? coordsA[i].y : particles[i].y,
+                               coordsB[i] ? coordsB[i].y : particles[i].y,
+                               progress),
+              };
+            }
+
+            targetShape = s.shape;
+            coordsB     = computeShape(targetShape);
+            morphProgress = 0;
+          }
+        });
+      });
+    }, {
+      threshold: 0.18,
+      rootMargin: '-60px 0px -60px 0px',
+    });
+
+    sectionMap.forEach(function (s) {
+      var el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+  }
+
+  /* ----------------------------------------------------------
+     RESIZE
+     ---------------------------------------------------------- */
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    isMobile = W < 768;
+    PARTICLE_COUNT = isMobile ? rand(600, 900) : rand(1500, 2000);
+    PARTICLE_COUNT = Math.round(PARTICLE_COUNT);
+  }
+
+  /* ----------------------------------------------------------
+     INICIALIZAÇÃO
+     ---------------------------------------------------------- */
+  function init() {
+    resize();
+    createParticles();
+
+    /* Posicionar partículas na forma inicial e calcular coords */
+    coordsA = computeShape(SHAPES.HERO);
+    coordsB = computeShape(SHAPES.HERO);
+    particles.forEach(function (p, i) {
+      p.x = coordsA[i].x;
+      p.y = coordsA[i].y;
+      p.ax = coordsA[i].x;
+      p.ay = coordsA[i].y;
+      p.bx = coordsB[i].x;
+      p.by = coordsB[i].y;
+    });
+
+    morphProgress = 1.0;
+    setupSectionObserver();
+    loop();
+  }
+
+  window.addEventListener('resize', function () {
+    /* Redimensionar canvas mantendo partículas */
+    var oldW = W, oldH = H;
+    resize();
+    /* Reescalar posições proporcionalmente */
+    var rx = W / oldW, ry = H / oldH;
+    particles.forEach(function (p, i) {
+      p.x  *= rx; p.y  *= ry;
+      if (coordsA[i]) { coordsA[i].x *= rx; coordsA[i].y *= ry; }
+      if (coordsB[i]) { coordsB[i].x *= rx; coordsB[i].y *= ry; }
+    });
+  }, { passive: true });
+
+  /* ----------------------------------------------------------
+     LOOP DE ANIMAÇÃO
+     ---------------------------------------------------------- */
+  var tick = 0;
+
+  function loop() {
+    raf = requestAnimationFrame(loop);
+    tick++;
+
+    ctx.clearRect(0, 0, W, H);
+
+    /* Avança morphProgress */
+    if (morphProgress < 1.0) {
+      morphProgress = Math.min(morphProgress + MORPH_SPEED, 1.0);
+    }
+
+    /* Desenhar por camada (fundo → frente) */
+    for (var layer = 2; layer >= 0; layer--) {
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        if (p.layer !== layer) continue;
+
+        /* Destino interpolado entre A e B */
+        var tx, ty;
+        if (coordsA[i] && coordsB[i]) {
+          tx = smoothLerp(coordsA[i].x, coordsB[i].x, morphProgress);
+          ty = smoothLerp(coordsA[i].y, coordsB[i].y, morphProgress);
+        } else {
+          tx = W * 0.5;
+          ty = H * 0.5;
+        }
+
+        /* Micro movimento orgânico (fase independente por partícula) */
+        var phase = p.phase + tick * p.freq;
+        var microX = Math.sin(phase * 1.3) * p.ampX * p.parallax;
+        var microY = Math.cos(phase * 0.9) * p.ampY * p.parallax;
+
+        /* Interpolar posição atual → destino com suavização */
+        var attractionStr = 0.035 * p.parallax;
+        p.vx += (tx - p.x + microX) * attractionStr;
+        p.vy += (ty - p.y + microY) * attractionStr;
+
+        /* Amortecimento (drag) */
+        p.vx *= 0.88;
+        p.vy *= 0.88;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        /* Opacidade pulsante suave */
+        var opacityMod = 1 + 0.18 * Math.sin(phase * 1.7);
+        var finalOpacity = Math.min(p.opacityBase * opacityMod, 0.65);
+
+        /* Desenhar */
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,' + finalOpacity + ')';
+        ctx.fill();
+      }
+    }
+  }
+
+  /* ----------------------------------------------------------
+     START
+     ---------------------------------------------------------- */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+}());
+</script>
+
 </body>
 </html>
