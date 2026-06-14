@@ -83,7 +83,7 @@ p {
 }
 
 /* ============================================================
-   PARTICLE CANVAS — camada de fundo global
+   PARTICLE CANVAS
    ============================================================ */
 #particle-background {
   position: fixed;
@@ -95,7 +95,6 @@ p {
   pointer-events: none;
 }
 
-/* Garantir que todo conteúdo fique acima do canvas */
 #navbar,
 .nav-mobile,
 main,
@@ -1187,9 +1186,6 @@ footer {
 
 <body>
 
-<!-- ============================================================
-     CANVAS — PARTÍCULAS (camada de fundo)
-     ============================================================ -->
 <canvas id="particle-background" aria-hidden="true"></canvas>
 
 <!-- ============================================================
@@ -1215,7 +1211,6 @@ footer {
   </button>
 </nav>
 
-<!-- Mobile menu -->
 <div class="nav-mobile" id="navMobile" aria-hidden="true">
   <ul>
     <li><a href="#problema" class="nav-mobile-link">O Problema</a></li>
@@ -1706,12 +1701,9 @@ footer {
 
 
 <!-- ============================================================
-     JAVASCRIPT — NAVBAR + REVEALS (original)
+     JAVASCRIPT — NAVBAR + REVEALS
      ============================================================ -->
 <script>
-/* ============================================================
-   NAVBAR — scroll state + mobile toggle
-   ============================================================ */
 (function () {
   var navbar = document.getElementById('navbar');
   var toggle = document.getElementById('navToggle');
@@ -1756,9 +1748,6 @@ footer {
   });
 }());
 
-/* ============================================================
-   INTERSECTION OBSERVER — fade-in .reveal
-   ============================================================ */
 (function () {
   var els = document.querySelectorAll('.reveal');
 
@@ -1779,9 +1768,6 @@ footer {
   els.forEach(function (el) { observer.observe(el); });
 }());
 
-/* ============================================================
-   FLOW STEPS — sequential animated appearance
-   ============================================================ */
 (function () {
   var steps = document.querySelectorAll('.flow-step');
 
@@ -1809,9 +1795,6 @@ footer {
   if (flowDiagram) observer.observe(flowDiagram);
 }());
 
-/* ============================================================
-   SMOOTH SCROLL
-   ============================================================ */
 (function () {
   document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     link.addEventListener('click', function (e) {
@@ -1826,9 +1809,6 @@ footer {
   });
 }());
 
-/* ============================================================
-   HORIZONTAL FLOW — progressive dot highlight
-   ============================================================ */
 (function () {
   var nodes = document.querySelectorAll('.horiz-node');
   if (!nodes.length || !('IntersectionObserver' in window)) return;
@@ -1875,102 +1855,426 @@ footer {
 
 
 <!-- ============================================================
-     JAVASCRIPT — SISTEMA DE PARTÍCULAS
+     JAVASCRIPT — SISTEMA DE PARTÍCULAS (FORMAS GEOMÉTRICAS EXPLÍCITAS)
      ============================================================ -->
 <script>
 (function () {
   'use strict';
 
-  /* ----------------------------------------------------------
-     CONFIGURAÇÃO GLOBAL
-     ---------------------------------------------------------- */
   var canvas = document.getElementById('particle-background');
-  var ctx = canvas.getContext('2d');
+  var ctx    = canvas.getContext('2d');
   var W = 0, H = 0;
   var isMobile = false;
   var PARTICLE_COUNT = 0;
-  var raf = null;
 
-  /* ----------------------------------------------------------
-     FORMAS: identificadores de seção → índice de forma
-     ---------------------------------------------------------- */
+  /* --------------------------------------------------------
+     ÍNDICES DE FORMA
+     -------------------------------------------------------- */
   var SHAPES = {
-    HERO:        0,  // nebulosa difusa — presença inicial
-    PROBLEMA:    1,  // dispersão caótica — entropia / problema
-    PRE:         2,  // coluna estruturada — formulário / funil
-    AGENDAMENTO: 3,  // grade — calendário
-    CONTINUIDADE:4,  // rede conectada — grafo de relacionamento
-    JORNADA:     5,  // linha horizontal contínua — fluxo integrado
-    BENEFICIOS:  6,  // círculo — completude / resultado
-    CTA:         7,  // espiral — convergência premium
+    HERO: 0, PROBLEMA: 1, PRE: 2, AGENDAMENTO: 3,
+    CONTINUIDADE: 4, JORNADA: 5, BENEFICIOS: 6, CTA: 7,
   };
 
-  /* seção ativa atual e progresso de transição */
-  var currentShape = SHAPES.HERO;
-  var targetShape  = SHAPES.HERO;
-  var morphProgress = 1.0; // 0 → 1 (1 = totalmente na forma alvo)
-  var MORPH_SPEED = 0.018; // velocidade de interpolação por frame
+  var targetShape   = SHAPES.HERO;
+  var morphProgress = 1.0;
+  var MORPH_SPEED   = 0.016;
 
-  /* ----------------------------------------------------------
-     PARTÍCULA
-     ---------------------------------------------------------- */
+  /* --------------------------------------------------------
+     PARTÍCULAS
+     -------------------------------------------------------- */
   var particles = [];
 
-  /* Cada partícula pertence a uma "camada" (0, 1, 2):
-     0 = frente (maior, mais opaco)
-     1 = meio
-     2 = fundo (menor, mais suave) */
   var LAYER_CONFIG = [
     { opacityMax: 0.55, opacityMin: 0.25, sizeMax: 1.6, sizeMin: 0.9, count: 0.30 },
     { opacityMax: 0.28, opacityMin: 0.10, sizeMax: 1.0, sizeMin: 0.5, count: 0.45 },
     { opacityMax: 0.13, opacityMin: 0.04, sizeMax: 0.6, sizeMin: 0.3, count: 0.25 },
   ];
 
-  /* Lerp linear */
-  function lerp(a, b, t) {
-    return a + (b - a) * t;
+  function lerp(a, b, t)       { return a + (b - a) * t; }
+  function smoothLerp(a, b, t) { var s = t * t * (3 - 2 * t); return a + (b - a) * s; }
+  function rand(min, max)      { return min + Math.random() * (max - min); }
+
+  /* --------------------------------------------------------
+     UTILITÁRIO: distribuir N pontos ao longo de segmentos
+     spread = espalhamento perpendicular (px)
+     -------------------------------------------------------- */
+  function distributeOnSegments(segs, count, spread) {
+    spread = spread || 0;
+    if (segs.length < 2) {
+      var r = [];
+      for (var i = 0; i < count; i++) r.push({ x: segs[0].x, y: segs[0].y });
+      return r;
+    }
+    var lengths = [], total = 0;
+    for (var i = 0; i < segs.length - 1; i++) {
+      var dx = segs[i+1].x - segs[i].x, dy = segs[i+1].y - segs[i].y;
+      var l = Math.sqrt(dx*dx + dy*dy) || 0.001;
+      lengths.push(l);
+      total += l;
+    }
+    var result = [];
+    for (var j = 0; j < count; j++) {
+      var d = (j / count) * total;
+      var acc = 0;
+      for (var k = 0; k < lengths.length; k++) {
+        if (acc + lengths[k] >= d) {
+          var segT = (d - acc) / lengths[k];
+          var px = lerp(segs[k].x, segs[k+1].x, segT);
+          var py = lerp(segs[k].y, segs[k+1].y, segT);
+          if (spread > 0) {
+            var nx = -(segs[k+1].y - segs[k].y) / lengths[k];
+            var ny =  (segs[k+1].x - segs[k].x) / lengths[k];
+            px += (Math.random() - 0.5) * spread * nx;
+            py += (Math.random() - 0.5) * spread * ny;
+          }
+          result.push({ x: px, y: py });
+          break;
+        }
+        acc += lengths[k];
+      }
+    }
+    while (result.length < count) result.push(result[result.length - 1] || { x: W*0.5, y: H*0.5 });
+    return result;
   }
 
-  /* Lerp suave (ease-in-out cúbico) */
-  function smoothLerp(a, b, t) {
-    var s = t * t * (3 - 2 * t);
-    return a + (b - a) * s;
+  /* --------------------------------------------------------
+     FORMA 0 — HERO: dois anéis concêntricos + núcleo
+     ○○ anel externo + anel interno + ponto central
+     -------------------------------------------------------- */
+  function shapeHero(total) {
+    var pts = [];
+    var cx = W * 0.5, cy = H * 0.48;
+    var r1 = Math.min(W, H) * 0.27;
+    var r2 = Math.min(W, H) * 0.13;
+
+    var c1 = Math.round(total * 0.48);
+    for (var i = 0; i < c1; i++) {
+      var a = (i / c1) * Math.PI * 2;
+      pts.push({ x: cx + Math.cos(a) * r1, y: cy + Math.sin(a) * r1 });
+    }
+    var c2 = Math.round(total * 0.32);
+    for (var i = 0; i < c2; i++) {
+      var a = (i / c2) * Math.PI * 2;
+      pts.push({ x: cx + Math.cos(a) * r2, y: cy + Math.sin(a) * r2 });
+    }
+    var c3 = total - c1 - c2;
+    for (var i = 0; i < c3; i++) {
+      var ra = Math.random() * Math.PI * 2;
+      var rr = Math.random() * r2 * 0.45;
+      pts.push({ x: cx + Math.cos(ra) * rr, y: cy + Math.sin(ra) * rr });
+    }
+    return pts;
   }
 
-  /* Número aleatório entre [min, max] */
-  function rand(min, max) {
-    return min + Math.random() * (max - min);
+  /* --------------------------------------------------------
+     FORMA 1 — PROBLEMA: triângulo de alerta ⚠ com exclamação
+     -------------------------------------------------------- */
+  function shapeProblema(total) {
+    var cx = W * 0.5, cy = H * 0.48;
+    var side = Math.min(W * 0.50, H * 0.55);
+    var h    = side * Math.sqrt(3) / 2;
+    var top  = { x: cx,              y: cy - h * 0.60 };
+    var botL = { x: cx - side * 0.5, y: cy + h * 0.40 };
+    var botR = { x: cx + side * 0.5, y: cy + h * 0.40 };
+
+    /* Arestas do triângulo — 68% dos pontos */
+    var edgePts = distributeOnSegments([top, botL, botR, top], Math.round(total * 0.68), 3.5);
+
+    /* Haste da exclamação — 22% */
+    var hasteTop = { x: cx, y: top.y + h * 0.20 };
+    var hasteMid = { x: cx, y: cy + h * 0.12 };
+    var hastePts = distributeOnSegments([hasteTop, hasteMid], Math.round(total * 0.22), 2.5);
+
+    /* Ponto da exclamação — 10% */
+    var dotY  = cy + h * 0.26;
+    var dotR  = side * 0.028;
+    var dotN  = total - edgePts.length - hastePts.length;
+    var dotPts = [];
+    for (var i = 0; i < dotN; i++) {
+      var a = (i / dotN) * Math.PI * 2;
+      dotPts.push({ x: cx + Math.cos(a) * dotR, y: dotY + Math.sin(a) * dotR });
+    }
+    return edgePts.concat(hastePts).concat(dotPts);
   }
 
-  /* Criar partículas */
+  /* --------------------------------------------------------
+     FORMA 2 — PRÉ-ATENDIMENTO: formulário
+     ┌──────────┐
+     │ ──────── │  ← 4 linhas internas
+     │ ──────── │
+     │ ──────── │
+     │ ──────   │  ← última linha mais curta
+     └──────────┘
+     -------------------------------------------------------- */
+  function shapePre(total) {
+    var cx = W * 0.5, cy = H * 0.48;
+    var bw = Math.min(W * 0.46, 310);
+    var bh = bw * 1.05;
+    var x0 = cx - bw/2, y0 = cy - bh/2;
+    var x1 = cx + bw/2, y1 = cy + bh/2;
+    var pad = bw * 0.11;
+    var pts = [];
+
+    /* Borda do retângulo — 38% */
+    var box = [{x:x0,y:y0},{x:x1,y:y0},{x:x1,y:y1},{x:x0,y:y1},{x:x0,y:y0}];
+    pts = pts.concat(distributeOnSegments(box, Math.round(total * 0.38), 2.5));
+
+    /* 4 linhas internas — 62% divididos */
+    var lineCount   = 4;
+    var lineY0      = y0 + bh * 0.22;
+    var lineSpacing = bh * 0.185;
+    var ptsPerLine  = Math.round(total * 0.62 / lineCount);
+    for (var i = 0; i < lineCount; i++) {
+      var ly = lineY0 + i * lineSpacing;
+      var lw = (i === lineCount - 1) ? (bw - pad * 2) * 0.56 : (bw - pad * 2);
+      var lx0 = cx - lw / 2, lx1 = cx + lw / 2;
+      pts = pts.concat(distributeOnSegments([{x:lx0,y:ly},{x:lx1,y:ly}], ptsPerLine, 2));
+    }
+
+    while (pts.length < total) pts.push(pts[pts.length - 1]);
+    return pts.slice(0, total);
+  }
+
+  /* --------------------------------------------------------
+     FORMA 3 — AGENDAMENTO: calendário
+     ┌─────────┐
+     ├─────────┤  ← linha separadora do cabeçalho
+     │ □ □ □ □ │  ← grade 4×4 de células
+     │ □ □ □ □ │
+     └─────────┘
+     -------------------------------------------------------- */
+  function shapeAgendamento(total) {
+    var cx = W * 0.5, cy = H * 0.48;
+    var bw = Math.min(W * 0.50, 330);
+    var bh = bw * 0.84;
+    var x0 = cx - bw/2, y0 = cy - bh/2;
+    var x1 = cx + bw/2, y1 = cy + bh/2;
+    var pad    = bw * 0.075;
+    var hdrH   = bh * 0.195;
+    var pts    = [];
+
+    /* Borda — 20% */
+    var box = [{x:x0,y:y0},{x:x1,y:y0},{x:x1,y:y1},{x:x0,y:y1},{x:x0,y:y0}];
+    pts = pts.concat(distributeOnSegments(box, Math.round(total * 0.20), 2.5));
+
+    /* Separador cabeçalho — 7% */
+    var sepY = y0 + hdrH;
+    pts = pts.concat(distributeOnSegments([{x:x0,y:sepY},{x:x1,y:sepY}], Math.round(total * 0.07), 1.5));
+
+    /* Grade 4×4 — 73% */
+    var cols = 4, rows = 4;
+    var gx0 = x0 + pad, gx1 = x1 - pad;
+    var gy0 = sepY + (bh - hdrH) * 0.07, gy1 = y1 - pad * 0.5;
+    var cw  = (gx1 - gx0) / cols;
+    var ch  = (gy1 - gy0) / rows;
+    var ppc = Math.round(total * 0.73 / (cols * rows));
+
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        var ccx = gx0 + c * cw + cw * 0.5;
+        var ccy = gy0 + r * ch + ch * 0.5;
+        var hw  = cw * 0.42, hh = ch * 0.48;
+        var cell = [
+          {x:ccx-hw,y:ccy-hh},{x:ccx+hw,y:ccy-hh},
+          {x:ccx+hw,y:ccy+hh},{x:ccx-hw,y:ccy+hh},
+          {x:ccx-hw,y:ccy-hh}
+        ];
+        pts = pts.concat(distributeOnSegments(cell, ppc, 1.2));
+      }
+    }
+
+    while (pts.length < total) pts.push(pts[pts.length - 1]);
+    return pts.slice(0, total);
+  }
+
+  /* --------------------------------------------------------
+     FORMA 4 — CONTINUIDADE / HISTÓRICO: grafo de nós
+     ●────●────●────●────●
+                │
+                ●
+     -------------------------------------------------------- */
+  function shapeContinuidade(total) {
+    var cx = W * 0.5, cy = H * 0.46;
+    var span = Math.min(W * 0.72, 480);
+    var pts  = [];
+
+    /* 5 nós na linha horizontal */
+    var nodeY   = cy - span * 0.06;
+    var nodeR   = span * 0.050;
+    var nodeXs  = [];
+    for (var i = 0; i < 5; i++) nodeXs.push(cx - span/2 + (i / 4) * span);
+
+    /* Nó descendente (abaixo do nó central) */
+    var downNode = { x: nodeXs[2], y: cy + span * 0.28 };
+
+    /* Conectores entre nós — 55% */
+    var connectors = [];
+    for (var i = 0; i < 4; i++) {
+      connectors.push([{x:nodeXs[i],y:nodeY},{x:nodeXs[i+1],y:nodeY}]);
+    }
+    connectors.push([{x:nodeXs[2],y:nodeY},{x:downNode.x,y:downNode.y}]);
+
+    var ptsPerConn = Math.round(total * 0.55 / connectors.length);
+    connectors.forEach(function(seg) {
+      pts = pts.concat(distributeOnSegments(seg, ptsPerConn, 2));
+    });
+
+    /* Círculos nos 6 nós — 45% */
+    var allNodes = nodeXs.map(function(x) { return {x:x,y:nodeY}; }).concat([downNode]);
+    var ptsPerNode = Math.round(total * 0.45 / allNodes.length);
+    allNodes.forEach(function(n) {
+      for (var i = 0; i < ptsPerNode; i++) {
+        var a = (i / ptsPerNode) * Math.PI * 2;
+        pts.push({ x: n.x + Math.cos(a) * nodeR, y: n.y + Math.sin(a) * nodeR });
+      }
+    });
+
+    while (pts.length < total) pts.push(pts[pts.length - 1]);
+    return pts.slice(0, total);
+  }
+
+  /* --------------------------------------------------------
+     FORMA 5 — JORNADA: linha com 6 nós circulares
+     ●───●───●───●───●───●
+     -------------------------------------------------------- */
+  function shapeJornada(total) {
+    var cx = W * 0.5, cy = H * 0.50;
+    var lw  = Math.min(W * 0.76, 560);
+    var x0  = cx - lw / 2, x1 = cx + lw / 2;
+    var pts = [];
+
+    var steps = 6;
+    var nodes = [];
+    for (var i = 0; i < steps; i++) {
+      nodes.push({ x: x0 + (i / (steps - 1)) * lw, y: cy });
+    }
+
+    /* Linha contínua — 50% */
+    pts = pts.concat(distributeOnSegments(nodes, Math.round(total * 0.50), 2.5));
+
+    /* Círculos nos nós — 50% */
+    var nodeR    = lw * 0.030;
+    var ptsPerNode = Math.round(total * 0.50 / steps);
+    nodes.forEach(function(n) {
+      for (var i = 0; i < ptsPerNode; i++) {
+        var a = (i / ptsPerNode) * Math.PI * 2;
+        pts.push({ x: n.x + Math.cos(a) * nodeR, y: n.y + Math.sin(a) * nodeR });
+      }
+    });
+
+    while (pts.length < total) pts.push(pts[pts.length - 1]);
+    return pts.slice(0, total);
+  }
+
+  /* --------------------------------------------------------
+     FORMA 6 — BENEFÍCIOS: checkmark inscrito em círculo ✓○
+     -------------------------------------------------------- */
+  function shapeBeneficios(total) {
+    var cx = W * 0.5, cy = H * 0.48;
+    var r  = Math.min(W, H) * 0.27;
+    var pts = [];
+
+    /* Círculo — 55% */
+    var cCount = Math.round(total * 0.55);
+    for (var i = 0; i < cCount; i++) {
+      var a = (i / cCount) * Math.PI * 2;
+      pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
+    }
+
+    /* Checkmark — 45%
+       A = esquerda baixo, B = vértice inferior, C = direita alto */
+    var ckA = { x: cx - r * 0.44, y: cy + r * 0.04 };
+    var ckB = { x: cx - r * 0.08, y: cy + r * 0.40 };
+    var ckC = { x: cx + r * 0.50, y: cy - r * 0.34 };
+    pts = pts.concat(distributeOnSegments([ckA, ckB, ckC], total - cCount, 3.5));
+
+    while (pts.length < total) pts.push(pts[pts.length - 1]);
+    return pts.slice(0, total);
+  }
+
+  /* --------------------------------------------------------
+     FORMA 7 — CTA: sistema completo — checkmark em duplo anel
+     com 5 pontos satélites externos
+     -------------------------------------------------------- */
+  function shapeCTA(total) {
+    var cx = W * 0.5, cy = H * 0.48;
+    var r1 = Math.min(W, H) * 0.30;
+    var r2 = r1 * 0.62;
+    var pts = [];
+
+    /* Anel externo — 28% */
+    var c1 = Math.round(total * 0.28);
+    for (var i = 0; i < c1; i++) {
+      var a = (i / c1) * Math.PI * 2;
+      pts.push({ x: cx + Math.cos(a) * r1, y: cy + Math.sin(a) * r1 });
+    }
+
+    /* Anel médio — 20% */
+    var c2 = Math.round(total * 0.20);
+    for (var i = 0; i < c2; i++) {
+      var a = (i / c2) * Math.PI * 2;
+      pts.push({ x: cx + Math.cos(a) * r2, y: cy + Math.sin(a) * r2 });
+    }
+
+    /* Checkmark central — 27% */
+    var ckA2 = { x: cx - r2 * 0.40, y: cy + r2 * 0.04 };
+    var ckB2 = { x: cx - r2 * 0.06, y: cy + r2 * 0.38 };
+    var ckC2 = { x: cx + r2 * 0.46, y: cy - r2 * 0.32 };
+    pts = pts.concat(distributeOnSegments([ckA2, ckB2, ckC2], Math.round(total * 0.27), 3));
+
+    /* 5 pontos satélites no anel externo — 25% */
+    var r3   = r1 * 1.20;
+    var dotR = r1 * 0.038;
+    var dotN = 5;
+    var ptsPerDot = Math.round(total * 0.25 / dotN);
+    for (var d = 0; d < dotN; d++) {
+      var da  = (d / dotN) * Math.PI * 2 - Math.PI / 2;
+      var dnx = cx + Math.cos(da) * r3;
+      var dny = cy + Math.sin(da) * r3;
+      for (var i = 0; i < ptsPerDot; i++) {
+        var aa = (i / ptsPerDot) * Math.PI * 2;
+        pts.push({ x: dnx + Math.cos(aa) * dotR, y: dny + Math.sin(aa) * dotR });
+      }
+    }
+
+    while (pts.length < total) pts.push(pts[pts.length - 1]);
+    return pts.slice(0, total);
+  }
+
+  /* --------------------------------------------------------
+     MAPA DE FUNÇÕES
+     -------------------------------------------------------- */
+  var shapeFns = [
+    shapeHero, shapeProblema, shapePre, shapeAgendamento,
+    shapeContinuidade, shapeJornada, shapeBeneficios, shapeCTA,
+  ];
+
+  function computeShape(shapeIdx) {
+    return shapeFns[shapeIdx](particles.length);
+  }
+
+  var coordsA = [], coordsB = [];
+
+  /* --------------------------------------------------------
+     CRIAÇÃO DE PARTÍCULAS
+     -------------------------------------------------------- */
   function createParticles() {
     particles = [];
     LAYER_CONFIG.forEach(function (cfg, layerIdx) {
       var count = Math.round(PARTICLE_COUNT * cfg.count);
       for (var i = 0; i < count; i++) {
         var p = {
-          /* posição atual */
-          x: rand(0, W),
-          y: rand(0, H),
-          /* destino atual (forma A) */
-          ax: 0, ay: 0,
-          /* destino seguinte (forma B) */
-          bx: 0, by: 0,
-          /* velocidade de vida própria (micro movimento) */
-          vx: rand(-0.08, 0.08),
-          vy: rand(-0.08, 0.08),
-          /* micro oscilação (respiração) */
-          phase:  rand(0, Math.PI * 2),
-          freq:   rand(0.004, 0.012),
-          ampX:   rand(0.3, 0.9),
-          ampY:   rand(0.3, 0.9),
-          /* visuais */
+          x: rand(0, W), y: rand(0, H),
+          vx: rand(-0.06, 0.06), vy: rand(-0.06, 0.06),
+          phase: rand(0, Math.PI * 2),
+          freq:  rand(0.003, 0.010),
+          ampX:  rand(0.2, 0.7),
+          ampY:  rand(0.2, 0.7),
           size:    rand(cfg.sizeMin, cfg.sizeMax),
           opacity: rand(cfg.opacityMin, cfg.opacityMax),
-          opacityBase: 0, // calculado depois
-          layer: layerIdx,
-          /* fator de paralaxe (partículas mais ao fundo = mais lentas) */
-          parallax: 1 - layerIdx * 0.25,
+          opacityBase: 0,
+          layer:    layerIdx,
+          parallax: 1 - layerIdx * 0.22,
         };
         p.opacityBase = p.opacity;
         particles.push(p);
@@ -1978,160 +2282,18 @@ footer {
     });
   }
 
-  /* ----------------------------------------------------------
-     GERADOR DE FORMAS
-     Cada função recebe um índice [0, N-1] e retorna {x, y}
-     normalizado para o viewport atual.
-     ---------------------------------------------------------- */
-
-  /** Forma 0 — HERO: nebulosa difusa, galáxia suave */
-  function shapeHero(i, total) {
-    var t = i / total;
-    /* dois anéis gaussianos sobrepostos */
-    var angle = rand(0, Math.PI * 2);
-    var ring   = Math.random() < 0.6 ? 0.28 : 0.52;
-    var r      = W * ring * (0.5 + Math.random() * 0.5);
-    var spread = H * 0.38;
-    return {
-      x: W * 0.5 + Math.cos(angle) * r * (0.3 + Math.random() * 0.7),
-      y: H * 0.45 + (Math.random() - 0.5) * spread,
-    };
-  }
-
-  /** Forma 1 — PROBLEMA: dispersão caótica / entropia */
-  function shapeProblema(i, total) {
-    /* clusters irregulares + ruído */
-    var clusters = [
-      { cx: 0.15, cy: 0.25 }, { cx: 0.75, cy: 0.18 },
-      { cx: 0.42, cy: 0.55 }, { cx: 0.88, cy: 0.65 },
-      { cx: 0.22, cy: 0.78 }, { cx: 0.60, cy: 0.82 },
-    ];
-    var c = clusters[i % clusters.length];
-    return {
-      x: W * c.cx + (Math.random() - 0.5) * W * 0.32,
-      y: H * c.cy + (Math.random() - 0.5) * H * 0.28,
-    };
-  }
-
-  /** Forma 2 — PRÉ-ATENDIMENTO: funil / coluna estruturada */
-  function shapePre(i, total) {
-    var t = i / total;
-    /* funil: linhas horizontais que convergem para o centro */
-    var rows = 14;
-    var row  = Math.floor(t * rows);
-    var rowT = (t * rows) % 1;
-    var progress = row / (rows - 1); // 0 = topo, 1 = base
-    var funelW   = lerp(0.72, 0.18, progress);   // largura diminui
-    var centerX  = 0.5;
-    var startX   = centerX - funelW / 2;
-    return {
-      x: W * (startX + rowT * funelW),
-      y: H * (0.12 + progress * 0.76),
-    };
-  }
-
-  /** Forma 3 — AGENDAMENTO: grade de calendário */
-  function shapeAgendamento(i, total) {
-    var cols = 7, rows = Math.ceil(total / cols);
-    var col  = i % cols;
-    var row  = Math.floor(i / cols);
-    var gW   = 0.58, gH = 0.60;
-    var startX = (1 - gW) / 2, startY = (1 - gH) / 2;
-    return {
-      x: W * (startX + (col / (cols - 1)) * gW),
-      y: H * (startY + (row / Math.max(rows - 1, 1)) * gH),
-    };
-  }
-
-  /** Forma 4 — CONTINUIDADE: rede / grafo conectado */
-  function shapeContinuidade(i, total) {
-    /* nós principais + satélites */
-    var nodes = [
-      { x: 0.5,  y: 0.50 },
-      { x: 0.25, y: 0.28 }, { x: 0.75, y: 0.28 },
-      { x: 0.18, y: 0.62 }, { x: 0.82, y: 0.62 },
-      { x: 0.50, y: 0.78 }, { x: 0.50, y: 0.22 },
-    ];
-    var nodeIdx = i % nodes.length;
-    var n = nodes[nodeIdx];
-    var spread = 0.08 + (nodeIdx === 0 ? 0.04 : 0);
-    return {
-      x: W * n.x + (Math.random() - 0.5) * W * spread,
-      y: H * n.y + (Math.random() - 0.5) * H * spread,
-    };
-  }
-
-  /** Forma 5 — JORNADA: linha horizontal contínua com ondulação */
-  function shapeJornada(i, total) {
-    var t   = i / total;
-    var x   = W * (0.04 + t * 0.92);
-    /* ondulação suave */
-    var amp = H * 0.06;
-    var y   = H * 0.50 + Math.sin(t * Math.PI * 6) * amp * (0.5 + Math.random() * 0.5);
-    /* leve dispersão vertical por camada */
-    y += (Math.random() - 0.5) * H * 0.06;
-    return { x: x, y: y };
-  }
-
-  /** Forma 6 — BENEFÍCIOS: círculo / completude */
-  function shapeBeneficios(i, total) {
-    var t     = i / total;
-    var angle = t * Math.PI * 2;
-    /* anel duplo */
-    var ring  = i % 3 === 0 ? 0.38 : (i % 3 === 1 ? 0.28 : 0.18);
-    var noise = 0.04;
-    return {
-      x: W * 0.5 + Math.cos(angle) * W * ring + (Math.random() - 0.5) * W * noise,
-      y: H * 0.5 + Math.sin(angle) * H * ring + (Math.random() - 0.5) * H * noise,
-    };
-  }
-
-  /** Forma 7 — CTA: espiral convergindo ao centro */
-  function shapeCTA(i, total) {
-    var t     = i / total;
-    var turns = 3.5;
-    var angle = t * Math.PI * 2 * turns;
-    var r     = (1 - t) * 0.42; /* raio diminui = convergência */
-    return {
-      x: W * 0.5 + Math.cos(angle) * W * r,
-      y: H * 0.5 + Math.sin(angle) * H * r,
-    };
-  }
-
-  /* Mapa índice → função geradora */
-  var shapeFns = [
-    shapeHero, shapeProblema, shapePre, shapeAgendamento,
-    shapeContinuidade, shapeJornada, shapeBeneficios, shapeCTA,
-  ];
-
-  /* Pré-calcular coordenadas de uma forma para todas as partículas */
-  function computeShape(shapeIdx) {
-    var fn    = shapeFns[shapeIdx];
-    var total = particles.length;
-    /* shuffle de índices para distribuir uniformemente entre camadas */
-    var result = [];
-    for (var i = 0; i < total; i++) {
-      result.push(fn(i, total));
-    }
-    return result;
-  }
-
-  /* Coordenadas pré-calculadas para forma A e B */
-  var coordsA = [];
-  var coordsB = [];
-
-  /* ----------------------------------------------------------
-     DETECÇÃO DE SEÇÃO via IntersectionObserver
-     ---------------------------------------------------------- */
+  /* --------------------------------------------------------
+     DETECÇÃO DE SEÇÃO
+     -------------------------------------------------------- */
   var sectionMap = [
-    { id: 'hero',           shape: SHAPES.HERO         },
-    { id: 'problema',       shape: SHAPES.PROBLEMA      },
-    { id: 'pre-atendimento',shape: SHAPES.PRE           },
-    { id: 'agendamento',    shape: SHAPES.AGENDAMENTO   },
-    { id: 'continuidade',   shape: SHAPES.CONTINUIDADE  },
-    { id: 'jornada',        shape: SHAPES.JORNADA       },
-    { id: 'beneficios',     shape: SHAPES.BENEFICIOS    },
-    { id: 'cta',            shape: SHAPES.CTA           },
+    { id: 'hero',            shape: SHAPES.HERO         },
+    { id: 'problema',        shape: SHAPES.PROBLEMA      },
+    { id: 'pre-atendimento', shape: SHAPES.PRE           },
+    { id: 'agendamento',     shape: SHAPES.AGENDAMENTO   },
+    { id: 'continuidade',    shape: SHAPES.CONTINUIDADE  },
+    { id: 'jornada',         shape: SHAPES.JORNADA       },
+    { id: 'beneficios',      shape: SHAPES.BENEFICIOS    },
+    { id: 'cta',             shape: SHAPES.CTA           },
   ];
 
   function setupSectionObserver() {
@@ -2142,31 +2304,22 @@ footer {
         if (!entry.isIntersecting) return;
         sectionMap.forEach(function (s) {
           if (entry.target.id === s.id && s.shape !== targetShape) {
-            /* Nova seção: A = estado atual interpolado, B = nova forma */
-            var progress = morphProgress;
-
-            /* Estado atual interpolado torna-se A */
+            var prog = morphProgress;
             for (var i = 0; i < particles.length; i++) {
               coordsA[i] = {
                 x: smoothLerp(coordsA[i] ? coordsA[i].x : particles[i].x,
-                               coordsB[i] ? coordsB[i].x : particles[i].x,
-                               progress),
+                               coordsB[i] ? coordsB[i].x : particles[i].x, prog),
                 y: smoothLerp(coordsA[i] ? coordsA[i].y : particles[i].y,
-                               coordsB[i] ? coordsB[i].y : particles[i].y,
-                               progress),
+                               coordsB[i] ? coordsB[i].y : particles[i].y, prog),
               };
             }
-
-            targetShape = s.shape;
-            coordsB     = computeShape(targetShape);
+            targetShape   = s.shape;
+            coordsB       = computeShape(targetShape);
             morphProgress = 0;
           }
         });
       });
-    }, {
-      threshold: 0.18,
-      rootMargin: '-60px 0px -60px 0px',
-    });
+    }, { threshold: 0.18, rootMargin: '-60px 0px -60px 0px' });
 
     sectionMap.forEach(function (s) {
       var el = document.getElementById(s.id);
@@ -2174,34 +2327,28 @@ footer {
     });
   }
 
-  /* ----------------------------------------------------------
+  /* --------------------------------------------------------
      RESIZE
-     ---------------------------------------------------------- */
+     -------------------------------------------------------- */
   function resize() {
     W = canvas.width  = window.innerWidth;
     H = canvas.height = window.innerHeight;
     isMobile = W < 768;
-    PARTICLE_COUNT = isMobile ? rand(600, 900) : rand(1500, 2000);
-    PARTICLE_COUNT = Math.round(PARTICLE_COUNT);
+    PARTICLE_COUNT = isMobile ? 700 : 1600;
   }
 
-  /* ----------------------------------------------------------
-     INICIALIZAÇÃO
-     ---------------------------------------------------------- */
+  /* --------------------------------------------------------
+     INIT
+     -------------------------------------------------------- */
   function init() {
     resize();
     createParticles();
 
-    /* Posicionar partículas na forma inicial e calcular coords */
     coordsA = computeShape(SHAPES.HERO);
     coordsB = computeShape(SHAPES.HERO);
     particles.forEach(function (p, i) {
       p.x = coordsA[i].x;
       p.y = coordsA[i].y;
-      p.ax = coordsA[i].x;
-      p.ay = coordsA[i].y;
-      p.bx = coordsB[i].x;
-      p.by = coordsB[i].y;
     });
 
     morphProgress = 1.0;
@@ -2210,10 +2357,8 @@ footer {
   }
 
   window.addEventListener('resize', function () {
-    /* Redimensionar canvas mantendo partículas */
     var oldW = W, oldH = H;
     resize();
-    /* Reescalar posições proporcionalmente */
     var rx = W / oldW, ry = H / oldH;
     particles.forEach(function (p, i) {
       p.x  *= rx; p.y  *= ry;
@@ -2222,71 +2367,65 @@ footer {
     });
   }, { passive: true });
 
-  /* ----------------------------------------------------------
+  /* --------------------------------------------------------
      LOOP DE ANIMAÇÃO
-     ---------------------------------------------------------- */
+     -------------------------------------------------------- */
   var tick = 0;
 
   function loop() {
-    raf = requestAnimationFrame(loop);
+    requestAnimationFrame(loop);
     tick++;
 
     ctx.clearRect(0, 0, W, H);
 
-    /* Avança morphProgress */
     if (morphProgress < 1.0) {
       morphProgress = Math.min(morphProgress + MORPH_SPEED, 1.0);
     }
 
-    /* Desenhar por camada (fundo → frente) */
+    /* Renderizar do fundo para a frente */
     for (var layer = 2; layer >= 0; layer--) {
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
         if (p.layer !== layer) continue;
 
-        /* Destino interpolado entre A e B */
+        /* Destino interpolado */
         var tx, ty;
         if (coordsA[i] && coordsB[i]) {
           tx = smoothLerp(coordsA[i].x, coordsB[i].x, morphProgress);
           ty = smoothLerp(coordsA[i].y, coordsB[i].y, morphProgress);
         } else {
-          tx = W * 0.5;
-          ty = H * 0.5;
+          tx = W * 0.5; ty = H * 0.5;
         }
 
-        /* Micro movimento orgânico (fase independente por partícula) */
+        /* Micro-movimento orgânico */
         var phase = p.phase + tick * p.freq;
         var microX = Math.sin(phase * 1.3) * p.ampX * p.parallax;
         var microY = Math.cos(phase * 0.9) * p.ampY * p.parallax;
 
-        /* Interpolar posição atual → destino com suavização */
-        var attractionStr = 0.035 * p.parallax;
-        p.vx += (tx - p.x + microX) * attractionStr;
-        p.vy += (ty - p.y + microY) * attractionStr;
-
-        /* Amortecimento (drag) */
+        /* Atração suave + amortecimento */
+        var attr = 0.032 * p.parallax;
+        p.vx += (tx - p.x + microX) * attr;
+        p.vy += (ty - p.y + microY) * attr;
         p.vx *= 0.88;
         p.vy *= 0.88;
+        p.x  += p.vx;
+        p.y  += p.vy;
 
-        p.x += p.vx;
-        p.y += p.vy;
+        /* Opacidade pulsante */
+        var opMod    = 1 + 0.15 * Math.sin(phase * 1.7);
+        var finalOp  = Math.min(p.opacityBase * opMod, 0.65);
 
-        /* Opacidade pulsante suave */
-        var opacityMod = 1 + 0.18 * Math.sin(phase * 1.7);
-        var finalOpacity = Math.min(p.opacityBase * opacityMod, 0.65);
-
-        /* Desenhar */
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,' + finalOpacity + ')';
+        ctx.fillStyle = 'rgba(255,255,255,' + finalOp + ')';
         ctx.fill();
       }
     }
   }
 
-  /* ----------------------------------------------------------
+  /* --------------------------------------------------------
      START
-     ---------------------------------------------------------- */
+     -------------------------------------------------------- */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
