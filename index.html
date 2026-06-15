@@ -1855,577 +1855,549 @@ footer {
 
 
 <!-- ============================================================
-     JAVASCRIPT — SISTEMA DE PARTÍCULAS (FORMAS GEOMÉTRICAS EXPLÍCITAS)
+     JAVASCRIPT — SISTEMA DE PARTÍCULAS PREMIUM
+     Scroll-driven morphing · cores por seção · partículas minúsculas
+     distribuição uniforme · trajetórias físicas visíveis
      ============================================================ -->
 <script>
 (function () {
   'use strict';
 
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
   var canvas = document.getElementById('particle-background');
   var ctx    = canvas.getContext('2d');
   var W = 0, H = 0;
   var isMobile = false;
-  var PARTICLE_COUNT = 0;
+  var TOTAL = 0;
 
-  /* --------------------------------------------------------
-     ÍNDICES DE FORMA
-     -------------------------------------------------------- */
-  var SHAPES = {
-    HERO: 0, PROBLEMA: 1, PRE: 2, AGENDAMENTO: 3,
-    CONTINUIDADE: 4, JORNADA: 5, BENEFICIOS: 6, CTA: 7,
-  };
-
-  var targetShape   = SHAPES.HERO;
-  var morphProgress = 1.0;
-  var MORPH_SPEED   = 0.016;
-
-  /* --------------------------------------------------------
-     PARTÍCULAS
-     -------------------------------------------------------- */
-  var particles = [];
-
-  var LAYER_CONFIG = [
-    { opacityMax: 0.55, opacityMin: 0.25, sizeMax: 1.6, sizeMin: 0.9, count: 0.30 },
-    { opacityMax: 0.28, opacityMin: 0.10, sizeMax: 1.0, sizeMin: 0.5, count: 0.45 },
-    { opacityMax: 0.13, opacityMin: 0.04, sizeMax: 0.6, sizeMin: 0.3, count: 0.25 },
+  /* ============================================================
+     PALETA DE CORES POR SEÇÃO
+     Cada entrada: [R, G, B] — interpolado via scroll
+     ============================================================ */
+  var SECTION_COLORS = [
+    [255, 255, 255],   // 0 hero      — branco puro
+    [180, 190, 210],   // 1 problema  — branco frio
+    [130, 170, 230],   // 2 pre       — azul suave
+    [37,  211, 102],   // 3 whatsapp  — verde
+    [210, 160,  80],   // 4 agenda    — âmbar suave
+    [160, 120, 220],   // 5 cont      — roxo suave
+    [80,  210, 220],   // 6 jornada   — ciano suave
+    [200, 180, 255],   // 7 beneficios— lilás suave
+    [255, 255, 255],   // 8 cta       — branco premium
   ];
 
-  function lerp(a, b, t)       { return a + (b - a) * t; }
-  function smoothLerp(a, b, t) { var s = t * t * (3 - 2 * t); return a + (b - a) * s; }
-  function rand(min, max)      { return min + Math.random() * (max - min); }
+  /* ============================================================
+     SEÇÕES E FORMAS
+     ============================================================ */
+  var SECTION_IDS = [
+    'hero', 'problema', 'pre-atendimento', 'agendamento',
+    'continuidade', 'jornada', 'beneficios', 'cta'
+  ];
 
-  /* --------------------------------------------------------
-     UTILITÁRIO: distribuir N pontos ao longo de segmentos
-     spread = espalhamento perpendicular (px)
-     -------------------------------------------------------- */
-  function distributeOnSegments(segs, count, spread) {
-    spread = spread || 0;
-    if (segs.length < 2) {
-      var r = [];
-      for (var i = 0; i < count; i++) r.push({ x: segs[0].x, y: segs[0].y });
-      return r;
-    }
-    var lengths = [], total = 0;
-    for (var i = 0; i < segs.length - 1; i++) {
-      var dx = segs[i+1].x - segs[i].x, dy = segs[i+1].y - segs[i].y;
-      var l = Math.sqrt(dx*dx + dy*dy) || 0.001;
-      lengths.push(l);
-      total += l;
-    }
-    var result = [];
-    for (var j = 0; j < count; j++) {
-      var d = (j / count) * total;
-      var acc = 0;
-      for (var k = 0; k < lengths.length; k++) {
-        if (acc + lengths[k] >= d) {
-          var segT = (d - acc) / lengths[k];
-          var px = lerp(segs[k].x, segs[k+1].x, segT);
-          var py = lerp(segs[k].y, segs[k+1].y, segT);
-          if (spread > 0) {
-            var nx = -(segs[k+1].y - segs[k].y) / lengths[k];
-            var ny =  (segs[k+1].x - segs[k].x) / lengths[k];
-            px += (Math.random() - 0.5) * spread * nx;
-            py += (Math.random() - 0.5) * spread * ny;
-          }
-          result.push({ x: px, y: py });
-          break;
-        }
-        acc += lengths[k];
-      }
-    }
-    while (result.length < count) result.push(result[result.length - 1] || { x: W*0.5, y: H*0.5 });
-    return result;
+  /* Posição normalizada (0-1) de cada seção no documento */
+  var sectionBreaks = []; // preenchido após DOM load
+
+  function computeSectionBreaks() {
+    sectionBreaks = SECTION_IDS.map(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return 0;
+      var rect = el.getBoundingClientRect();
+      return (rect.top + window.scrollY);
+    });
   }
 
-  /* --------------------------------------------------------
-     FORMA 0 — HERO: dois anéis concêntricos + núcleo
-     ○○ anel externo + anel interno + ponto central
-     -------------------------------------------------------- */
-  function shapeHero(total) {
-    var pts = [];
-    var cx = W * 0.5, cy = H * 0.48;
-    var r1 = Math.min(W, H) * 0.27;
-    var r2 = Math.min(W, H) * 0.13;
+  /* ============================================================
+     SCROLL STATE — valor contínuo 0..N-1 mapeando seções
+     ============================================================ */
+  var scrollValue = 0; // 0 = hero, 1 = problema, etc.
 
-    var c1 = Math.round(total * 0.48);
-    for (var i = 0; i < c1; i++) {
-      var a = (i / c1) * Math.PI * 2;
-      pts.push({ x: cx + Math.cos(a) * r1, y: cy + Math.sin(a) * r1 });
+  function updateScrollValue() {
+    var sy = window.scrollY + H * 0.35;
+    var n  = sectionBreaks.length;
+    if (sy <= sectionBreaks[0]) { scrollValue = 0; return; }
+    if (sy >= sectionBreaks[n-1]) { scrollValue = n - 1; return; }
+    for (var i = 0; i < n - 1; i++) {
+      if (sy >= sectionBreaks[i] && sy < sectionBreaks[i+1]) {
+        var t = (sy - sectionBreaks[i]) / (sectionBreaks[i+1] - sectionBreaks[i]);
+        scrollValue = i + clamp01(t);
+        return;
+      }
     }
-    var c2 = Math.round(total * 0.32);
-    for (var i = 0; i < c2; i++) {
-      var a = (i / c2) * Math.PI * 2;
-      pts.push({ x: cx + Math.cos(a) * r2, y: cy + Math.sin(a) * r2 });
+    scrollValue = n - 1;
+  }
+
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function lerp(a,b,t) { return a + (b-a)*t; }
+  function smoothstep(t) { return t*t*(3-2*t); }
+
+  /* ============================================================
+     COR ATUAL — interpola entre seções conforme scrollValue
+     ============================================================ */
+  function getCurrentColor(alpha) {
+    var i   = Math.floor(scrollValue);
+    var t   = scrollValue - i;
+    var ca  = SECTION_COLORS[Math.min(i,   SECTION_COLORS.length-1)];
+    var cb  = SECTION_COLORS[Math.min(i+1, SECTION_COLORS.length-1)];
+    var st  = smoothstep(t);
+    var r   = Math.round(lerp(ca[0], cb[0], st));
+    var g   = Math.round(lerp(ca[1], cb[1], st));
+    var b   = Math.round(lerp(ca[2], cb[2], st));
+    return 'rgba('+r+','+g+','+b+','+alpha+')';
+  }
+
+  /* ============================================================
+     PARTÍCULAS
+     ============================================================ */
+  var particles = [];
+
+  /* Posições alvo A e B para morphing */
+  var coordsA = [];
+  var coordsB = [];
+  var lastShapeIdx = -1;
+
+  function rand(a,b) { return a + Math.random()*(b-a); }
+
+  /* ============================================================
+     POISSON DISK SAMPLING — distribuição uniforme
+     Gera pontos dentro de uma região, min distância = minDist
+     Usamos uma versão simplificada (grid-acelerada)
+     ============================================================ */
+  function poissonOnMask(maskFn, count, attempts) {
+    /* maskFn(x,y) → true se ponto é válido */
+    attempts = attempts || 30;
+    var pts  = [];
+    var minD = Math.sqrt((W * H) / count) * 0.7;
+    var cellS = minD / Math.SQRT2;
+    var cols  = Math.ceil(W / cellS);
+    var rows  = Math.ceil(H / cellS);
+    var grid  = new Int32Array(cols * rows).fill(-1);
+
+    function gridIdx(x, y) {
+      var cx = Math.floor(x / cellS);
+      var cy = Math.floor(y / cellS);
+      return cy * cols + cx;
     }
-    var c3 = total - c1 - c2;
-    for (var i = 0; i < c3; i++) {
-      var ra = Math.random() * Math.PI * 2;
-      var rr = Math.random() * r2 * 0.45;
-      pts.push({ x: cx + Math.cos(ra) * rr, y: cy + Math.sin(ra) * rr });
+
+    function tooClose(x, y) {
+      var cx = Math.floor(x / cellS);
+      var cy = Math.floor(y / cellS);
+      var x0 = Math.max(0, cx-2), x1 = Math.min(cols-1, cx+2);
+      var y0 = Math.max(0, cy-2), y1 = Math.min(rows-1, cy+2);
+      for (var gy = y0; gy <= y1; gy++) {
+        for (var gx = x0; gx <= x1; gx++) {
+          var idx = grid[gy*cols+gx];
+          if (idx < 0) continue;
+          var p = pts[idx];
+          var dx = p.x-x, dy = p.y-y;
+          if (dx*dx+dy*dy < minD*minD) return true;
+        }
+      }
+      return false;
+    }
+
+    function addPoint(x, y) {
+      var p = {x:x, y:y};
+      pts.push(p);
+      grid[gridIdx(x,y)] = pts.length-1;
+      return p;
+    }
+
+    /* seed */
+    var sx = W*0.5, sy = H*0.5;
+    if (maskFn(sx,sy)) addPoint(sx,sy);
+    var active = pts.slice();
+
+    var safety = 0;
+    while (active.length > 0 && pts.length < count * 3 && safety++ < 50000) {
+      var ri = Math.floor(Math.random() * active.length);
+      var ref = active[ri];
+      var found = false;
+      for (var a = 0; a < attempts; a++) {
+        var angle = Math.random() * Math.PI * 2;
+        var dist  = rand(minD, 2*minD);
+        var nx = ref.x + Math.cos(angle)*dist;
+        var ny = ref.y + Math.sin(angle)*dist;
+        if (nx < 0 || nx >= W || ny < 0 || ny >= H) continue;
+        if (!maskFn(nx, ny)) continue;
+        if (tooClose(nx, ny)) continue;
+        addPoint(nx, ny);
+        active.push(pts[pts.length-1]);
+        found = true;
+        break;
+      }
+      if (!found) active.splice(ri, 1);
     }
     return pts;
   }
 
-  /* --------------------------------------------------------
-     FORMA 1 — PROBLEMA: triângulo de alerta ⚠ com exclamação
-     -------------------------------------------------------- */
-  function shapeProblema(total) {
-    var cx = W * 0.5, cy = H * 0.48;
-    var side = Math.min(W * 0.50, H * 0.55);
-    var h    = side * Math.sqrt(3) / 2;
-    var top  = { x: cx,              y: cy - h * 0.60 };
-    var botL = { x: cx - side * 0.5, y: cy + h * 0.40 };
-    var botR = { x: cx + side * 0.5, y: cy + h * 0.40 };
+  /* ============================================================
+     FUNÇÕES DE FORMA — retornam array de {x,y}
+     Baseadas em regiões de máscara (linha/borda)
+     Cada forma define uma função maskFn que retorna true
+     se o ponto deve ser aceito (dentro de uma "faixa" da forma)
+     ============================================================ */
 
-    /* Arestas do triângulo — 68% dos pontos */
-    var edgePts = distributeOnSegments([top, botL, botR, top], Math.round(total * 0.68), 3.5);
+  /* Espessura da faixa das formas */
+  function thickness() { return isMobile ? 9 : 7; }
 
-    /* Haste da exclamação — 22% */
-    var hasteTop = { x: cx, y: top.y + h * 0.20 };
-    var hasteMid = { x: cx, y: cy + h * 0.12 };
-    var hastePts = distributeOnSegments([hasteTop, hasteMid], Math.round(total * 0.22), 2.5);
-
-    /* Ponto da exclamação — 10% */
-    var dotY  = cy + h * 0.26;
-    var dotR  = side * 0.028;
-    var dotN  = total - edgePts.length - hastePts.length;
-    var dotPts = [];
-    for (var i = 0; i < dotN; i++) {
-      var a = (i / dotN) * Math.PI * 2;
-      dotPts.push({ x: cx + Math.cos(a) * dotR, y: dotY + Math.sin(a) * dotR });
-    }
-    return edgePts.concat(hastePts).concat(dotPts);
+  /* Distância ponto-segmento */
+  function distSeg(px,py, ax,ay, bx,by) {
+    var dx=bx-ax, dy=by-ay;
+    var len2=dx*dx+dy*dy;
+    if(len2===0) return Math.hypot(px-ax,py-ay);
+    var t=((px-ax)*dx+(py-ay)*dy)/len2;
+    t=Math.max(0,Math.min(1,t));
+    return Math.hypot(px-(ax+t*dx), py-(ay+t*dy));
   }
 
-  /* --------------------------------------------------------
-     FORMA 2 — PRÉ-ATENDIMENTO: formulário
-     ┌──────────┐
-     │ ──────── │  ← 4 linhas internas
-     │ ──────── │
-     │ ──────── │
-     │ ──────   │  ← última linha mais curta
-     └──────────┘
-     -------------------------------------------------------- */
-  function shapePre(total) {
-    var cx = W * 0.5, cy = H * 0.48;
-    var bw = Math.min(W * 0.46, 310);
-    var bh = bw * 1.05;
-    var x0 = cx - bw/2, y0 = cy - bh/2;
-    var x1 = cx + bw/2, y1 = cy + bh/2;
-    var pad = bw * 0.11;
-    var pts = [];
-
-    /* Borda do retângulo — 38% */
-    var box = [{x:x0,y:y0},{x:x1,y:y0},{x:x1,y:y1},{x:x0,y:y1},{x:x0,y:y0}];
-    pts = pts.concat(distributeOnSegments(box, Math.round(total * 0.38), 2.5));
-
-    /* 4 linhas internas — 62% divididos */
-    var lineCount   = 4;
-    var lineY0      = y0 + bh * 0.22;
-    var lineSpacing = bh * 0.185;
-    var ptsPerLine  = Math.round(total * 0.62 / lineCount);
-    for (var i = 0; i < lineCount; i++) {
-      var ly = lineY0 + i * lineSpacing;
-      var lw = (i === lineCount - 1) ? (bw - pad * 2) * 0.56 : (bw - pad * 2);
-      var lx0 = cx - lw / 2, lx1 = cx + lw / 2;
-      pts = pts.concat(distributeOnSegments([{x:lx0,y:ly},{x:lx1,y:ly}], ptsPerLine, 2));
-    }
-
-    while (pts.length < total) pts.push(pts[pts.length - 1]);
-    return pts.slice(0, total);
+  function distCircle(px,py,cx,cy,r) {
+    return Math.abs(Math.hypot(px-cx,py-cy)-r);
   }
 
-  /* --------------------------------------------------------
-     FORMA 3 — AGENDAMENTO: calendário
-     ┌─────────┐
-     ├─────────┤  ← linha separadora do cabeçalho
-     │ □ □ □ □ │  ← grade 4×4 de células
-     │ □ □ □ □ │
-     └─────────┘
-     -------------------------------------------------------- */
-  function shapeAgendamento(total) {
-    var cx = W * 0.5, cy = H * 0.48;
-    var bw = Math.min(W * 0.50, 330);
-    var bh = bw * 0.84;
-    var x0 = cx - bw/2, y0 = cy - bh/2;
-    var x1 = cx + bw/2, y1 = cy + bh/2;
-    var pad    = bw * 0.075;
-    var hdrH   = bh * 0.195;
-    var pts    = [];
+  /* ── FORMA 0: HERO — duplo anel ── */
+  function maskHero(x,y) {
+    var cx=W*0.5, cy=H*0.48;
+    var r1=Math.min(W,H)*0.26, r2=Math.min(W,H)*0.12;
+    var th=thickness();
+    return distCircle(x,y,cx,cy,r1)<th || distCircle(x,y,cx,cy,r2)<th;
+  }
 
-    /* Borda — 20% */
-    var box = [{x:x0,y:y0},{x:x1,y:y0},{x:x1,y:y1},{x:x0,y:y1},{x:x0,y:y0}];
-    pts = pts.concat(distributeOnSegments(box, Math.round(total * 0.20), 2.5));
+  /* ── FORMA 1: PROBLEMA — triângulo de alerta com exclamação ── */
+  function maskProblema(x,y) {
+    var cx=W*0.5, cy=H*0.48;
+    var side=Math.min(W*0.48,H*0.50);
+    var h=side*Math.SQRT2*0.7;
+    var top ={x:cx,       y:cy-h*0.58};
+    var botL={x:cx-side/2,y:cy+h*0.42};
+    var botR={x:cx+side/2,y:cy+h*0.42};
+    var th=thickness();
+    /* arestas */
+    if(distSeg(x,y,top.x,top.y,botL.x,botL.y)<th) return true;
+    if(distSeg(x,y,top.x,top.y,botR.x,botR.y)<th) return true;
+    if(distSeg(x,y,botL.x,botL.y,botR.x,botR.y)<th) return true;
+    /* haste exclamação */
+    if(distSeg(x,y,cx,top.y+h*0.20,cx,cy+h*0.10)<th*0.9) return true;
+    /* ponto */
+    if(Math.hypot(x-cx,y-(cy+h*0.28))<th*0.9) return true;
+    return false;
+  }
 
-    /* Separador cabeçalho — 7% */
-    var sepY = y0 + hdrH;
-    pts = pts.concat(distributeOnSegments([{x:x0,y:sepY},{x:x1,y:sepY}], Math.round(total * 0.07), 1.5));
+  /* ── FORMA 2: PRÉ — formulário ── */
+  function maskPre(x,y) {
+    var cx=W*0.5, cy=H*0.48;
+    var bw=Math.min(W*0.44,300), bh=bw*1.05;
+    var x0=cx-bw/2, y0=cy-bh/2, x1=cx+bw/2, y1=cy+bh/2;
+    var pad=bw*0.10;
+    var th=thickness();
+    /* borda */
+    if(distSeg(x,y,x0,y0,x1,y0)<th) return true;
+    if(distSeg(x,y,x1,y0,x1,y1)<th) return true;
+    if(distSeg(x,y,x1,y1,x0,y1)<th) return true;
+    if(distSeg(x,y,x0,y1,x0,y0)<th) return true;
+    /* 4 linhas */
+    var lineY0=y0+bh*0.22, lineSpacing=bh*0.18;
+    for(var i=0;i<4;i++){
+      var ly=lineY0+i*lineSpacing;
+      var lw=(i===3)?(bw-pad*2)*0.55:(bw-pad*2);
+      if(Math.abs(y-ly)<th && x>=cx-lw/2 && x<=cx+lw/2) return true;
+    }
+    return false;
+  }
 
-    /* Grade 4×4 — 73% */
-    var cols = 4, rows = 4;
-    var gx0 = x0 + pad, gx1 = x1 - pad;
-    var gy0 = sepY + (bh - hdrH) * 0.07, gy1 = y1 - pad * 0.5;
-    var cw  = (gx1 - gx0) / cols;
-    var ch  = (gy1 - gy0) / rows;
-    var ppc = Math.round(total * 0.73 / (cols * rows));
-
-    for (var r = 0; r < rows; r++) {
-      for (var c = 0; c < cols; c++) {
-        var ccx = gx0 + c * cw + cw * 0.5;
-        var ccy = gy0 + r * ch + ch * 0.5;
-        var hw  = cw * 0.42, hh = ch * 0.48;
-        var cell = [
-          {x:ccx-hw,y:ccy-hh},{x:ccx+hw,y:ccy-hh},
-          {x:ccx+hw,y:ccy+hh},{x:ccx-hw,y:ccy+hh},
-          {x:ccx-hw,y:ccy-hh}
-        ];
-        pts = pts.concat(distributeOnSegments(cell, ppc, 1.2));
+  /* ── FORMA 3: AGENDAMENTO — calendário ── */
+  function maskAgendamento(x,y) {
+    var cx=W*0.5, cy=H*0.48;
+    var bw=Math.min(W*0.48,320), bh=bw*0.84;
+    var x0=cx-bw/2,y0=cy-bh/2,x1=cx+bw/2,y1=cy+bh/2;
+    var hdrH=bh*0.19;
+    var pad=bw*0.07;
+    var th=thickness();
+    /* borda */
+    if(distSeg(x,y,x0,y0,x1,y0)<th) return true;
+    if(distSeg(x,y,x1,y0,x1,y1)<th) return true;
+    if(distSeg(x,y,x1,y1,x0,y1)<th) return true;
+    if(distSeg(x,y,x0,y1,x0,y0)<th) return true;
+    /* separador */
+    var sepY=y0+hdrH;
+    if(Math.abs(y-sepY)<th && x>=x0 && x<=x1) return true;
+    /* grade 4x4 */
+    var cols=4,rows=4;
+    var gx0=x0+pad,gx1=x1-pad,gy0=sepY+(bh-hdrH)*0.07,gy1=y1-pad*0.5;
+    var cw=(gx1-gx0)/cols, ch=(gy1-gy0)/rows;
+    for(var r=0;r<rows;r++){
+      for(var c=0;c<cols;c++){
+        var ccx=gx0+c*cw+cw*0.5, ccy=gy0+r*ch+ch*0.5;
+        var hw=cw*0.38, hh=ch*0.44;
+        var nx=x-ccx, ny=y-ccy;
+        if(Math.abs(Math.abs(nx)-hw)<th && Math.abs(ny)<=hh) return true;
+        if(Math.abs(Math.abs(ny)-hh)<th && Math.abs(nx)<=hw) return true;
       }
     }
-
-    while (pts.length < total) pts.push(pts[pts.length - 1]);
-    return pts.slice(0, total);
+    return false;
   }
 
-  /* --------------------------------------------------------
-     FORMA 4 — CONTINUIDADE / HISTÓRICO: grafo de nós
-     ●────●────●────●────●
-                │
-                ●
-     -------------------------------------------------------- */
-  function shapeContinuidade(total) {
-    var cx = W * 0.5, cy = H * 0.46;
-    var span = Math.min(W * 0.72, 480);
-    var pts  = [];
-
-    /* 5 nós na linha horizontal */
-    var nodeY   = cy - span * 0.06;
-    var nodeR   = span * 0.050;
-    var nodeXs  = [];
-    for (var i = 0; i < 5; i++) nodeXs.push(cx - span/2 + (i / 4) * span);
-
-    /* Nó descendente (abaixo do nó central) */
-    var downNode = { x: nodeXs[2], y: cy + span * 0.28 };
-
-    /* Conectores entre nós — 55% */
-    var connectors = [];
-    for (var i = 0; i < 4; i++) {
-      connectors.push([{x:nodeXs[i],y:nodeY},{x:nodeXs[i+1],y:nodeY}]);
+  /* ── FORMA 4: CONTINUIDADE — grafo de nós ── */
+  function maskContinuidade(x,y) {
+    var cx=W*0.5, cy=H*0.46;
+    var span=Math.min(W*0.70,460);
+    var nodeY=cy-span*0.06;
+    var nodeR=span*0.048;
+    var th=thickness();
+    var nodeXs=[];
+    for(var i=0;i<5;i++) nodeXs.push(cx-span/2+(i/4)*span);
+    var downNode={x:nodeXs[2],y:cy+span*0.27};
+    /* conectores */
+    for(var i=0;i<4;i++){
+      if(distSeg(x,y,nodeXs[i],nodeY,nodeXs[i+1],nodeY)<th*0.8) return true;
     }
-    connectors.push([{x:nodeXs[2],y:nodeY},{x:downNode.x,y:downNode.y}]);
-
-    var ptsPerConn = Math.round(total * 0.55 / connectors.length);
-    connectors.forEach(function(seg) {
-      pts = pts.concat(distributeOnSegments(seg, ptsPerConn, 2));
-    });
-
-    /* Círculos nos 6 nós — 45% */
-    var allNodes = nodeXs.map(function(x) { return {x:x,y:nodeY}; }).concat([downNode]);
-    var ptsPerNode = Math.round(total * 0.45 / allNodes.length);
-    allNodes.forEach(function(n) {
-      for (var i = 0; i < ptsPerNode; i++) {
-        var a = (i / ptsPerNode) * Math.PI * 2;
-        pts.push({ x: n.x + Math.cos(a) * nodeR, y: n.y + Math.sin(a) * nodeR });
-      }
-    });
-
-    while (pts.length < total) pts.push(pts[pts.length - 1]);
-    return pts.slice(0, total);
+    if(distSeg(x,y,nodeXs[2],nodeY,downNode.x,downNode.y)<th*0.8) return true;
+    /* nós */
+    for(var i=0;i<nodeXs.length;i++){
+      if(distCircle(x,y,nodeXs[i],nodeY,nodeR)<th) return true;
+    }
+    if(distCircle(x,y,downNode.x,downNode.y,nodeR)<th) return true;
+    return false;
   }
 
-  /* --------------------------------------------------------
-     FORMA 5 — JORNADA: linha com 6 nós circulares
-     ●───●───●───●───●───●
-     -------------------------------------------------------- */
-  function shapeJornada(total) {
-    var cx = W * 0.5, cy = H * 0.50;
-    var lw  = Math.min(W * 0.76, 560);
-    var x0  = cx - lw / 2, x1 = cx + lw / 2;
-    var pts = [];
-
-    var steps = 6;
-    var nodes = [];
-    for (var i = 0; i < steps; i++) {
-      nodes.push({ x: x0 + (i / (steps - 1)) * lw, y: cy });
+  /* ── FORMA 5: JORNADA — linha com 6 nós ── */
+  function maskJornada(x,y) {
+    var cx=W*0.5, cy=H*0.50;
+    var lw=Math.min(W*0.74,540);
+    var nodeR=lw*0.028;
+    var th=thickness();
+    var steps=6;
+    var nodes=[];
+    for(var i=0;i<steps;i++) nodes.push({x:cx-lw/2+(i/(steps-1))*lw,y:cy});
+    /* linha */
+    if(Math.abs(y-cy)<th*0.7 && x>=nodes[0].x && x<=nodes[steps-1].x) return true;
+    /* nós */
+    for(var i=0;i<nodes.length;i++){
+      if(distCircle(x,y,nodes[i].x,nodes[i].y,nodeR)<th) return true;
     }
-
-    /* Linha contínua — 50% */
-    pts = pts.concat(distributeOnSegments(nodes, Math.round(total * 0.50), 2.5));
-
-    /* Círculos nos nós — 50% */
-    var nodeR    = lw * 0.030;
-    var ptsPerNode = Math.round(total * 0.50 / steps);
-    nodes.forEach(function(n) {
-      for (var i = 0; i < ptsPerNode; i++) {
-        var a = (i / ptsPerNode) * Math.PI * 2;
-        pts.push({ x: n.x + Math.cos(a) * nodeR, y: n.y + Math.sin(a) * nodeR });
-      }
-    });
-
-    while (pts.length < total) pts.push(pts[pts.length - 1]);
-    return pts.slice(0, total);
+    return false;
   }
 
-  /* --------------------------------------------------------
-     FORMA 6 — BENEFÍCIOS: checkmark inscrito em círculo ✓○
-     -------------------------------------------------------- */
-  function shapeBeneficios(total) {
-    var cx = W * 0.5, cy = H * 0.48;
-    var r  = Math.min(W, H) * 0.27;
-    var pts = [];
-
-    /* Círculo — 55% */
-    var cCount = Math.round(total * 0.55);
-    for (var i = 0; i < cCount; i++) {
-      var a = (i / cCount) * Math.PI * 2;
-      pts.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r });
-    }
-
-    /* Checkmark — 45%
-       A = esquerda baixo, B = vértice inferior, C = direita alto */
-    var ckA = { x: cx - r * 0.44, y: cy + r * 0.04 };
-    var ckB = { x: cx - r * 0.08, y: cy + r * 0.40 };
-    var ckC = { x: cx + r * 0.50, y: cy - r * 0.34 };
-    pts = pts.concat(distributeOnSegments([ckA, ckB, ckC], total - cCount, 3.5));
-
-    while (pts.length < total) pts.push(pts[pts.length - 1]);
-    return pts.slice(0, total);
+  /* ── FORMA 6: BENEFÍCIOS — círculo com checkmark ── */
+  function maskBeneficios(x,y) {
+    var cx=W*0.5, cy=H*0.48;
+    var r=Math.min(W,H)*0.26;
+    var th=thickness();
+    if(distCircle(x,y,cx,cy,r)<th) return true;
+    var ckA={x:cx-r*0.42,y:cy+r*0.04};
+    var ckB={x:cx-r*0.07,y:cy+r*0.38};
+    var ckC={x:cx+r*0.48,y:cy-r*0.32};
+    if(distSeg(x,y,ckA.x,ckA.y,ckB.x,ckB.y)<th*1.1) return true;
+    if(distSeg(x,y,ckB.x,ckB.y,ckC.x,ckC.y)<th*1.1) return true;
+    return false;
   }
 
-  /* --------------------------------------------------------
-     FORMA 7 — CTA: sistema completo — checkmark em duplo anel
-     com 5 pontos satélites externos
-     -------------------------------------------------------- */
-  function shapeCTA(total) {
-    var cx = W * 0.5, cy = H * 0.48;
-    var r1 = Math.min(W, H) * 0.30;
-    var r2 = r1 * 0.62;
-    var pts = [];
-
-    /* Anel externo — 28% */
-    var c1 = Math.round(total * 0.28);
-    for (var i = 0; i < c1; i++) {
-      var a = (i / c1) * Math.PI * 2;
-      pts.push({ x: cx + Math.cos(a) * r1, y: cy + Math.sin(a) * r1 });
+  /* ── FORMA 7: CTA — sistema completo: duplo anel + checkmark + satélites ── */
+  function maskCTA(x,y) {
+    var cx=W*0.5, cy=H*0.48;
+    var r1=Math.min(W,H)*0.28, r2=r1*0.60;
+    var th=thickness();
+    if(distCircle(x,y,cx,cy,r1)<th) return true;
+    if(distCircle(x,y,cx,cy,r2)<th) return true;
+    var ckA={x:cx-r2*0.38,y:cy+r2*0.05};
+    var ckB={x:cx-r2*0.05,y:cy+r2*0.36};
+    var ckC={x:cx+r2*0.44,y:cy-r2*0.30};
+    if(distSeg(x,y,ckA.x,ckA.y,ckB.x,ckB.y)<th*1.1) return true;
+    if(distSeg(x,y,ckB.x,ckB.y,ckC.x,ckC.y)<th*1.1) return true;
+    /* 5 satélites */
+    var r3=r1*1.18, dotR=r1*0.04;
+    for(var d=0;d<5;d++){
+      var da=(d/5)*Math.PI*2 - Math.PI/2;
+      var dnx=cx+Math.cos(da)*r3, dny=cy+Math.sin(da)*r3;
+      if(distCircle(x,y,dnx,dny,dotR)<th) return true;
     }
-
-    /* Anel médio — 20% */
-    var c2 = Math.round(total * 0.20);
-    for (var i = 0; i < c2; i++) {
-      var a = (i / c2) * Math.PI * 2;
-      pts.push({ x: cx + Math.cos(a) * r2, y: cy + Math.sin(a) * r2 });
-    }
-
-    /* Checkmark central — 27% */
-    var ckA2 = { x: cx - r2 * 0.40, y: cy + r2 * 0.04 };
-    var ckB2 = { x: cx - r2 * 0.06, y: cy + r2 * 0.38 };
-    var ckC2 = { x: cx + r2 * 0.46, y: cy - r2 * 0.32 };
-    pts = pts.concat(distributeOnSegments([ckA2, ckB2, ckC2], Math.round(total * 0.27), 3));
-
-    /* 5 pontos satélites no anel externo — 25% */
-    var r3   = r1 * 1.20;
-    var dotR = r1 * 0.038;
-    var dotN = 5;
-    var ptsPerDot = Math.round(total * 0.25 / dotN);
-    for (var d = 0; d < dotN; d++) {
-      var da  = (d / dotN) * Math.PI * 2 - Math.PI / 2;
-      var dnx = cx + Math.cos(da) * r3;
-      var dny = cy + Math.sin(da) * r3;
-      for (var i = 0; i < ptsPerDot; i++) {
-        var aa = (i / ptsPerDot) * Math.PI * 2;
-        pts.push({ x: dnx + Math.cos(aa) * dotR, y: dny + Math.sin(aa) * dotR });
-      }
-    }
-
-    while (pts.length < total) pts.push(pts[pts.length - 1]);
-    return pts.slice(0, total);
+    return false;
   }
 
-  /* --------------------------------------------------------
-     MAPA DE FUNÇÕES
-     -------------------------------------------------------- */
-  var shapeFns = [
-    shapeHero, shapeProblema, shapePre, shapeAgendamento,
-    shapeContinuidade, shapeJornada, shapeBeneficios, shapeCTA,
+  var maskFns = [
+    maskHero, maskProblema, maskPre, maskAgendamento,
+    maskContinuidade, maskJornada, maskBeneficios, maskCTA
   ];
 
+  /* ============================================================
+     GERAÇÃO DE FORMA via Poisson + máscara
+     ============================================================ */
   function computeShape(shapeIdx) {
-    return shapeFns[shapeIdx](particles.length);
+    var fn = maskFns[shapeIdx];
+    var pts = poissonOnMask(fn, TOTAL, 20);
+    /* Se Poisson gerou menos que TOTAL, completar com pontos aleatórios na máscara */
+    var safety = 0;
+    while (pts.length < TOTAL && safety++ < TOTAL * 20) {
+      var rx = rand(0, W), ry = rand(0, H);
+      if (fn(rx, ry)) pts.push({x:rx, y:ry});
+    }
+    /* Embaralhar */
+    for (var i = pts.length-1; i > 0; i--) {
+      var j = Math.floor(Math.random()*(i+1));
+      var t = pts[i]; pts[i] = pts[j]; pts[j] = t;
+    }
+    /* Truncar ou repetir ao tamanho exato */
+    while (pts.length < TOTAL) pts.push(pts[Math.floor(Math.random()*pts.length)]);
+    return pts.slice(0, TOTAL);
   }
 
-  var coordsA = [], coordsB = [];
-
-  /* --------------------------------------------------------
+  /* ============================================================
      CRIAÇÃO DE PARTÍCULAS
-     -------------------------------------------------------- */
-  function createParticles() {
+     Partículas minúsculas — maioria entre 0.3 e 0.9px
+     ============================================================ */
+  function createParticles(initShape) {
     particles = [];
-    LAYER_CONFIG.forEach(function (cfg, layerIdx) {
-      var count = Math.round(PARTICLE_COUNT * cfg.count);
-      for (var i = 0; i < count; i++) {
-        var p = {
-          x: rand(0, W), y: rand(0, H),
-          vx: rand(-0.06, 0.06), vy: rand(-0.06, 0.06),
-          phase: rand(0, Math.PI * 2),
-          freq:  rand(0.003, 0.010),
-          ampX:  rand(0.2, 0.7),
-          ampY:  rand(0.2, 0.7),
-          size:    rand(cfg.sizeMin, cfg.sizeMax),
-          opacity: rand(cfg.opacityMin, cfg.opacityMax),
-          opacityBase: 0,
-          layer:    layerIdx,
-          parallax: 1 - layerIdx * 0.22,
-        };
-        p.opacityBase = p.opacity;
-        particles.push(p);
+    for (var i = 0; i < TOTAL; i++) {
+      var layerRand = Math.random();
+      var layer, sz, opBase;
+      if (layerRand < 0.30) {
+        layer = 0; sz = rand(0.55, 0.95); opBase = rand(0.35, 0.60);
+      } else if (layerRand < 0.75) {
+        layer = 1; sz = rand(0.30, 0.60); opBase = rand(0.18, 0.38);
+      } else {
+        layer = 2; sz = rand(0.18, 0.40); opBase = rand(0.08, 0.20);
       }
-    });
-  }
-
-  /* --------------------------------------------------------
-     DETECÇÃO DE SEÇÃO
-     -------------------------------------------------------- */
-  var sectionMap = [
-    { id: 'hero',            shape: SHAPES.HERO         },
-    { id: 'problema',        shape: SHAPES.PROBLEMA      },
-    { id: 'pre-atendimento', shape: SHAPES.PRE           },
-    { id: 'agendamento',     shape: SHAPES.AGENDAMENTO   },
-    { id: 'continuidade',    shape: SHAPES.CONTINUIDADE  },
-    { id: 'jornada',         shape: SHAPES.JORNADA       },
-    { id: 'beneficios',      shape: SHAPES.BENEFICIOS    },
-    { id: 'cta',             shape: SHAPES.CTA           },
-  ];
-
-  function setupSectionObserver() {
-    if (!('IntersectionObserver' in window)) return;
-
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        sectionMap.forEach(function (s) {
-          if (entry.target.id === s.id && s.shape !== targetShape) {
-            var prog = morphProgress;
-            for (var i = 0; i < particles.length; i++) {
-              coordsA[i] = {
-                x: smoothLerp(coordsA[i] ? coordsA[i].x : particles[i].x,
-                               coordsB[i] ? coordsB[i].x : particles[i].x, prog),
-                y: smoothLerp(coordsA[i] ? coordsA[i].y : particles[i].y,
-                               coordsB[i] ? coordsB[i].y : particles[i].y, prog),
-              };
-            }
-            targetShape   = s.shape;
-            coordsB       = computeShape(targetShape);
-            morphProgress = 0;
-          }
-        });
+      var p = initShape[i] || {x: rand(0,W), y: rand(0,H)};
+      particles.push({
+        x: p.x, y: p.y,
+        vx: 0, vy: 0,
+        phase: rand(0, Math.PI*2),
+        freq:  rand(0.004, 0.012),
+        ampX:  rand(0.15, 0.50),
+        ampY:  rand(0.15, 0.50),
+        size:  sz,
+        opBase: opBase,
+        layer: layer,
+        parallax: 1 - layer * 0.20,
       });
-    }, { threshold: 0.18, rootMargin: '-60px 0px -60px 0px' });
-
-    sectionMap.forEach(function (s) {
-      var el = document.getElementById(s.id);
-      if (el) observer.observe(el);
-    });
+    }
   }
 
-  /* --------------------------------------------------------
+  /* ============================================================
      RESIZE
-     -------------------------------------------------------- */
+     ============================================================ */
   function resize() {
     W = canvas.width  = window.innerWidth;
     H = canvas.height = window.innerHeight;
     isMobile = W < 768;
-    PARTICLE_COUNT = isMobile ? 700 : 1600;
+    /* Partículas menores em quantidade mas minúsculas — premium */
+    TOTAL = isMobile ? 1400 : 3200;
   }
 
-  /* --------------------------------------------------------
-     INIT
-     -------------------------------------------------------- */
-  function init() {
-    resize();
-    createParticles();
-
-    coordsA = computeShape(SHAPES.HERO);
-    coordsB = computeShape(SHAPES.HERO);
-    particles.forEach(function (p, i) {
-      p.x = coordsA[i].x;
-      p.y = coordsA[i].y;
-    });
-
-    morphProgress = 1.0;
-    setupSectionObserver();
-    loop();
+  /* ============================================================
+     SCROLL-DRIVEN MORPH
+     Não usa tempo; lê diretamente scrollValue para determinar
+     qual par de formas (A→B) e o progresso entre elas.
+     ============================================================ */
+  function getShapeForScrollValue(sv) {
+    return Math.min(Math.floor(sv), maskFns.length - 1);
   }
 
-  window.addEventListener('resize', function () {
-    var oldW = W, oldH = H;
-    resize();
-    var rx = W / oldW, ry = H / oldH;
-    particles.forEach(function (p, i) {
-      p.x  *= rx; p.y  *= ry;
-      if (coordsA[i]) { coordsA[i].x *= rx; coordsA[i].y *= ry; }
-      if (coordsB[i]) { coordsB[i].x *= rx; coordsB[i].y *= ry; }
-    });
-  }, { passive: true });
+  function getTargetCoords(i) {
+    var sv   = scrollValue;
+    var idxA = Math.min(Math.floor(sv), maskFns.length - 1);
+    var idxB = Math.min(idxA + 1, maskFns.length - 1);
+    var t    = smoothstep(sv - idxA);
 
-  /* --------------------------------------------------------
-     LOOP DE ANIMAÇÃO
-     -------------------------------------------------------- */
+    /* Recalcula formas se mudou de par */
+    if (idxA !== lastShapeIdx) {
+      lastShapeIdx = idxA;
+      coordsA = computeShape(idxA);
+      coordsB = (idxB !== idxA) ? computeShape(idxB) : coordsA;
+    }
+
+    var a = coordsA[i] || {x: W*0.5, y: H*0.5};
+    var b = coordsB[i] || {x: W*0.5, y: H*0.5};
+    return {
+      x: a.x + (b.x - a.x) * t,
+      y: a.y + (b.y - a.y) * t,
+    };
+  }
+
+  /* ============================================================
+     LOOP
+     ============================================================ */
   var tick = 0;
 
   function loop() {
     requestAnimationFrame(loop);
     tick++;
 
+    updateScrollValue();
+
     ctx.clearRect(0, 0, W, H);
 
-    if (morphProgress < 1.0) {
-      morphProgress = Math.min(morphProgress + MORPH_SPEED, 1.0);
-    }
-
-    /* Renderizar do fundo para a frente */
+    /* Renderizar camada por camada (fundo → frente) */
     for (var layer = 2; layer >= 0; layer--) {
       for (var i = 0; i < particles.length; i++) {
         var p = particles[i];
         if (p.layer !== layer) continue;
 
-        /* Destino interpolado */
-        var tx, ty;
-        if (coordsA[i] && coordsB[i]) {
-          tx = smoothLerp(coordsA[i].x, coordsB[i].x, morphProgress);
-          ty = smoothLerp(coordsA[i].y, coordsB[i].y, morphProgress);
-        } else {
-          tx = W * 0.5; ty = H * 0.5;
-        }
+        /* Destino dirigido pelo scroll */
+        var target = getTargetCoords(i);
 
         /* Micro-movimento orgânico */
-        var phase = p.phase + tick * p.freq;
-        var microX = Math.sin(phase * 1.3) * p.ampX * p.parallax;
-        var microY = Math.cos(phase * 0.9) * p.ampY * p.parallax;
+        var ph  = p.phase + tick * p.freq;
+        var mX  = Math.sin(ph * 1.4) * p.ampX * p.parallax;
+        var mY  = Math.cos(ph * 0.85) * p.ampY * p.parallax;
 
-        /* Atração suave + amortecimento */
-        var attr = 0.032 * p.parallax;
-        p.vx += (tx - p.x + microX) * attr;
-        p.vy += (ty - p.y + microY) * attr;
-        p.vx *= 0.88;
-        p.vy *= 0.88;
+        /* Força de atração + amortecimento — trajetória visível */
+        var attr = 0.028 * p.parallax;
+        p.vx += (target.x - p.x + mX) * attr;
+        p.vy += (target.y - p.y + mY) * attr;
+        p.vx *= 0.86;
+        p.vy *= 0.86;
         p.x  += p.vx;
         p.y  += p.vy;
 
         /* Opacidade pulsante */
-        var opMod    = 1 + 0.15 * Math.sin(phase * 1.7);
-        var finalOp  = Math.min(p.opacityBase * opMod, 0.65);
+        var opMod   = 1 + 0.12 * Math.sin(ph * 1.9);
+        var finalOp = Math.min(p.opBase * opMod, 0.65);
+
+        /* Cor interpolada pela seção */
+        var col = getCurrentColor(finalOp);
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,' + finalOp + ')';
+        ctx.fillStyle = col;
         ctx.fill();
       }
     }
   }
 
-  /* --------------------------------------------------------
-     START
-     -------------------------------------------------------- */
+  /* ============================================================
+     INIT
+     ============================================================ */
+  function init() {
+    resize();
+    computeSectionBreaks();
+
+    /* Iniciar na forma hero */
+    lastShapeIdx = 0;
+    coordsA = computeShape(0);
+    coordsB = computeShape(1);
+
+    createParticles(coordsA);
+    loop();
+  }
+
+  window.addEventListener('scroll', function() {
+    /* Só recomputa breaks se página mudou de altura */
+  }, { passive: true });
+
+  window.addEventListener('resize', function () {
+    var oldW = W, oldH = H;
+    resize();
+    computeSectionBreaks();
+    /* Reescala posições das partículas */
+    var rx = W/oldW, ry = H/oldH;
+    particles.forEach(function(p) {
+      p.x  *= rx; p.y  *= ry;
+    });
+    /* Regenera formas nas novas dimensões */
+    lastShapeIdx = -1;
+  }, { passive: true });
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
