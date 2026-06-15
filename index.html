@@ -1932,17 +1932,54 @@ footer {
   function smoothstep(t) { return t*t*(3-2*t); }
 
   /* ============================================================
-     COR ATUAL — interpola entre seções conforme scrollValue
+     TIMELINE DE FORMAÇÃO — HOLD vs MORPH
+     Cada seção é dividida em duas fases ao longo do seu scroll:
+
+       HOLD  → 0%            até HOLD_RATIO   → forma estável,
+               já totalmente concluída, apenas micro-movimento.
+       MORPH → HOLD_RATIO     até 100%         → transformação
+               gradual em direção à forma da próxima seção.
+
+     Isso garante que cada figura permaneça visível e "parada"
+     pela maior parte da seção, e que a troca de forma seja
+     uma transformação curta e progressiva, não instantânea.
+     ============================================================ */
+  var HOLD_RATIO   = 0.75;  // ~75% da seção = figura parada (faixa 70%-80%)
+  var MORPH_SPREAD = 0.55;  // cada partícula leva 55% da fase de morph p/ se mover
+
+  /* Progresso de morph DA SEÇÃO: 0 durante o HOLD, 0→1 durante o MORPH */
+  function sectionMorphT(frac) {
+    if (frac <= HOLD_RATIO) return 0;
+    return clamp01((frac - HOLD_RATIO) / (1 - HOLD_RATIO));
+  }
+
+  /* Progresso de morph de UMA PARTÍCULA. Cada partícula inicia seu
+     deslocamento em um instante levemente diferente (definido por
+     "seed"), criando um efeito de onda/metamorfose — partículas saem
+     de uma formação organizada e chegam a outra organizada, em vez
+     de todas se deslocarem juntas (o que lembraria uma explosão). */
+  function particleMorphT(sectionT, seed) {
+    if (sectionT <= 0) return 0;
+    if (sectionT >= 1) return 1;
+    var start = seed * (1 - MORPH_SPREAD);
+    var local = (sectionT - start) / MORPH_SPREAD;
+    return smoothstep(clamp01(local));
+  }
+
+  /* ============================================================
+     COR ATUAL — acompanha a mesma timeline de HOLD/MORPH:
+     a cor permanece estável durante o HOLD e migra junto com
+     a formação durante o MORPH.
      ============================================================ */
   function getCurrentColor(alpha) {
-    var i   = Math.floor(scrollValue);
-    var t   = scrollValue - i;
-    var ca  = SECTION_COLORS[Math.min(i,   SECTION_COLORS.length-1)];
-    var cb  = SECTION_COLORS[Math.min(i+1, SECTION_COLORS.length-1)];
-    var st  = smoothstep(t);
-    var r   = Math.round(lerp(ca[0], cb[0], st));
-    var g   = Math.round(lerp(ca[1], cb[1], st));
-    var b   = Math.round(lerp(ca[2], cb[2], st));
+    var i    = Math.floor(scrollValue);
+    var frac = scrollValue - i;
+    var st   = smoothstep(sectionMorphT(frac));
+    var ca   = SECTION_COLORS[Math.min(i,   SECTION_COLORS.length-1)];
+    var cb   = SECTION_COLORS[Math.min(i+1, SECTION_COLORS.length-1)];
+    var r    = Math.round(lerp(ca[0], cb[0], st));
+    var g    = Math.round(lerp(ca[1], cb[1], st));
+    var b    = Math.round(lerp(ca[2], cb[2], st));
     return 'rgba('+r+','+g+','+b+','+alpha+')';
   }
 
@@ -2297,14 +2334,23 @@ footer {
     var sv   = scrollValue;
     var idxA = Math.min(Math.floor(sv), maskFns.length - 1);
     var idxB = Math.min(idxA + 1, maskFns.length - 1);
-    var t    = smoothstep(sv - idxA);
+    var frac = sv - idxA;
 
-    /* Recalcula formas se mudou de par */
+    /* Recalcula formas se mudou de seção */
     if (idxA !== lastShapeIdx) {
       lastShapeIdx = idxA;
       coordsA = computeShape(idxA);
       coordsB = (idxB !== idxA) ? computeShape(idxB) : coordsA;
     }
+
+    /* Progresso da seção dentro da fase de MORPH (0 durante o HOLD) */
+    var sectionT = sectionMorphT(frac);
+
+    /* Cada partícula recebe um deslocamento temporal próprio,
+       determinístico, distribuído uniformemente via razão áurea —
+       gera a "onda" de transformação sem alterar a partícula em si */
+    var seed = (i * 0.6180339887498949) % 1;
+    var t    = particleMorphT(sectionT, seed);
 
     var a = coordsA[i] || {x: W*0.5, y: H*0.5};
     var b = coordsB[i] || {x: W*0.5, y: H*0.5};
